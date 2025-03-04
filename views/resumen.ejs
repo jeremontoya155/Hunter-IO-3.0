@@ -3,54 +3,53 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard de Análisis - Resumen de Progreso</title>
+    <title>Dashboard de <%= username %></title>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/static/css/navbar.css">
-    <link rel="stylesheet" href="/static/css/resumen.css">
-    <link rel="stylesheet" href="/static/css/scrollbar.css">
+    <link rel="stylesheet" href="/static/css/resumen.css" />
+    <link rel="stylesheet" href="/static/css/scrollbar.css" />
+    <link rel="stylesheet" href="/static/css/navbar.css" />
     <script src="/static/js/navbar.js"></script>
-    <script src="/static/js/resumen.js"></script>
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
       rel="stylesheet"
-    >
+    />
   </head>
   <body>
     <%- include('partials/navbar') %>
     <div class="contenedorBody">
       <header>
-        <h1>Dashboard - <%= username %></h1>
-        
-        <!-- Sección de Cuentas Asociadas -->
-        <section class="accounts-section" style="margin-top: 1rem;">
-          <h2>Cuentas Asociadas:</h2>
-          <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-            <% if (userAccounts && userAccounts.length > 0) { %>
-              <% userAccounts.forEach(function(ac) { %>
-                <a 
-                  href="/resumen?account=<%= ac.insta_username %>" 
-                  style="text-decoration: none; padding: 0.5rem 1rem; border: 1px solid #ccc; border-radius: 4px; background: <%= selectedAccount === ac.insta_username ? '#1E3A8A' : '#fff' %>; color: <%= selectedAccount === ac.insta_username ? '#fff' : '#000' %>;"
-                >
-                  <i class="fas fa-user-circle"></i> <%= ac.insta_username %>
-                </a>
+        <div class="header-content">
+          <h1>Dashboard - <%= username %></h1>
+
+          <section class="accounts-section">
+            <h2>Cuentas Asociadas:</h2>
+            <div class="accounts-list">
+              <% if (userAccounts && userAccounts.length > 0) { %> <%
+              userAccounts.forEach(function(ac) { %>
+              <a
+                href="/resumen?account=<%= ac.insta_username %>"
+                class="account-link <%= selectedAccount === ac.insta_username ? 'active' : '' %>"
+              >
+                <i class="fas fa-user-circle"></i> <%= ac.insta_username %>
+              </a>
               <% }); %>
-              <!-- Opción para quitar el filtro -->
-              <a 
-                href="/resumen" 
-                style="text-decoration: none; padding: 0.5rem 1rem; border: 1px solid #ccc; border-radius: 4px; background: <%= !selectedAccount ? '#1E3A8A' : '#fff' %>; color: <%= !selectedAccount ? '#fff' : '#000' %>;"
+              <a
+                href="/resumen"
+                class="account-link <%= !selectedAccount ? 'active' : '' %>"
               >
                 Todas las Cuentas
               </a>
-            <% } else { %>
-              <p>No hay cuentas asociadas.</p>
-            <% } %>
-          </div>
-        </section>
+              <% } else { %>
+              <p class="no-accounts">No hay cuentas asociadas.</p>
+              <% } %>
+            </div>
+          </section>
+        </div>
       </header>
 
       <div class="dashboard-container">
-        <!-- Métricas principales -->
         <section class="titleMetrics">
           <div class="titleMetricsContent">
             <div class="rowTitle">
@@ -64,7 +63,9 @@
               </div>
               <div class="metricCard">
                 <h2>Destinatario del Último Mensaje</h2>
-                <p id="destinatarioUltimo"><%= ultimos_mensajes[0].destinatario %></p>
+                <p id="destinatarioUltimo">
+                  <%= ultimos_mensajes[0].destinatario %>
+                </p>
               </div>
             </div>
             <div class="MetricUltimoMensaje">
@@ -75,92 +76,27 @@
             </div>
           </div>
         </section>
-  
-        <div class="row">
-          <section class="columnMetrics">
-            <div class="columnMetricsContent">
-              <div class="metricCard">
-                <h2>Total de Mensajes por Usuario</h2>
-                <p id="totalMensajesPorUsuario"></p>
-              </div>
-              <div class="metricCard">
-                <h2>Fecha del Primer Mensaje</h2>
-                <p id="fechaPrimerMensaje"><%= fechaPrimerMensaje %></p>
-              </div>
-              <div class="metricCard">
-                <h2>Promedio de Likes por Mensaje</h2>
-                <p id="promedioLikesPorMensaje"></p>
-              </div>
-              <div class="metricCard">
-                <h2>Usuario con Más Mensajes</h2>
-                <p id="usuarioMasMensajes"></p>
-              </div>
-              <div class="metricCard">
-                <h2>Usuario con Más Likes</h2>
-                <p id="usuarioMasLikes"></p>
-              </div>
-              <div class="metricCard">
-                <h2>Día con Más Mensajes Enviados</h2>
-                <p id="diaMasMensajes"><%= diaMasMensajes %></p>
-              </div>
-            </div>
-          </section>
-  
-          <div class="column">
-            <section class="evolution">
-              <div class="evolutionSection">
-                <h2>Evolución de Mensajes Enviados</h2>
-                <div class="chart-container">
-                  <canvas id="mensajesEnviados-chart"></canvas>
-                </div>
-              </div>
-              <div class="evolutionSection">
-                <h2>Distribución por Destinatarios</h2>
-                <div class="chart-container">
-                  <canvas id="destinatarios-chart"></canvas>
-                </div>
-              </div>
-              <div class="evolutionSection">
-                <h2>Distribución de Me Gustas</h2>
-                <div class="chart-container">
-                  <canvas id="meGustas-chart"></canvas>
-                </div>
-              </div>
-            </section>
-            <section class="likes-section">
-              <h2>Me Gustas por Mensaje</h2>
-              <div id="likesContainer"></div>
-            </section>
-          </div>
-        </div>
-        <div class="rowMensajes">
-          <section class="mensajes-section">
-            <h2>Mensajes Enviados</h2>
-            <div id="mensajesSend"></div>
-          </section>
-        </div>
 
-        <!-- Sección para mostrar el historial de acciones proveniente de MongoDB -->
-        <section class="historial-acciones">
-          <h2>Historial de Acciones</h2>
-          <% if (historial && historial.length > 0) { %>
-            <ul>
-              <% historial.forEach(function(accion) { %>
-                <li>
-                  <strong>Usuario:</strong> <%= accion.username %> |
-                  <strong>Acción:</strong> <%= accion.accion %> |
-                  <strong>Destinatario:</strong> <%= accion.destinatario %> |
-                  <strong>Mensaje:</strong> <%= accion.mensaje %> |
-                  <strong>Fecha:</strong> <%= accion.fecha %>
-                </li>
-              <% }); %>
-            </ul>
-          <% } else { %>
-            <p>No hay historial de acciones disponible.</p>
-          <% } %>
+        <section class="mensajes-section">
+          <h2>Mensajes Enviados</h2>
+          <div id="mensajesSend">
+            <% if (ultimos_mensajes && ultimos_mensajes.length > 0) { %> <%
+            ultimos_mensajes.forEach(function(mensaje) { %>
+            <div class="mensaje-item">
+              <div class="mensaje-header">
+                <span class="mensaje-destinatario">
+                  <%= mensaje.destinatario %>
+                </span>
+                <span class="mensaje-fecha"><%= mensaje.fecha %></span>
+              </div>
+              <div class="mensaje-contenido"><%= mensaje.mensaje %></div>
+            </div>
+            <% }); %> <% } else { %>
+            <p>No hay mensajes disponibles.</p>
+            <% } %>
+          </div>
         </section>
       </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </body>
 </html>
