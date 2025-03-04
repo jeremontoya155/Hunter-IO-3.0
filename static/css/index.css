@@ -1,21 +1,20 @@
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
 }
 
 body {
-  margin-top: 40px;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
   background-color: #d9e9e0;
-  width:100%;
+  width: 100%;
+  margin: 0 auto;
+  padding-left: 3.7rem;
 }
 
 .login-container {
@@ -247,7 +246,6 @@ button.loading::after {
   background-color: rgba(255, 255, 255, 0.9);
   border: 2px solid transparent;
 }
-
 
 @media (max-width: 480px) {
   .login-container {
