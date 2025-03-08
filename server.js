@@ -1,6 +1,14 @@
 const express = require('express');
 const path = require('path');
 const { Pool } = require('pg');
+const nichosController = require('./controllers/nichosController');
+
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' }); // Configure the destination folder for uploads
+
+
+
+
 const session = require('express-session');
 // Importa MongoClient para conectarte a MongoDB
 const { MongoClient } = require('mongodb');
@@ -131,45 +139,48 @@ app.get('/index', isAuthenticated, (req, res) => {
     messages: [], // Puedes enviar mensajes de estado o notificaciones
   });
 });
+
 app.get('/resumen', isAuthenticated, async (req, res) => {
   try {
-    // 1. Extraer las cuentas de Instagram del usuario (campo 'accounts' en PostgreSQL)
+    // 1️⃣ Extraer las cuentas de Instagram del usuario desde PostgreSQL
     const userAccounts = req.session.user.accounts || [];
     const instaUsernames = userAccounts.map((ac) => ac.insta_username);
 
-    // 2. Revisar si se recibió un parámetro 'account' para filtrar
-    const selectedAccount = req.query.account; // Ej: 'bichobarber1'
+    // 2️⃣ Revisar si se recibió un parámetro 'account' para filtrar
+    const selectedAccount = req.query.account || null; // Ejemplo: 'bichobarber1'
+    const selectedMonth = req.query.month || new Date().toISOString().slice(0, 7); // Formato YYYY-MM
 
-    // 3. Conectarse a MongoDB y obtener los documentos de 'historial_acciones'
+    // 3️⃣ Conectarse a MongoDB y obtener los documentos de 'historial_acciones'
     const client = new MongoClient(mongoUri, { useUnifiedTopology: true });
     await client.connect();
     const db = client.db(mongoDbName);
     const collection = db.collection('historial_acciones');
 
-    // Si se seleccionó una cuenta, filtrar solo por esa, de lo contrario, usar todas las asociadas
-    const filter = selectedAccount
-      ? { username: selectedAccount }
-      : { username: { $in: instaUsernames } };
+    // Construcción del filtro
+    const filter = {
+      username: selectedAccount ? selectedAccount : { $in: instaUsernames },
+      fecha: { $regex: `^${selectedMonth}` } // Filtrar por mes en formato "YYYY-MM"
+    };
 
     const historial = await collection.find(filter).toArray();
     await client.close();
 
-    // 4. Calcular métricas básicas a partir del historial filtrado
+    // 4️⃣ Calcular métricas básicas del historial
     let totalMensajesEnviados = historial.length;
     let fechaUltimoMensaje = 'N/A';
     let destinatarioUltimo = 'N/A';
     let ultimoMensaje = 'N/A';
     let fechaPrimerMensaje = 'N/A';
     let diaMasMensajes = 'N/A';
+    let mensajesPorTipo = { comunicacion: 0, venta: 0, imperativo: 0 };
+    let mensajesPorDia = {};
 
     if (historial.length > 0) {
-      // Función para convertir la fecha (formato "YYYY-MM-DD HH:mm:ss")
+      // Función para convertir la fecha correctamente
       const parseFecha = (str) => new Date(str.replace(' ', 'T'));
 
-      // Ordenar los documentos por fecha ascendente
-      const sorted = historial
-        .slice()
-        .sort((a, b) => parseFecha(a.fecha) - parseFecha(b.fecha));
+      // Ordenar mensajes por fecha ascendente
+      const sorted = historial.slice().sort((a, b) => parseFecha(a.fecha) - parseFecha(b.fecha));
 
       fechaPrimerMensaje = sorted[0].fecha;
       fechaUltimoMensaje = sorted[sorted.length - 1].fecha;
@@ -177,52 +188,141 @@ app.get('/resumen', isAuthenticated, async (req, res) => {
       ultimoMensaje = sorted[sorted.length - 1].mensaje;
 
       // Calcular el día con más mensajes
-      const dayCounts = {};
-      historial.forEach((item) => {
-        const day = item.fecha.substring(0, 10);
-        dayCounts[day] = (dayCounts[day] || 0) + 1;
+      historial.forEach(({ fecha, tipo_mensaje }) => {
+        const dia = fecha.substring(0, 10); // Extraer solo la fecha sin hora
+        mensajesPorDia[dia] = (mensajesPorDia[dia] || 0) + 1;
+        mensajesPorTipo[tipo_mensaje] = (mensajesPorTipo[tipo_mensaje] || 0) + 1;
       });
-      const dayArray = Object.entries(dayCounts);
-      dayArray.sort((a, b) => b[1] - a[1]);
+
+      const dayArray = Object.entries(mensajesPorDia).sort((a, b) => b[1] - a[1]);
       if (dayArray.length > 0) {
         diaMasMensajes = `${dayArray[0][0]} (Total: ${dayArray[0][1]})`;
       }
     }
 
-    // 5. Renderizar la vista 'resumen.ejs' pasando todas las métricas, el historial y la cuenta seleccionada
+    // 5️⃣ Formatear los datos del gráfico para la línea de tiempo
+    const fechasOrdenadas = Object.keys(mensajesPorDia).sort();
+    const datosGrafico = fechasOrdenadas.map(fecha => ({
+      fecha,
+      cantidad: mensajesPorDia[fecha]
+    }));
+
+    // 6️⃣ Renderizar la vista 'resumen.ejs'
     res.render('resumen', {
       username: req.session.user.username,
       total_mensajes_enviados: totalMensajesEnviados,
-      ultimos_mensajes: historial, // PASAR TODO EL HISTORIAL AQUÍ
-      historial,
+      ultimos_mensajes: historial,
       fechaPrimerMensaje,
+      fechaUltimoMensaje,
+      destinatarioUltimo,
+      ultimoMensaje,
       diaMasMensajes,
+      mensajesPorTipo,
+      datosGrafico,
       userAccounts, // Lista de todas las cuentas asociadas
-      selectedAccount, // Cuenta actualmente filtrada (si la hay)
+      selectedAccount, // Cuenta actualmente filtrada
+      selectedMonth, // Mes seleccionado en el filtro
     });
+
   } catch (error) {
     console.error('Error al obtener el historial desde MongoDB:', error);
     res.render('resumen', {
       username: req.session.user.username,
       total_mensajes_enviados: 0,
-      ultimos_mensajes: [
-        {
-          fecha: 'N/A',
-          destinatario: 'N/A',
-          mensaje: 'N/A',
-        },
-      ],
-      historial: [],
+      ultimos_mensajes: [],
       fechaPrimerMensaje: 'N/A',
+      fechaUltimoMensaje: 'N/A',
+      destinatarioUltimo: 'N/A',
+      ultimoMensaje: 'N/A',
       diaMasMensajes: 'N/A',
+      mensajesPorTipo: { comunicacion: 0, venta: 0, imperativo: 0 },
+      datosGrafico: [],
       userAccounts: req.session.user.accounts || [],
       selectedAccount: null,
+      selectedMonth: new Date().toISOString().slice(0, 7),
     });
   }
 });
 
+
+
+
 app.get('/onboarding', isAuthenticated, (req, res) => {
   res.render('onboarding');
+});
+
+
+
+app.get('/nicho', isAuthenticated, (req, res) => {
+  res.render('nicho');
+});
+
+
+
+app.get('/flujo', isAuthenticated, (req, res) => {
+  res.render('flujo');
+});
+
+app.get('/nicho', isAuthenticated, nichosController.getNichoForm);
+app.post('/nicho', isAuthenticated, upload.single('archivo_pdf'), nichosController.postNicho);
+app.get('/nicho/asignar', isAuthenticated, nichosController.getNichosAsignar);
+app.post('/nicho/asignar', isAuthenticated, nichosController.postAsignarNicho);
+
+
+
+
+
+app.post('/flujo/save', isAuthenticated, async (req, res) => {
+  const { nombre, nodes } = req.body;
+  const userId = req.session.user.id;
+
+  try {
+    const queryText = `
+      INSERT INTO flujos (user_id, nombre, flujo)
+      VALUES ($1, $2, $3)
+      RETURNING *;
+    `;
+    const { rows } = await pool.query(queryText, [userId, nombre, JSON.stringify(nodes)]);
+
+    res.status(200).json({ message: 'Flujo guardado correctamente', flujo: rows[0] });
+  } catch (error) {
+    console.error('Error al guardar el flujo:', error);
+    res.status(500).json({ error: 'Error al guardar el flujo' });
+  }
+});
+
+app.get('/flujo/list', isAuthenticated, async (req, res) => {
+  const userId = req.session.user.id;
+
+  try {
+    const queryText = 'SELECT * FROM flujos WHERE user_id = $1';
+    const { rows } = await pool.query(queryText, [userId]);
+
+    res.status(200).json({ flujos: rows });
+  } catch (error) {
+    console.error('Error al obtener los flujos:', error);
+    res.status(500).json({ error: 'Error al obtener los flujos' });
+  }
+});
+
+
+app.get('/flujo/load', isAuthenticated, async (req, res) => {
+  const { nombre } = req.query;
+  const userId = req.session.user.id;
+
+  try {
+    const queryText = 'SELECT * FROM flujos WHERE user_id = $1 AND nombre = $2';
+    const { rows } = await pool.query(queryText, [userId, nombre]);
+
+    if (rows.length > 0) {
+      res.status(200).json(rows[0]);
+    } else {
+      res.status(404).json({ error: 'Flujo no encontrado' });
+    }
+  } catch (error) {
+    console.error('Error al cargar el flujo:', error);
+    res.status(500).json({ error: 'Error al cargar el flujo' });
+  }
 });
 
 app.listen(port, () => {

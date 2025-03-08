@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard de <%= username %></title>
@@ -15,88 +15,170 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
       rel="stylesheet"
     />
-  </head>
-  <body>
+</head>
+<body>
     <%- include('partials/navbar') %>
+
     <div class="contenedorBody">
-      <header>
-        <div class="header-content">
-          <h1>Dashboard - <%= username %></h1>
+        <header>
+            <div class="header-content">
+                <h1>Dashboard - <%= username %></h1>
 
-          <section class="accounts-section">
-            <h2>Cuentas Asociadas:</h2>
-            <div class="accounts-list">
-              <% if (userAccounts && userAccounts.length > 0) { %> <%
-              userAccounts.forEach(function(ac) { %>
-              <a
-                href="/resumen?account=<%= ac.insta_username %>"
-                class="account-link <%= selectedAccount === ac.insta_username ? 'active' : '' %>"
-              >
-                <i class="fas fa-user-circle"></i> <%= ac.insta_username %>
-              </a>
-              <% }); %>
-              <a
-                href="/resumen"
-                class="account-link <%= !selectedAccount ? 'active' : '' %>"
-              >
-                Todas las Cuentas
-              </a>
-              <% } else { %>
-              <p class="no-accounts">No hay cuentas asociadas.</p>
-              <% } %>
+                <section class="accounts-section">
+                    <h2>Cuentas Asociadas:</h2>
+                    <div class="accounts-list">
+                        <% if (userAccounts && userAccounts.length > 0) { %> 
+                            <% userAccounts.forEach(function(ac) { %>
+                                <a href="/resumen?account=<%= ac.insta_username %>"
+                                   class="account-link <%= selectedAccount === ac.insta_username ? 'active' : '' %>">
+                                    <i class="fas fa-user-circle"></i> <%= ac.insta_username %>
+                                </a>
+                            <% }); %>
+                            <a href="/resumen" class="account-link <%= !selectedAccount ? 'active' : '' %>">
+                                Todas las Cuentas
+                            </a>
+                        <% } else { %>
+                            <p class="no-accounts">No hay cuentas asociadas.</p>
+                        <% } %>
+                    </div>
+                </section>
             </div>
-          </section>
+        </header>
+
+        <div class="dashboard-container">
+            <!-- 📌 TARJETAS DE MÉTRICAS -->
+            <section class="titleMetrics">
+                <div class="titleMetricsContent">
+                    <div class="rowTitle">
+                        <div class="metricCard">
+                            <h2>Total de Mensajes Enviados</h2>
+                            <p id="totalMensajes"><%= total_mensajes_enviados %></p>
+                        </div>
+                        <div class="metricCard">
+                            <h2>Fecha del Último Mensaje</h2>
+                            <p id="fechaUltimoMensaje"><%= ultimos_mensajes.length > 0 ? ultimos_mensajes[0].fecha : 'N/A' %></p>
+                        </div>
+                        <div class="metricCard">
+                            <h2>Destinatario del Último Mensaje</h2>
+                            <p id="destinatarioUltimo">
+                                <%= ultimos_mensajes.length > 0 ? ultimos_mensajes[0].destinatario : 'N/A' %>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="MetricUltimoMensaje">
+                        <div class="metricCard">
+                            <h2>Último Mensaje</h2>
+                            <p id="ultimoMensaje"><%= ultimos_mensajes.length > 0 ? ultimos_mensajes[0].mensaje : 'N/A' %></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 📌 TARJETAS DE CANTIDAD DE MENSAJES POR TIPO -->
+            <section class="tipoMensajes">
+                <div class="metricCard">
+                    <h2>Mensajes de Comunicación</h2>
+                    <p id="mensajesComunicacion"><%= mensajesPorTipo.comunicacion %></p>
+                </div>
+                <div class="metricCard">
+                    <h2>Mensajes de Venta</h2>
+                    <p id="mensajesVenta"><%= mensajesPorTipo.venta %></p>
+                </div>
+                <div class="metricCard">
+                    <h2>Mensajes Imperativos</h2>
+                    <p id="mensajesImperativos"><%= mensajesPorTipo.imperativo %></p>
+                </div>
+            </section>
+
+            <!-- 📌 Selector de mes -->
+            <section class="selector-mes">
+                <label for="selectMonth">Seleccionar Mes:</label>
+                <input type="month" id="selectMonth" value="<%= selectedMonth %>">
+            </section>
+
+            <!-- 📌 Gráfico de mensajes enviados por día -->
+            <section class="grafico-mensajes">
+                <h2>Mensajes Enviados por Día</h2>
+                <canvas id="graficoMensajes"></canvas>
+            </section>
+
+            <!-- 📌 LISTADO DE MENSAJES ENVIADOS -->
+            <section class="mensajes-section">
+                <h2>Mensajes Enviados</h2>
+                <div id="mensajesSend">
+                    <% if (ultimos_mensajes && ultimos_mensajes.length > 0) { %> 
+                        <% ultimos_mensajes.forEach(function(mensaje) { %>
+                            <div class="mensaje-item">
+                                <div class="mensaje-header">
+                                    <span class="mensaje-destinatario">
+                                        <%= mensaje.destinatario %>
+                                    </span>
+                                    <span class="mensaje-fecha"><%= mensaje.fecha %></span>
+                                </div>
+                                <div class="mensaje-contenido"><%= mensaje.mensaje %></div>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <p>No hay mensajes disponibles.</p>
+                    <% } %>
+                </div>
+            </section>
         </div>
-      </header>
-
-      <div class="dashboard-container">
-        <section class="titleMetrics">
-          <div class="titleMetricsContent">
-            <div class="rowTitle">
-              <div class="metricCard">
-                <h2>Total de Mensajes Enviados</h2>
-                <p id="totalMensajes"><%= total_mensajes_enviados %></p>
-              </div>
-              <div class="metricCard">
-                <h2>Fecha del Último Mensaje</h2>
-                <p id="fechaUltimoMensaje"><%= ultimos_mensajes[0].fecha %></p>
-              </div>
-              <div class="metricCard">
-                <h2>Destinatario del Último Mensaje</h2>
-                <p id="destinatarioUltimo">
-                  <%= ultimos_mensajes[0].destinatario %>
-                </p>
-              </div>
-            </div>
-            <div class="MetricUltimoMensaje">
-              <div class="metricCard">
-                <h2>Último Mensaje</h2>
-                <p id="ultimoMensaje"><%= ultimos_mensajes[0].mensaje %></p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="mensajes-section">
-          <h2>Mensajes Enviados</h2>
-          <div id="mensajesSend">
-            <% if (ultimos_mensajes && ultimos_mensajes.length > 0) { %> <%
-            ultimos_mensajes.forEach(function(mensaje) { %>
-            <div class="mensaje-item">
-              <div class="mensaje-header">
-                <span class="mensaje-destinatario">
-                  <%= mensaje.destinatario %>
-                </span>
-                <span class="mensaje-fecha"><%= mensaje.fecha %></span>
-              </div>
-              <div class="mensaje-contenido"><%= mensaje.mensaje %></div>
-            </div>
-            <% }); %> <% } else { %>
-            <p>No hay mensajes disponibles.</p>
-            <% } %>
-          </div>
-        </section>
-      </div>
     </div>
-  </body>
+
+    <!-- 📌 Librería Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const ctx = document.getElementById("graficoMensajes").getContext("2d");
+        let chart;
+
+        async function cargarDatosGrafico(month) {
+          try {
+            const response = await fetch(`/resumen/data?month=${month}`);
+            const { datosGrafico } = await response.json();
+
+            if (chart) {
+              chart.destroy();
+            }
+
+            chart = new Chart(ctx, {
+              type: "line",
+              data: {
+                labels: datosGrafico.map(d => d.fecha),
+                datasets: [{
+                  label: "Mensajes enviados",
+                  data: datosGrafico.map(d => d.cantidad),
+                  borderColor: "rgba(0, 123, 255, 1)",
+                  backgroundColor: "rgba(0, 123, 255, 0.2)",
+                  fill: true,
+                  tension: 0.4
+                }]
+              },
+              options: {
+                responsive: true,
+                plugins: {
+                  legend: { display: false }
+                },
+                scales: {
+                  x: { title: { display: true, text: "Fecha" } },
+                  y: { title: { display: true, text: "Cantidad de Mensajes" } }
+                }
+              }
+            });
+          } catch (error) {
+            console.error("Error al cargar los datos:", error);
+          }
+        }
+
+        const selectMonth = document.getElementById("selectMonth");
+        cargarDatosGrafico(selectMonth.value);
+
+        selectMonth.addEventListener("change", function () {
+          cargarDatosGrafico(this.value);
+        });
+      });
+    </script>
+</body>
 </html>
