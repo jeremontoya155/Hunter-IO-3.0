@@ -17,6 +17,15 @@ body {
   padding-left: 3.7rem;
 }
 
+/* Estilos personalizados para el tooltip */
+.tooltip {
+  background-color: #000; /* Fondo negro */
+  color: #fff; /* Texto blanco */
+  border-radius: 8px; /* Bordes redondeados */
+  padding: 8px 12px; /* Espaciado interno */
+  font-size: 14px; /* Tamaño de fuente */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra */
+}
 .login-container {
   background: url('/static/images/image.png') no-repeat center center;
   background-size: cover;

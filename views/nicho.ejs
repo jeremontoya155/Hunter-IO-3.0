@@ -4,19 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrar Nicho</title>
+    
     <link rel="stylesheet" href="/static/css/nichos.css">
     <link rel="stylesheet" href="/static/css/navbar.css">
-    <link rel="stylesheet" href="/static/css/style.css">
-    <link rel="stylesheet" href="static/css/onboarding.css" />
-    <link rel="stylesheet" href="static/css/scrollbar.css" />
-    <!-- Agregamos FontAwesome para íconos -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
-    <link rel="stylesheet" href="static/css/navbar.css" />
-    <link rel="stylesheet" href="static/css/scrollbar.css" />
-    <script src="static/js/navbar.js"></script>
+    
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <script src="/static/js/navbar.js"></script>
 </head>
 <body>
     <%- include('partials/navbar') %>
@@ -24,12 +18,12 @@
     <div class="container">
         <h2>Registrar Nicho</h2>
 
-     
-        <form action="/nicho" method="POST" enctype="multipart/form-data">
+        <!-- Formulario -->
+        <form id="nichoForm" action="/nicho" method="POST" enctype="multipart/form-data">
             <label for="ubicacion">Ubicación:</label>
             <input type="text" id="ubicacion" name="ubicacion" required>
 
-            <label for="tipo_personas">Intagram(separados por coma):</label>
+            <label for="tipo_personas">Instagram (separados por coma):</label>
             <textarea id="tipo_personas" name="tipo_personas" required></textarea>
 
             <label for="edad_min">Edad Mínima:</label>
@@ -49,5 +43,35 @@
             <button type="submit">Guardar Nicho</button>
         </form>
     </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          const form = document.getElementById("nichoForm");
+
+          form.addEventListener("submit", function (event) {
+              event.preventDefault(); // Evita que la página se recargue al enviar
+
+              const formData = new FormData(form);
+
+              fetch("/nicho", {
+                  method: "POST",
+                  body: formData
+              })
+              .then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      alert("✅ Nicho registrado correctamente.");
+                      form.reset(); // Limpia el formulario
+                  } else {
+                      alert("❌ Hubo un error al registrar el nicho.");
+                  }
+              })
+              .catch(error => {
+                  console.error("Error al enviar el formulario:", error);
+                  alert("⚠️ Error en la solicitud. Inténtelo de nuevo.");
+              });
+          });
+      });
+    </script>
 </body>
 </html>

@@ -6,7 +6,7 @@
   left: 0;
   background-color: #252525;
   overflow-x: hidden;
-  overflow-y:hidden;
+  overflow-y: auto; /* Permitir desplazamiento vertical */
   transition: 0.5s;
   padding-top: 1em;
   z-index: 1;
@@ -21,7 +21,7 @@
 
 .logo-container {
   padding: 0.5rem;
-  min-height:130px;
+  min-height: 130px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -40,9 +40,9 @@
 
 .togglebtn {
   position: absolute;
-  border-top-left-radius: .3em;
-  border-bottom-right-radius: .3em;
-  border-bottom-left-radius: .3em;
+  border-top-left-radius: 0.3em;
+  border-bottom-right-radius: 0.3em;
+  border-bottom-left-radius: 0.3em;
   padding: 10px;
   top: 10px;
   right: 10px;
@@ -53,7 +53,7 @@
   cursor: pointer;
   color: #ffc552;
   z-index: 99;
-  transition: all .6s linear;
+  transition: all 0.6s linear;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -72,29 +72,26 @@
 .menu {
   margin-top: 3em;
 }
-.nav-links{
-  height: 200px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  flex-flow: column wrap;
-}
 
 .nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Alinear elementos al inicio */
+  flex-flow: column nowrap; /* Cambia wrap a nowrap */
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
 .nav-links a {
-  padding: 8px 8px 8px 16px;
+  padding: 12px 16px; /* Aumenta el padding */
   text-decoration: none;
   font-size: 1.1em;
   width: 100%;
   color: #fff;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 10px; /* Espacio entre ícono y texto */
   transition: 0.3s;
 }
 
@@ -134,7 +131,7 @@
 }
 
 .sidebar.collapsed .togglebtn {
-  border-top-right-radius: .3em;
+  border-top-right-radius: 0.3em;
   border-bottom-left-radius: 0;
 }
 
@@ -142,7 +139,7 @@
 .sidebar:not(.collapsed) {
   width: 17em;
   box-shadow: 0 0 15px rgba(0, 0, 0, 1);
-  background: rgba(0,0,0,.5)
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .sidebar:not(.collapsed) .logo-small {

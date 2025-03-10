@@ -325,6 +325,12 @@ app.get('/flujo/load', isAuthenticated, async (req, res) => {
   }
 });
 
+app.get('/logout', (req, res) => {
+  req.session.destroy(() => {
+    res.redirect('/login');
+  });
+});
+
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
 });

@@ -1,7 +1,8 @@
-/* nichos.css */
+/* Estilo general */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #e6f0eb;
+    font-family: 'Inter', sans-serif;
+    background-color: #d9e9e0;
+
     color: #333;
     display: flex;
     justify-content: center;
@@ -10,67 +11,97 @@ body {
     flex-direction: column;
 }
 
+/* Contenedor principal */
 .container {
     background: #ffffff;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    width: 100%;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.1);
+    width: 60%;
     text-align: center;
+    transition: all 0.3s ease-in-out;
 }
 
+/* Título */
 h2 {
     font-size: 24px;
     color: #0b6e4f;
     margin-bottom: 20px;
+    font-weight: 600;
 }
 
+/* Estilos para el formulario */
 form {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
+/* Etiquetas del formulario */
 label {
-    font-weight: bold;
+    font-weight: 500;
     text-align: left;
-    color: #333;
+    color: #555;
+    font-size: 14px;
 }
 
-input, textarea, select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+/* Inputs y textareas */
+input, textarea {
+    width: 85%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
     font-size: 16px;
+    background: #f9f9f9;
+    transition: all 0.3s ease-in-out;
 }
 
+input:focus, textarea:focus {
+    outline: none;
+    border-color: #0b6e4f;
+    background: #fff;
+    box-shadow: 0px 0px 8px rgba(11, 110, 79, 0.2);
+}
+
+/* Botón de enviar */
 button {
     background-color: #0b6e4f;
     color: white;
-    padding: 12px;
+    padding: 14px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease-in-out;
 }
 
 button:hover {
     background-color: #088054;
+    box-shadow: 0px 5px 10px rgba(11, 110, 79, 0.3);
 }
 
+/* Contenedor de subida de archivos */
 .upload-container {
-    text-align: left;
+    text-align: center;
+    
 }
 
+/* Input de archivo */
 .file-input {
     border: none;
     padding: 5px;
 }
 
+/* Mensaje de error */
 .message {
     color: red;
     font-weight: bold;
 }
 
+/* Responsive */
+@media screen and (max-width: 500px) {
+    .container {
+        max-width: 90%;
+    }
+}

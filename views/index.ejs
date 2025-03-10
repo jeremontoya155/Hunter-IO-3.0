@@ -15,7 +15,7 @@
   </head>
   <body>
     <%- include('partials/navbar') %>
-    <div class="login-container">
+    <div class="login-container" data-tooltip="Usted debe ingresar aquí una cuenta para continuar el uso de Hunter" data-tooltip-target="tooltip-default">
       <div class="avatar-wrapper">
         <div class="avatar"></div>
       </div>
@@ -83,6 +83,16 @@
           alert('Error en la solicitud');
         }
       });
+
+       // Inicializar tooltips de Flowbite
+       const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tooltip-target]'));
+      tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new Tooltip(tooltipTriggerEl, {
+          placement: 'top', // Posición del tooltip
+          trigger: 'hover', // Mostrar al pasar el mouse
+        });
+      });
     </script>
+   
   </body>
 </html>
