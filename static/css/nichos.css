@@ -1,32 +1,44 @@
 /* Estilo general */
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #d9e9e0;
-
+    background-color:  #d9e9e0;
     color: #333;
+    margin: 0;
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     flex-direction: column;
+    padding: 20px; /* Espaciado general para móviles */
+    box-sizing: border-box;
+    align-content: center;
 }
 
 /* Contenedor principal */
 .container {
     background: #ffffff;
-    border-radius: 12px;
-    padding: 25px;
+    border-radius: 20px;
+    padding: 30px;
     box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.1);
-    width: 60%;
+    width: 70%;
+    max-width: 400px; /* Máximo ancho para pantallas grandes */
     text-align: center;
     transition: all 0.3s ease-in-out;
+    margin: 20px auto; /* Centrado en pantallas grandes */
+}
+
+.contenedorAux{
+    text-align: center;
+    align-items: center;
+    align-content: center;
 }
 
 /* Título */
 h2 {
     font-size: 24px;
     color: #0b6e4f;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     font-weight: 600;
 }
 
@@ -34,7 +46,7 @@ h2 {
 form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
 }
 
 /* Etiquetas del formulario */
@@ -43,20 +55,24 @@ label {
     text-align: left;
     color: #555;
     font-size: 14px;
+    margin-bottom: 5px;
 }
 
 /* Inputs y textareas */
-input, textarea {
-    width: 85%;
+input,
+textarea {
+    width: 100%;
     padding: 12px;
     border: 1px solid #ddd;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 16px;
     background: #f9f9f9;
     transition: all 0.3s ease-in-out;
+    box-sizing: border-box;
 }
 
-input:focus, textarea:focus {
+input:focus,
+textarea:focus {
     outline: none;
     border-color: #0b6e4f;
     background: #fff;
@@ -69,11 +85,13 @@ button {
     color: white;
     padding: 14px;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     font-size: 16px;
     font-weight: 500;
     transition: all 0.3s ease-in-out;
+    margin-top: 10px;
+    width: 100%; /* Botón ocupa todo el ancho */
 }
 
 button:hover {
@@ -84,24 +102,131 @@ button:hover {
 /* Contenedor de subida de archivos */
 .upload-container {
     text-align: center;
-    
+    margin-top: 10px;
 }
 
 /* Input de archivo */
 .file-input {
     border: none;
     padding: 5px;
+    width: 100%;
+    background: #f9f9f9;
+    border-radius: 10px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    transition: all 0.3s ease-in-out;
+    box-sizing: border-box;
+}
+
+.file-input:focus {
+    outline: none;
+    border-color: #0b6e4f;
+    background: #fff;
+    box-shadow: 0px 0px 8px rgba(11, 110, 79, 0.2);
 }
 
 /* Mensaje de error */
 .message {
     color: red;
     font-weight: bold;
+    margin-top: 10px;
 }
 
-/* Responsive */
-@media screen and (max-width: 500px) {
+/* ------------------------- */
+/* Responsive Design */
+/* ------------------------- */
+
+/* Pantallas pequeñas (móviles) */
+@media screen and (max-width: 480px) {
+    body {
+        padding: 10px; /* Menos padding en móviles */
+        display: flex;
+        justify-content: center;
+        text-align: center;
+    
+    }
+
+    .contenedorAux{
+        text-align: center;
+        align-items: center;
+        align-content: center;
+    }
+
     .container {
-        max-width: 90%;
+        padding: 20px; /* Menos padding en móviles */
+        border-radius: 15px; /* Bordes más redondeados */
+        margin-left: 2em;
+        text-align: center;
+    }
+
+    h2 {
+        font-size: 20px; /* Título más pequeño */
+        margin-bottom: 15px;
+    }
+
+    input,
+    textarea {
+        font-size: 14px; /* Fuente más pequeña en móviles */
+        padding: 10px; /* Menos padding en móviles */
+    }
+
+    button {
+        font-size: 14px; /* Fuente más pequeña en móviles */
+        padding: 12px; /* Menos padding en móviles */
+    }
+
+    .file-input {
+        font-size: 14px; /* Fuente más pequeña en móviles */
+        padding: 10px; /* Menos padding en móviles */
+    }
+}
+
+/* Pantallas medianas (tablets) */
+/* Pantallas pequeñas (móviles) */
+@media screen and (max-width: 480px) {
+    body {
+        padding: 10px; /* Menos padding en móviles */
+        display: flex;
+        justify-content: center;
+        align-items: center; /* Centrado vertical */
+        text-align: center;
+    }
+
+    .container {
+        padding: 20px; /* Menos padding en móviles */
+        border-radius: 15px; /* Bordes más redondeados */
+        width: 60%; /* Ocupa el 90% del ancho en móviles */
+        max-width: 70%; /* Asegura que no exceda el ancho de la pantalla */
+        margin: 0 auto; /* Centrado horizontal */
+        text-align: center;
+    }
+
+    h2 {
+        font-size: 20px; /* Título más pequeño */
+        margin-bottom: 15px;
+    }
+
+    input,
+    textarea {
+        font-size: 14px; /* Fuente más pequeña en móviles */
+        padding: 10px; /* Menos padding en móviles */
+    }
+
+    button {
+        font-size: 14px; /* Fuente más pequeña en móviles */
+        padding: 12px; /* Menos padding en móviles */
+    }
+
+    .file-input {
+        font-size: 14px; /* Fuente más pequeña en móviles */
+        padding: 10px; /* Menos padding en móviles */
+    }
+}
+
+/* Pantallas grandes (escritorio) */
+@media screen and (min-width: 769px) {
+    .container {
+        max-width: 400px; /* Ancho fijo para escritorio */
     }
 }

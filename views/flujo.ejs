@@ -97,7 +97,11 @@
     <div class="mb-4">
       <input type="text" id="nombreFlujo" placeholder="Nombre del flujo" class="border p-2 rounded">
       <button id="guardarFlujo" class="bg-blue-500 text-white p-2 rounded">Guardar Flujo</button>
+      <button id="cargarFlujos" class="bg-green-500 text-white p-2 rounded">Cargar Flujos</button>
     </div>
+
+    <!-- Contenedor para mostrar la lista de flujos -->
+    <div id="listaFlujos" class="mb-4"></div>
 
     <!-- Menú de selección de nodos -->
     <div class="node-menu">
@@ -237,6 +241,68 @@
         alert('Error al guardar el flujo.');
       }
     });
-  </script>
+
+    // Evento para cargar los flujos guardados
+    document.getElementById('cargarFlujos').addEventListener('click', async () => {
+      try {
+        const response = await fetch('/flujo/list');
+        const data = await response.json();
+
+        const listaFlujos = document.getElementById('listaFlujos');
+        listaFlujos.innerHTML = '<h2 class="text-xl font-bold mb-2">Flujos Guardados</h2>';
+
+        if (data.flujos.length > 0) {
+          data.flujos.forEach((flujo) => {
+            const flujoItem = document.createElement('div');
+            flujoItem.className = 'bg-gray-100 p-2 rounded mb-2';
+            flujoItem.innerHTML = `
+              <p class="font-bold">${flujo.nombre}</p>
+              <button onclick="cargarFlujo('${flujo.nombre}')" class="bg-blue-500 text-white p-1 rounded">Cargar</button>
+            `;
+            listaFlujos.appendChild(flujoItem);
+          });
+        } else {
+          listaFlujos.innerHTML = '<p>No hay flujos guardados.</p>';
+        }
+      } catch (error) {
+        console.error('Error al cargar los flujos:', error);
+        alert('Error al cargar los flujos.');
+      }
+    });
+
+    // Función para cargar un flujo específico
+    // Función para cargar un flujo específico
+window.cargarFlujo = async (nombre) => {
+  try {
+    const response = await fetch(`/flujo/load?nombre=${nombre}`);
+    const data = await response.json();
+
+    if (data.error) {
+      alert(data.error);
+      return;
+    }
+
+    // Limpiar el canvas actual
+    document.getElementById('canvas').innerHTML = '';
+    jsPlumbInstance.reset();
+    nodes = [];
+
+    // Cargar los nodos del flujo
+    if (Array.isArray(data)) { // Verificar si data es un array
+      data.forEach((node) => {
+        createNode(node.x, node.y, node.type);
+      });
+    } else {
+      console.error('Formato de flujo no válido:', data);
+      alert('El flujo no tiene un formato válido.');
+    }
+
+    alert(`Flujo "${nombre}" cargado correctamente.`);
+  } catch (error) {
+    console.error('Error al cargar el flujo:', error);
+    alert('Error al cargar el flujo.');
+  }
+};
+ </script>
 </body>
 </html>

@@ -315,7 +315,9 @@ app.get('/flujo/load', isAuthenticated, async (req, res) => {
     const { rows } = await pool.query(queryText, [userId, nombre]);
 
     if (rows.length > 0) {
-      res.status(200).json(rows[0]);
+      // Devuelve directamente el array de nodos
+      const flujo = rows[0].flujo; // flujo es un array de nodos
+      res.status(200).json(flujo);
     } else {
       res.status(404).json({ error: 'Flujo no encontrado' });
     }
