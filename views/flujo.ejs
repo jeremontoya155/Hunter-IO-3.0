@@ -133,68 +133,69 @@
     });
 
     // Función para crear un nodo
-    function createNode(x, y, type) {
-      const node = document.createElement('div');
-      node.classList.add('node', type);
-      node.setAttribute('data-type', type);
-      node.innerHTML = `
-        <span class="node-label">${type.toUpperCase()}</span>
-        <button class="delete-btn">×</button>
-      `;
-      node.style.left = `${x}px`;
-      node.style.top = `${y}px`;
-      document.getElementById('canvas').appendChild(node);
+    // Función para crear un nodo
+function createNode(x, y, type) {
+  const node = document.createElement('div');
+  node.classList.add('node', type);
+  node.setAttribute('data-type', type);
+  node.innerHTML = `
+    <span class="node-label">${type.toUpperCase()}</span>
+    <button class="delete-btn">×</button>
+  `;
+  node.style.position = 'absolute'; // Asegurar que el nodo use posición absoluta
+  node.style.left = `${x}px`; // Usar la coordenada x
+  node.style.top = `${y}px`; // Usar la coordenada y
+  document.getElementById('canvas').appendChild(node);
 
-      // Hacer el nodo arrastrable con Interact.js
-      interact(node).draggable({
-        onmove: function (event) {
-          const target = event.target;
-          const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
-          const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+  // Hacer el nodo arrastrable con Interact.js
+  interact(node).draggable({
+    onmove: function (event) {
+      const target = event.target;
+      const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+      const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
 
-          target.style.transform = `translate(${x}px, ${y}px)`;
-          target.setAttribute('data-x', x);
-          target.setAttribute('data-y', y);
+      target.style.transform = `translate(${x}px, ${y}px)`;
+      target.setAttribute('data-x', x);
+      target.setAttribute('data-y', y);
 
-          // Actualizar las conexiones de jsPlumb
-          jsPlumbInstance.repaintEverything();
-        },
-      });
+      // Actualizar las conexiones de jsPlumb
+      jsPlumbInstance.repaintEverything();
+    },
+  });
 
-      // Hacer el nodo conectable con jsPlumb
-      jsPlumbInstance.addEndpoint(node, {
-        anchors: ['Top', 'Bottom', 'Left', 'Right'],
-        endpoint: 'Dot',
-        paintStyle: { fill: '#4CAF50' },
-        isSource: true,
-        isTarget: true,
-      });
+  // Hacer el nodo conectable con jsPlumb
+  jsPlumbInstance.addEndpoint(node, {
+    anchors: ['Top', 'Bottom', 'Left', 'Right'],
+    endpoint: 'Dot',
+    paintStyle: { fill: '#4CAF50' },
+    isSource: true,
+    isTarget: true,
+  });
 
-      // Guardar el nodo en el array
-      const nodeId = nodes.length + 1;
-      nodes.push({ id: nodeId, type, x, y, label: type.toUpperCase() });
+  // Guardar el nodo en el array
+  const nodeId = nodes.length + 1;
+  nodes.push({ id: nodeId, type, x, y, label: type.toUpperCase() });
 
-      // Editar el nombre del nodo al hacer doble clic
-      const nodeLabel = node.querySelector('.node-label');
-      nodeLabel.addEventListener('dblclick', () => {
-        const newLabel = prompt('Ingresa el nuevo nombre del nodo:', nodeLabel.textContent);
-        if (newLabel) {
-          nodeLabel.textContent = newLabel;
-          nodes.find((n) => n.id === nodeId).label = newLabel;
-        }
-      });
-
-      // Eliminar el nodo al hacer clic en el botón de eliminar
-      const deleteBtn = node.querySelector('.delete-btn');
-      deleteBtn.addEventListener('click', () => {
-        if (confirm('¿Estás seguro de que quieres eliminar este nodo?')) {
-          node.remove();
-          jsPlumbInstance.removeAllEndpoints(node);
-          nodes = nodes.filter((n) => n.id !== nodeId);
-        }
-      });
+  // Editar el nombre del nodo al hacer doble clic
+  const nodeLabel = node.querySelector('.node-label');
+  nodeLabel.addEventListener('dblclick', () => {
+    const newLabel = prompt('Ingresa el nuevo nombre del nodo:', nodeLabel.textContent);
+    if (newLabel) {
+      nodeLabel.textContent = newLabel;
+      nodes.find((n) => n.id === nodeId).label = newLabel;
     }
+  });
 
+  // Eliminar el nodo al hacer clic en el botón de eliminar
+  const deleteBtn = node.querySelector('.delete-btn');
+  deleteBtn.addEventListener('click', () => {
+    if (confirm('¿Estás seguro de que quieres eliminar este nodo?')) {
+      node.remove();
+      jsPlumbInstance.removeAllEndpoints(node);
+      nodes = nodes.filter((n) => n.id !== nodeId);
+    }
+  });
+}
     // Evento para agregar un nodo al hacer clic en el menú de selección
     document.querySelectorAll('.node-option').forEach((option) => {
       option.addEventListener('click', () => {
@@ -272,6 +273,7 @@
 
     // Función para cargar un flujo específico
     // Función para cargar un flujo específico
+// Función para cargar un flujo específico
 window.cargarFlujo = async (nombre) => {
   try {
     const response = await fetch(`/flujo/load?nombre=${nombre}`);
@@ -290,7 +292,7 @@ window.cargarFlujo = async (nombre) => {
     // Cargar los nodos del flujo
     if (Array.isArray(data)) { // Verificar si data es un array
       data.forEach((node) => {
-        createNode(node.x, node.y, node.type);
+        createNode(node.x, node.y, node.type); // Usar las coordenadas x e y
       });
     } else {
       console.error('Formato de flujo no válido:', data);
@@ -303,6 +305,7 @@ window.cargarFlujo = async (nombre) => {
     alert('Error al cargar el flujo.');
   }
 };
- </script>
+
+</script>
 </body>
 </html>
