@@ -21,6 +21,7 @@ const mongoDbName = 'instagram_bot';
 const app = express();
 const port = process.env.PORT || 3000;
 
+
 // Configuración de la conexión a PostgreSQL
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URI,
@@ -45,6 +46,11 @@ app.use(
     saveUninitialized: false,
   })
 );
+
+app.use((req, res, next) => {
+  res.locals.user = req.session.user || null; // Se asigna a todas las vistas
+  next();
+});
 
 // Middleware para proteger rutas
 function isAuthenticated(req, res, next) {
@@ -324,6 +330,59 @@ app.get('/flujo/load', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error('Error al cargar el flujo:', error);
     res.status(500).json({ error: 'Error al cargar el flujo' });
+  }
+});
+app.get('/leads', isAuthenticated, (req, res) => {
+  res.render('leads');
+});
+
+// Endpoint para obtener los leads calientes desde MongoDB
+app.get('/leads/data', isAuthenticated, async (req, res) => {
+  try {
+      const client = new MongoClient(mongoUri, { useUnifiedTopology: true });
+      await client.connect();
+      const db = client.db(mongoDbName);
+      const collection = db.collection('leads_calientes');
+
+      // Obtener todos los leads calientes
+      const leads = await collection.find({}).toArray();
+      await client.close();
+
+      res.status(200).json(leads);
+  } catch (error) {
+      console.error('Error al obtener los leads:', error);
+      res.status(500).json({ error: 'Error al obtener los leads' });
+  }
+});
+
+// Endpoint para agregar un historial a un lead
+app.post('/leads/historial', isAuthenticated, async (req, res) => {
+  const { username, mensaje } = req.body;
+
+  try {
+      const client = new MongoClient(mongoUri, { useUnifiedTopology: true });
+      await client.connect();
+      const db = client.db(mongoDbName);
+      const collection = db.collection('leads_calientes');
+
+      // Agregar el historial al lead
+      await collection.updateOne(
+          { username: username },
+          {
+              $push: {
+                  historial: {
+                      mensaje: mensaje,
+                      fecha: new Date().toISOString(),
+                  },
+              },
+          }
+      );
+
+      await client.close();
+      res.status(200).json({ message: 'Historial agregado correctamente' });
+  } catch (error) {
+      console.error('Error al agregar historial:', error);
+      res.status(500).json({ error: 'Error al agregar historial' });
   }
 });
 

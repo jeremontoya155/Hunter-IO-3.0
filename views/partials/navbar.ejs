@@ -25,15 +25,24 @@
         </a>
         <a href="/nicho">
           <i class="fas fa-arrow-right"></i>
-                    <span>Nicho</span>
+          <span>Nicho</span>
         </a>
         <a href="/flujo">
           <i class="fas fa-water"></i>
-                    <span>Flujo</span>
+          <span>Flujo</span>
         </a>
+
+        <% if (user && user.username === 'admin') { %>
+          <a href="/leads">
+            <i class="fas fa-users"></i>
+            <span>Leads</span>
+          </a>
+        <% } %>
+
         <a href="/logout">
           <i class="fas fa-sign-out-alt"></i>
-          <span>Logout</span></a>
+          <span>Logout</span>
+        </a>
       </div>
     </div>
   </div>
