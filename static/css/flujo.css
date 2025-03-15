@@ -5,6 +5,7 @@
     height: 100vh;
     background: #e7f0eb; /* Color de fondo similar al estilo anterior */
     position: relative;
+    font-family: 'Poppins', sans-serif;
 }
 
 /* Barra lateral flotante para las herramientas */

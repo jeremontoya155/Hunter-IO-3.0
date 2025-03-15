@@ -75,7 +75,7 @@ app.post('/login', async (req, res) => {
 
     if (rows.length > 0) {
       req.session.user = rows[0];
-      res.redirect('/index');
+      res.redirect('/resumen');
     } else {
       res.render('login', {
         error: 'Credenciales inválidas. Intente nuevamente.',

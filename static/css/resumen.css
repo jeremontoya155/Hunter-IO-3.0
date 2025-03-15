@@ -4,7 +4,8 @@ body {
   width: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Poppins', sans-serif;
+  /* font-family: 'Roboto', sans-serif; */
   background-color: #121212;
   color: #e0e0e0;
   margin: 0;
@@ -29,6 +30,7 @@ header {
   box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
   border: 1px solid rgba(255, 255, 255, 0.18);
   margin-bottom: 20px;
+  font-family: 'Poppins', sans-serif;
 }
 
 header h1 {
@@ -37,6 +39,7 @@ header h1 {
   letter-spacing: 1px;
   text-transform: uppercase;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-family: 'Poppins', sans-serif;
 }
 
 .accounts-section {

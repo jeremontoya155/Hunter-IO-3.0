@@ -15,42 +15,52 @@
   </head>
   <body>
     <%- include('partials/navbar') %>
-    <div class="login-container" data-tooltip="Usted debe ingresar aquí una cuenta para continuar el uso de Hunter" data-tooltip-target="tooltip-default">
-      <div class="avatar-wrapper">
-        <div class="avatar"></div>
-      </div>
-
-      <% if (messages && messages.length > 0) { %>
-        <% messages.forEach(function(item) { %>
-          <div class="alert alert-<%= item.category %>"><%= item.message %></div>
-        <% }); %>
-      <% } %>
-
-      <!-- Formulario para agregar una cuenta de Instagram -->
-      <form id="addAccountForm">
-        <div class="form-group">
-          <input
-            type="text"
-            name="insta_username"
-            placeholder="Instagram Username"
-            required
-          />
-          <i class="fas fa-user"></i>
-        </div>
-  
-        <div class="form-group">
-          <input
-            type="password"
-            name="insta_password"
-            placeholder="Instagram Password"
-            required
-          />
-          <i class="fas fa-lock"></i>
-        </div>
-  
-        <button type="submit" id="submitBtn">Agregar Cuenta</button>
-      </form>
+    <div 
+    class="login-container" 
+    data-tooltip-target="tooltip-login" 
+    data-tooltip-placement="right"
+  >
+    <div class="avatar-wrapper">
+      <div class="avatar"></div>
     </div>
+  
+    <% if (messages && messages.length > 0) { %>
+      <% messages.forEach(function(item) { %>
+        <div class="alert alert-<%= item.category %>"><%= item.message %></div>
+      <% }); %>
+    <% } %>
+  
+    <!-- Formulario para agregar una cuenta de Instagram -->
+    <form id="addAccountForm">
+      <div class="form-group">
+        <input
+          type="text"
+          name="insta_username"
+          placeholder="Instagram Username"
+          required
+        />
+        <i class="fas fa-user"></i>
+      </div>
+  
+      <div class="form-group">
+        <input
+          type="password"
+          name="insta_password"
+          placeholder="Instagram Password"
+          required
+        />
+        <i class="fas fa-lock"></i>
+      </div>
+  
+      <button type="submit" id="submitBtn">Agregar Cuenta</button>
+    </form>
+  </div>
+  
+  <!-- Tooltip content -->
+  <div id="tooltip-login" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+    Cargue aqui sus usarios para ver sus avances!
+    <div class="tooltip-arrow" data-popper-arrow></div>
+  </div>
 
     <script>
       // Se intercepta el submit para enviar una petición PUT vía fetch
