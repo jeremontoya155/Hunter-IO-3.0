@@ -250,7 +250,47 @@ app.get('/resumen', isAuthenticated, async (req, res) => {
   }
 });
 
+// Endpoint para obtener datos del gráfico
+app.get('/resumen/data', isAuthenticated, async (req, res) => {
+  const selectedMonth = req.query.month || new Date().toISOString().slice(0, 7); // Formato YYYY-MM
+  const userAccounts = req.session.user.accounts || [];
+  const instaUsernames = userAccounts.map((ac) => ac.insta_username);
 
+  try {
+    const client = new MongoClient(mongoUri, { useUnifiedTopology: true });
+    await client.connect();
+    const db = client.db(mongoDbName);
+    const collection = db.collection('historial_acciones');
+
+    // Construcción del filtro
+    const filter = {
+      username: { $in: instaUsernames },
+      fecha: { $regex: `^${selectedMonth}` } // Filtrar por mes en formato "YYYY-MM"
+    };
+
+    const historial = await collection.find(filter).toArray();
+    await client.close();
+
+    // Calcular métricas básicas del historial
+    let mensajesPorDia = {};
+    historial.forEach(({ fecha }) => {
+      const dia = fecha.substring(0, 10); // Extraer solo la fecha sin hora
+      mensajesPorDia[dia] = (mensajesPorDia[dia] || 0) + 1;
+    });
+
+    // Formatear los datos del gráfico
+    const fechasOrdenadas = Object.keys(mensajesPorDia).sort();
+    const datosGrafico = fechasOrdenadas.map(fecha => ({
+      fecha,
+      cantidad: mensajesPorDia[fecha]
+    }));
+
+    res.status(200).json({ datosGrafico });
+  } catch (error) {
+    console.error('Error al obtener los datos del gráfico:', error);
+    res.status(500).json({ error: 'Error al obtener los datos del gráfico' });
+  }
+});
 
 
 app.get('/onboarding', isAuthenticated, (req, res) => {
