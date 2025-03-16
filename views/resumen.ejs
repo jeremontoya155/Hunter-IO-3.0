@@ -105,27 +105,29 @@
                 <canvas id="graficoMensajes"></canvas>
             </section>
 
-            <!-- 📌 LISTADO DE MENSAJES ENVIADOS -->
-            <section class="mensajes-section">
-                <h2>Mensajes Enviados</h2>
-                <div id="mensajesSend">
-                    <% if (ultimos_mensajes && ultimos_mensajes.length > 0) { %> 
-                        <% ultimos_mensajes.forEach(function(mensaje) { %>
-                            <div class="mensaje-item">
-                                <div class="mensaje-header">
-                                    <span class="mensaje-destinatario">
-                                        <%= mensaje.destinatario %>
-                                    </span>
-                                    <span class="mensaje-fecha"><%= mensaje.fecha %></span>
-                                </div>
-                                <div class="mensaje-contenido"><%= mensaje.mensaje %></div>
-                            </div>
-                        <% }); %>
-                    <% } else { %>
-                        <p>No hay mensajes disponibles.</p>
-                    <% } %>
-                </div>
-            </section>
+         <!-- 📌 LISTADO DE MENSAJES ENVIADOS -->
+<section class="mensajes-section">
+    <h2>Mensajes Enviados</h2>
+    <div id="mensajesSend">
+      <% if (ultimos_mensajes && ultimos_mensajes.length > 0) { %> 
+        <!-- Limitar los mensajes a los primeros 10 -->
+        <% const mensajesLimitados = ultimos_mensajes.slice(0, 10); %>
+        <% mensajesLimitados.forEach(function(mensaje) { %>
+          <div class="mensaje-item">
+            <div class="mensaje-header">
+              <span class="mensaje-destinatario">
+                <%= mensaje.destinatario %>
+              </span>
+              <span class="mensaje-fecha"><%= mensaje.fecha %></span>
+            </div>
+            <div class="mensaje-contenido"><%= mensaje.mensaje %></div>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <p>No hay mensajes disponibles.</p>
+      <% } %>
+    </div>
+  </section>
         </div>
     </div>
 
