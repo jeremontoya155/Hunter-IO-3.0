@@ -1,133 +1,118 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HUNTER - Tu Asistente Secreto para Instagram</title>
-    <link rel="stylesheet" href="static/css/onboarding.css" />
-    <link rel="stylesheet" href="static/css/scrollbar.css" />
-    <!-- Agregamos FontAwesome para íconos -->
+    <title>HUNTER - Bienvenida y Primeros Pasos</title>
+
+    <!-- Google Fonts (Poppins recomendado para un look moderno) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome -->
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
-    <link rel="stylesheet" href="static/css/navbar.css" />
-    <link rel="stylesheet" href="static/css/scrollbar.css" />
-    <script src="static/js/navbar.js"></script>
-  </head>
-  <body>
-    <%- include('partials/navbar') %>
-    <div class="galaxy-background">
-      <div class="container">
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" /> <!-- Versión más reciente -->
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="/static/css/navbar.css" /> <!-- Asegúrate que esta ruta es correcta -->
+    <link rel="stylesheet" href="/static/css/onboarding.css" /> <!-- NUEVOS estilos -->
+    <link rel="stylesheet" href="/static/css/scrollbar.css" /> <!-- Tu scrollbar -->
+
+    <script defer src="/static/js/navbar.js"></script> <!-- Tu JS de navbar -->
+</head>
+<body>
+    <%- include('partials/navbar') %> <!-- Incluye tu Navbar -->
+
+    <div class="onboarding-background"> <!-- Cambiado para claridad -->
+      <div class="onboarding-container"> <!-- Contenedor principal -->
+
         <!-- Header -->
-        <header class="header">
-          <div class="logo-container">
-            <img
-              src="static/images/Hunter.png"
-              alt="HUNTER Logo"
-              class="logo-main"
-            />
-          </div>
+      
           <h1>
-            Bienvenido a HUNTER: Tu Asistente Secreto para Cazar Éxito en
-            Instagram
+            Bienvenido a <span class="highlight">HUNTER</span>: Tu Asistente Secreto para Cazar Éxito en Instagram
           </h1>
         </header>
+
         <!-- Main Content -->
-        <main class="content">
+        <main class="onboarding-content">
+
           <!-- Paso 1 -->
-          <section class="section section-left">
-            <div class="section-header">
-              <h2>Paso 1: Inicia Sesión y Desbloquea el Poder de HUNTER</h2>
-              <span class="icon"><i class="fas fa-key"></i></span>
+          <section class="onboarding-step fade-in">
+            <div class="step-header">
+              <div class="step-number">1</div>
+              <h2 class="step-title">Inicia Sesión y Desbloquea el Poder</h2>
+              <span class="step-icon"><i class="fas fa-rocket"></i></span> <!-- Icono más dinámico -->
             </div>
-            <ol class="steps">
-              <li>
-                <strong>Accede a tu cuenta de Instagram:</strong> Introduce tus
-                credenciales.
-              </li>
-              <li>
-                <strong>Sube tu archivo de mensajes personalizados:</strong>
-                Estos serán tus anzuelos perfectos.
-              </li>
-              <li>
-                <strong>Personaliza preguntas clave:</strong> Usa el área de
-                texto disponible.
-              </li>
-              <li>
-                <strong>Carga tu lista de cuentas objetivo:</strong> Sube un
-                archivo con tus prospectos.
-              </li>
-              <li>
-                <strong>Haz clic en "Iniciar sesión":</strong> Dale al botón
-                mágico. ¡Boom!
-              </li>
-            </ol>
+            <div class="step-body">
+              <p class="step-intro">Para comenzar tu cacería de resultados, sigue estos pasos:</p>
+              <ol class="step-list">
+                <li><i class="fas fa-check-circle"></i> <strong>Accede a Instagram:</strong> Introduce tus credenciales de forma segura.</li>
+                <li><i class="fas fa-check-circle"></i> <strong>Mensajes Personalizados:</strong> Sube tu archivo con mensajes irresistibles.</li>
+                <li><i class="fas fa-check-circle"></i> <strong>Preguntas Clave:</strong> Define las preguntas que activarán tu estrategia.</li>
+                <li><i class="fas fa-check-circle"></i> <strong>Lista de Objetivos:</strong> Carga tu archivo con las cuentas a contactar.</li>
+                <li><i class="fas fa-check-circle"></i> <strong>¡Inicia Sesión!:</strong> Presiona el botón y deja que HUNTER haga su magia.</li>
+              </ol>
+            </div>
           </section>
+
           <!-- Paso 2 -->
-          <section class="section section-right">
-            <div class="section-header">
-              <h2>Paso 2: Explora el DASHBOARD de HUNTER</h2>
-              <span class="icon"><i class="fas fa-chart-bar"></i></span>
+          <section class="onboarding-step fade-in" style="animation-delay: 0.2s;"> <!-- Delay para animación escalonada -->
+            <div class="step-header">
+              <div class="step-number">2</div>
+              <h2 class="step-title">Explora tu Centro de Mando: El Dashboard</h2>
+              <span class="step-icon"><i class="fas fa-tachometer-alt"></i></span> <!-- Icono Dashboard -->
             </div>
-            <p>
-              Una vez que inicies sesión, serás redirigido al
-              <strong>DASHBOARD de HUNTER</strong>:
-            </p>
-            <ul class="features">
-              <li>
-                <strong>Mensajes enviados:</strong> Verás estadísticas en tiempo
-                real.
-              </li>
-              <li><strong>Estadísticas claras:</strong> Sabrás qué ajustar.</li>
-              <li>
-                <strong>Actividad del perfil:</strong> Observa cómo crece tu
-                cuenta.
-              </li>
-            </ul>
+            <div class="step-body">
+              <p class="step-intro">Una vez dentro, el <strong>DASHBOARD</strong> será tu torre de control:</p>
+              <ul class="feature-list">
+                <li><i class="fas fa-chart-line"></i> <strong>Métricas Clave:</strong> Visualiza mensajes enviados y rendimiento al instante.</li>
+                <li><i class="fas fa-bullseye"></i> <strong>Estadísticas Precisas:</strong> Entiende qué funciona y optimiza tu enfoque.</li>
+                <li><i class="fas fa-user-astronaut"></i> <!-- Icono temático --> <strong>Actividad y Crecimiento:</strong> Observa el impacto directo en tu perfil.</li>
+              </ul>
+            </div>
           </section>
+
           <!-- Paso 3 -->
-          <section class="section section-left">
-            <div class="section-header">
-              <h2>Paso 3: Navega como un Pro con el Panel Desplegable</h2>
-              <span class="icon"><i class="fas fa-compass"></i></span>
+          <section class="onboarding-step fade-in" style="animation-delay: 0.4s;"> <!-- Mayor Delay -->
+            <div class="step-header">
+              <div class="step-number">3</div>
+              <h2 class="step-title">Navega con Agilidad: Panel Lateral</h2>
+              <span class="step-icon"><i class="fas fa-compass-drafting"></i></span> <!-- Icono más técnico -->
             </div>
-            <p>
-              En el panel lateral izquierdo, encontrarás todas las herramientas
-              que necesitas:
-            </p>
-            <ul class="features">
-              <li><strong>Dashboard:</strong> El corazón de HUNTER.</li>
-              <li>
-                <strong>Perfil y crecimiento:</strong> Analiza el impacto de tus
-                acciones.
-              </li>
-              <li>
-                <strong>Configuración y personalización:</strong> Ajusta cada
-                detalle.
-              </li>
-            </ul>
+            <div class="step-body">
+              <p class="step-intro">El panel lateral izquierdo es tu arsenal de herramientas:</p>
+              <ul class="feature-list">
+                <li><i class="fas fa-columns"></i> <strong>Dashboard:</strong> Tu vista principal, siempre accesible.</li>
+                <li><i class="fas fa-user-chart"></i> <!-- Icono más específico --> <strong>Perfil y Análisis:</strong> Profundiza en el crecimiento y la interacción.</li>
+                <li><i class="fas fa-cogs"></i> <strong>Configuración:</strong> Personaliza HUNTER a tu medida.</li>
+              </ul>
+            </div>
           </section>
+
         </main>
+
         <!-- Footer -->
-        <footer class="footer">
+        <footer class="onboarding-footer fade-in" style="animation-delay: 0.6s;">
           <img
-            src="static/images/Logo.png"
-            alt="HUNTER Icon"
+            src="/static/images/Logo.png" <!-- Asume que está en static/images -->
+            alt="Icono HUNTER"
             class="logo-footer"
           />
-          <h2>¡El Futuro de tu Emprendimiento Comienza Ahora!</h2>
+          <h2>¡El Futuro de tu <span class="highlight">Éxito</span> Comienza Ahora!</h2>
           <p>
-            Esperamos que disfrutes de esta experiencia tanto como nosotros
-            disfrutamos creándola para ti.
+            Diseñamos HUNTER con pasión para potenciar tu estrategia en Instagram.
           </p>
           <p>
-            Ahora, toma el control, activa a HUNTER y prepárate para conquistar
-            Instagram como nunca antes.
+            Toma el control, activa tu asistente y prepárate para conquistar tus objetivos.
           </p>
-          <p>¡Vamos a cazar esos resultados juntos!</p>
+          <p class="cta-footer">
+            <i class="fas fa-fighter-jet"></i> ¡Vamos a cazar esos resultados juntos! <i class="fas fa-fighter-jet"></i>
+          </p>
         </footer>
-      </div>
-    </div>
-  </body>
+
+      </div> <!-- Fin .onboarding-container -->
+    </div> <!-- Fin .onboarding-background -->
+</body>
 </html>
