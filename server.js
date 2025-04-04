@@ -148,31 +148,34 @@ app.get('/index', isAuthenticated, (req, res) => {
 
 app.get('/resumen', isAuthenticated, async (req, res) => {
   try {
-    // 1️⃣ Extraer las cuentas de Instagram del usuario desde PostgreSQL
     const userAccounts = req.session.user.accounts || [];
     const instaUsernames = userAccounts.map((ac) => ac.insta_username);
 
-    // 2️⃣ Revisar si se recibió un parámetro 'account' para filtrar
-    const selectedAccount = req.query.account || null; // Ejemplo: 'bichobarber1'
-    const selectedMonth = req.query.month || new Date().toISOString().slice(0, 7); // Formato YYYY-MM
+    // ⚙️ Filtros por cuenta y fechas
+    const selectedAccount = req.query.account || null;
+    const fromDate = req.query.from || new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().slice(0, 10);
+    const toDate = req.query.to || new Date().toISOString().slice(0, 10);
 
-    // 3️⃣ Conectarse a MongoDB y obtener los documentos de 'historial_acciones'
+    // 📦 Conectar a MongoDB
     const client = new MongoClient(mongoUri, { useUnifiedTopology: true });
     await client.connect();
     const db = client.db(mongoDbName);
     const collection = db.collection('historial_acciones');
 
-    // Construcción del filtro
     const filter = {
       username: selectedAccount ? selectedAccount : { $in: instaUsernames },
-      fecha: { $regex: `^${selectedMonth}` } // Filtrar por mes en formato "YYYY-MM"
+      fecha: {
+        $gte: `${fromDate} 00:00:00`,
+        $lte: `${toDate} 23:59:59`
+      }
     };
 
     const historial = await collection.find(filter).toArray();
     await client.close();
 
-    // 4️⃣ Calcular métricas básicas del historial
-    let totalMensajesEnviados = historial.length;
+    // 📊 Métricas
+    let totalMensajesEnviados = 0;
+    let totalLikes = 0;
     let fechaUltimoMensaje = 'N/A';
     let destinatarioUltimo = 'N/A';
     let ultimoMensaje = 'N/A';
@@ -182,10 +185,7 @@ app.get('/resumen', isAuthenticated, async (req, res) => {
     let mensajesPorDia = {};
 
     if (historial.length > 0) {
-      // Función para convertir la fecha correctamente
       const parseFecha = (str) => new Date(str.replace(' ', 'T'));
-
-      // Ordenar mensajes por fecha ascendente
       const sorted = historial.slice().sort((a, b) => parseFecha(a.fecha) - parseFecha(b.fecha));
 
       fechaPrimerMensaje = sorted[0].fecha;
@@ -193,11 +193,15 @@ app.get('/resumen', isAuthenticated, async (req, res) => {
       destinatarioUltimo = sorted[sorted.length - 1].destinatario;
       ultimoMensaje = sorted[sorted.length - 1].mensaje;
 
-      // Calcular el día con más mensajes
-      historial.forEach(({ fecha, tipo_mensaje }) => {
-        const dia = fecha.substring(0, 10); // Extraer solo la fecha sin hora
-        mensajesPorDia[dia] = (mensajesPorDia[dia] || 0) + 1;
-        mensajesPorTipo[tipo_mensaje] = (mensajesPorTipo[tipo_mensaje] || 0) + 1;
+      historial.forEach(({ fecha, tipo_mensaje, accion }) => {
+        const dia = fecha.substring(0, 10);
+        if (accion && accion.toLowerCase().includes('mensaje')) {
+          totalMensajesEnviados++;
+          mensajesPorTipo[tipo_mensaje] = (mensajesPorTipo[tipo_mensaje] || 0) + 1;
+          mensajesPorDia[dia] = (mensajesPorDia[dia] || 0) + 1;
+        } else if (accion && accion.toLowerCase().includes('gusta')) {
+          totalLikes++;
+        }
       });
 
       const dayArray = Object.entries(mensajesPorDia).sort((a, b) => b[1] - a[1]);
@@ -206,17 +210,16 @@ app.get('/resumen', isAuthenticated, async (req, res) => {
       }
     }
 
-    // 5️⃣ Formatear los datos del gráfico para la línea de tiempo
     const fechasOrdenadas = Object.keys(mensajesPorDia).sort();
     const datosGrafico = fechasOrdenadas.map(fecha => ({
       fecha,
       cantidad: mensajesPorDia[fecha]
     }));
 
-    // 6️⃣ Renderizar la vista 'resumen.ejs'
     res.render('resumen', {
       username: req.session.user.username,
       total_mensajes_enviados: totalMensajesEnviados,
+      total_likes: totalLikes,
       ultimos_mensajes: historial,
       fechaPrimerMensaje,
       fechaUltimoMensaje,
@@ -225,9 +228,10 @@ app.get('/resumen', isAuthenticated, async (req, res) => {
       diaMasMensajes,
       mensajesPorTipo,
       datosGrafico,
-      userAccounts, // Lista de todas las cuentas asociadas
-      selectedAccount, // Cuenta actualmente filtrada
-      selectedMonth, // Mes seleccionado en el filtro
+      userAccounts,
+      selectedAccount,
+      fromDate,
+      toDate,
     });
 
   } catch (error) {
@@ -235,6 +239,7 @@ app.get('/resumen', isAuthenticated, async (req, res) => {
     res.render('resumen', {
       username: req.session.user.username,
       total_mensajes_enviados: 0,
+      total_likes: 0,
       ultimos_mensajes: [],
       fechaPrimerMensaje: 'N/A',
       fechaUltimoMensaje: 'N/A',
@@ -245,14 +250,16 @@ app.get('/resumen', isAuthenticated, async (req, res) => {
       datosGrafico: [],
       userAccounts: req.session.user.accounts || [],
       selectedAccount: null,
-      selectedMonth: new Date().toISOString().slice(0, 7),
+      fromDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().slice(0, 10),
+      toDate: new Date().toISOString().slice(0, 10),
     });
   }
 });
 
+
 // Endpoint para obtener datos del gráfico
 app.get('/resumen/data', isAuthenticated, async (req, res) => {
-  const selectedMonth = req.query.month || new Date().toISOString().slice(0, 7); // Formato YYYY-MM
+  const { from, to } = req.query;
   const userAccounts = req.session.user.accounts || [];
   const instaUsernames = userAccounts.map((ac) => ac.insta_username);
 
@@ -262,35 +269,48 @@ app.get('/resumen/data', isAuthenticated, async (req, res) => {
     const db = client.db(mongoDbName);
     const collection = db.collection('historial_acciones');
 
-    // Construcción del filtro
-    const filter = {
+    const filtro = {
       username: { $in: instaUsernames },
-      fecha: { $regex: `^${selectedMonth}` } // Filtrar por mes en formato "YYYY-MM"
+      fecha: {
+        $gte: `${from} 00:00:00`,
+        $lte: `${to} 23:59:59`,
+      }
     };
 
-    const historial = await collection.find(filter).toArray();
+    const historial = await collection.find(filtro).toArray();
     await client.close();
 
-    // Calcular métricas básicas del historial
     let mensajesPorDia = {};
-    historial.forEach(({ fecha }) => {
-      const dia = fecha.substring(0, 10); // Extraer solo la fecha sin hora
-      mensajesPorDia[dia] = (mensajesPorDia[dia] || 0) + 1;
+    let likesPorDia = {};
+
+    historial.forEach(({ fecha, accion }) => {
+      const dia = fecha.substring(0, 10);
+      if (accion && accion.toLowerCase().includes('mensaje')) {
+        mensajesPorDia[dia] = (mensajesPorDia[dia] || 0) + 1;
+      } else if (accion && accion.toLowerCase().includes('gusta')) {
+        likesPorDia[dia] = (likesPorDia[dia] || 0) + 1;
+      }
     });
 
-    // Formatear los datos del gráfico
-    const fechasOrdenadas = Object.keys(mensajesPorDia).sort();
-    const datosGrafico = fechasOrdenadas.map(fecha => ({
+    const fechasUnicas = Array.from(new Set([
+      ...Object.keys(mensajesPorDia),
+      ...Object.keys(likesPorDia),
+    ])).sort();
+
+    const datosGrafico = fechasUnicas.map(fecha => ({
       fecha,
-      cantidad: mensajesPorDia[fecha]
+      mensajes: mensajesPorDia[fecha] || 0,
+      likes: likesPorDia[fecha] || 0,
     }));
 
     res.status(200).json({ datosGrafico });
+
   } catch (error) {
     console.error('Error al obtener los datos del gráfico:', error);
     res.status(500).json({ error: 'Error al obtener los datos del gráfico' });
   }
 });
+
 
 
 app.get('/onboarding', isAuthenticated, (req, res) => {

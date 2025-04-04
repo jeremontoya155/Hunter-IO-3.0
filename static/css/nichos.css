@@ -1,8 +1,7 @@
 /* Estilo general */
 body {
     font-family: 'Poppins', sans-serif;
-    /* font-family: 'Inter', sans-serif; */
-    background-color:  #d9e9e0;
+    background-color: #d9e9e0;
     color: #333;
     margin: 0;
     padding: 0;
@@ -11,9 +10,7 @@ body {
     align-items: center;
     min-height: 100vh;
     flex-direction: column;
-    padding: 20px; /* Espaciado general para móviles */
     box-sizing: border-box;
-    align-content: center;
 }
 
 /* Contenedor principal */
@@ -22,17 +19,11 @@ body {
     border-radius: 20px;
     padding: 30px;
     box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.1);
-    width: 70%;
-    max-width: 400px; /* Máximo ancho para pantallas grandes */
+    width: 90%;
+    max-width: 400px;
     text-align: center;
     transition: all 0.3s ease-in-out;
-    margin: 20px auto; /* Centrado en pantallas grandes */
-}
-
-.contenedorAux{
-    text-align: center;
-    align-items: center;
-    align-content: center;
+    margin: 20px auto;
 }
 
 /* Título */
@@ -91,8 +82,8 @@ button {
     font-size: 16px;
     font-weight: 500;
     transition: all 0.3s ease-in-out;
+    width: 100%;
     margin-top: 10px;
-    width: 100%; /* Botón ocupa todo el ancho */
 }
 
 button:hover {
@@ -141,93 +132,51 @@ button:hover {
 /* Pantallas pequeñas (móviles) */
 @media screen and (max-width: 480px) {
     body {
-        padding: 10px; /* Menos padding en móviles */
-        display: flex;
-        justify-content: center;
-        text-align: center;
-    
-    }
-
-    .contenedorAux{
-        text-align: center;
-        align-items: center;
-        align-content: center;
+        padding: 10px;
     }
 
     .container {
-        padding: 20px; /* Menos padding en móviles */
-        border-radius: 15px; /* Bordes más redondeados */
-        margin-left: 2em;
-        text-align: center;
+        padding: 20px;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 100%;
+        margin: 0 auto;
     }
 
     h2 {
-        font-size: 20px; /* Título más pequeño */
+        font-size: 20px;
         margin-bottom: 15px;
     }
 
     input,
     textarea {
-        font-size: 14px; /* Fuente más pequeña en móviles */
-        padding: 10px; /* Menos padding en móviles */
+        font-size: 14px;
+        padding: 10px;
     }
 
     button {
-        font-size: 14px; /* Fuente más pequeña en móviles */
-        padding: 12px; /* Menos padding en móviles */
+        font-size: 14px;
+        padding: 12px;
     }
 
     .file-input {
-        font-size: 14px; /* Fuente más pequeña en móviles */
-        padding: 10px; /* Menos padding en móviles */
+        font-size: 14px;
+        padding: 10px;
     }
 }
 
 /* Pantallas medianas (tablets) */
-/* Pantallas pequeñas (móviles) */
-@media screen and (max-width: 480px) {
-    body {
-        padding: 10px; /* Menos padding en móviles */
-        display: flex;
-        justify-content: center;
-        align-items: center; /* Centrado vertical */
-        text-align: center;
-    }
-
+@media screen and (min-width: 481px) and (max-width: 768px) {
     .container {
-        padding: 20px; /* Menos padding en móviles */
-        border-radius: 15px; /* Bordes más redondeados */
-        width: 60%; /* Ocupa el 90% del ancho en móviles */
-        max-width: 70%; /* Asegura que no exceda el ancho de la pantalla */
-        margin: 0 auto; /* Centrado horizontal */
-        text-align: center;
-    }
-
-    h2 {
-        font-size: 20px; /* Título más pequeño */
-        margin-bottom: 15px;
-    }
-
-    input,
-    textarea {
-        font-size: 14px; /* Fuente más pequeña en móviles */
-        padding: 10px; /* Menos padding en móviles */
-    }
-
-    button {
-        font-size: 14px; /* Fuente más pequeña en móviles */
-        padding: 12px; /* Menos padding en móviles */
-    }
-
-    .file-input {
-        font-size: 14px; /* Fuente más pequeña en móviles */
-        padding: 10px; /* Menos padding en móviles */
+        width: 80%;
+        max-width: 400px;
     }
 }
 
 /* Pantallas grandes (escritorio) */
 @media screen and (min-width: 769px) {
     .container {
-        max-width: 400px; /* Ancho fijo para escritorio */
+        width: 70%;
+        max-width: 400px;
     }
 }

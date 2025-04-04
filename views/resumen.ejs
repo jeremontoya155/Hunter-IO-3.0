@@ -5,19 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard de <%= username %></title>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
     <link rel="stylesheet" href="/static/css/resumen.css" />
     <link rel="stylesheet" href="/static/css/scrollbar.css" />
     <link rel="stylesheet" href="/static/css/navbar.css" />
     <script src="/static/js/navbar.js"></script>
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-        </style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    </style>
 </head>
 <body>
     <%- include('partials/navbar') %>
@@ -49,6 +46,7 @@
         </header>
 
         <div class="dashboard-container">
+
             <!-- 📌 TARJETAS DE MÉTRICAS -->
             <section class="titleMetrics">
                 <div class="titleMetricsContent">
@@ -58,20 +56,22 @@
                             <p id="totalMensajes"><%= total_mensajes_enviados %></p>
                         </div>
                         <div class="metricCard">
+                            <h2>Total de Me Gusta</h2>
+                            <p id="totalLikes"><%= total_likes %></p>
+                        </div>
+                        <div class="metricCard">
                             <h2>Fecha del Último Mensaje</h2>
-                            <p id="fechaUltimoMensaje"><%= ultimos_mensajes.length > 0 ? ultimos_mensajes[0].fecha : 'N/A' %></p>
+                            <p id="fechaUltimoMensaje"><%= fechaUltimoMensaje %></p>
                         </div>
                         <div class="metricCard">
                             <h2>Destinatario del Último Mensaje</h2>
-                            <p id="destinatarioUltimo">
-                                <%= ultimos_mensajes.length > 0 ? ultimos_mensajes[0].destinatario : 'N/A' %>
-                            </p>
+                            <p id="destinatarioUltimo"><%= destinatarioUltimo %></p>
                         </div>
                     </div>
                     <div class="MetricUltimoMensaje">
                         <div class="metricCard">
                             <h2>Último Mensaje</h2>
-                            <p id="ultimoMensaje"><%= ultimos_mensajes.length > 0 ? ultimos_mensajes[0].mensaje : 'N/A' %></p>
+                            <p id="ultimoMensaje"><%= ultimoMensaje %></p>
                         </div>
                     </div>
                 </div>
@@ -93,114 +93,126 @@
                 </div>
             </section>
 
-            <!-- 📌 Selector de mes -->
-            <section class="selector-mes">
-                <label for="selectMonth">Seleccionar Mes:</label>
-                <input type="month" id="selectMonth" value="<%= selectedMonth %>">
+            <!-- 📌 Selector de Rango de Fechas -->
+            <section class="selector-fechas">
+                <label for="fromDate">Desde:</label>
+                <input type="date" id="fromDate" value="<%= fromDate %>">
+                <label for="toDate">Hasta:</label>
+                <input type="date" id="toDate" value="<%= toDate %>">
+                <button id="btnFiltrar">Filtrar</button>
             </section>
 
-            <!-- 📌 Gráfico de mensajes enviados por día -->
+            <!-- 📌 GRÁFICO: MENSAJES + ME GUSTA -->
             <section class="grafico-mensajes">
-                <h2>Mensajes Enviados por Día</h2>
+                <h2>Mensajes y Me Gusta por Día</h2>
                 <canvas id="graficoMensajes"></canvas>
             </section>
 
-         <!-- 📌 LISTADO DE MENSAJES ENVIADOS -->
-<section class="mensajes-section">
-    <h2>Mensajes Enviados</h2>
-    <div id="mensajesSend">
-      <% if (ultimos_mensajes && ultimos_mensajes.length > 0) { %> 
-        <!-- Limitar los mensajes a los primeros 10 -->
-        <% const mensajesLimitados = ultimos_mensajes.slice(0, 10); %>
-        <% mensajesLimitados.forEach(function(mensaje) { %>
-          <div class="mensaje-item">
-            <div class="mensaje-header">
-              <span class="mensaje-destinatario">
-                <%= mensaje.destinatario %>
-              </span>
-              <span class="mensaje-fecha"><%= mensaje.fecha %></span>
-            </div>
-            <div class="mensaje-contenido"><%= mensaje.mensaje %></div>
-          </div>
-        <% }); %>
-      <% } else { %>
-        <p>No hay mensajes disponibles.</p>
-      <% } %>
-    </div>
-  </section>
+            <!-- 📌 LISTADO DE MENSAJES -->
+            <section class="mensajes-section">
+                <h2>Mensajes Enviados</h2>
+                <div id="mensajesSend">
+                    <% if (ultimos_mensajes && ultimos_mensajes.length > 0) { %> 
+                        <% const mensajesLimitados = ultimos_mensajes.slice(0, 10); %>
+                        <% mensajesLimitados.forEach(function(mensaje) { %>
+                            <div class="mensaje-item">
+                                <div class="mensaje-header">
+                                    <span class="mensaje-destinatario"><%= mensaje.destinatario %></span>
+                                    <span class="mensaje-fecha"><%= mensaje.fecha %></span>
+                                </div>
+                                <div class="mensaje-contenido"><%= mensaje.mensaje %></div>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <p>No hay mensajes disponibles.</p>
+                    <% } %>
+                </div>
+            </section>
+
         </div>
     </div>
 
-    <!-- 📌 Librería Chart.js -->
+    <!-- 📌 CHART.JS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<!-- 📌 Gráfico de mensajes enviados por día -->
-<section class="grafico-mensajes">
-    <h2>Mensajes Enviados por Día</h2>
-    <canvas id="graficoMensajes"></canvas>
-  </section>
-  
-  <!-- 📌 Librería Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const ctx = document.getElementById("graficoMensajes").getContext("2d");
-      let chart;
-  
-      async function cargarDatosGrafico(month) {
-        try {
-          const response = await fetch(`/resumen/data?month=${month}`);
-          const { datosGrafico } = await response.json();
-  
-          if (chart) {
-            chart.destroy(); // Destruir el gráfico anterior si existe
-          }
-  
-          chart = new Chart(ctx, {
-            type: "line",
-            data: {
-              labels: datosGrafico.map(d => d.fecha), // Fechas como etiquetas
-              datasets: [
-                {
-                  label: "Mensajes enviados",
-                  data: datosGrafico.map(d => d.cantidad), // Cantidad de mensajes
-                  borderColor: "rgba(0, 123, 255, 1)",
-                  backgroundColor: "rgba(0, 123, 255, 0.2)",
-                  fill: true,
-                  tension: 0.4
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const ctx = document.getElementById("graficoMensajes").getContext("2d");
+            let chart;
+
+            async function cargarDatosGrafico(from, to) {
+                try {
+                    const response = await fetch(`/resumen/data?from=${from}&to=${to}`);
+                    const { datosGrafico } = await response.json();
+
+                    const fechas = datosGrafico.map(d => d.fecha);
+                    const mensajes = datosGrafico.map(d => d.mensajes);
+                    const likes = datosGrafico.map(d => d.likes);
+
+                    if (chart) chart.destroy();
+
+                    chart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: fechas,
+                            datasets: [
+                                {
+                                    label: 'Mensajes Enviados',
+                                    data: mensajes,
+                                    borderColor: 'blue',
+                                    backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                                    fill: true,
+                                    tension: 0.3
+                                },
+                                {
+                                    label: 'Me Gusta',
+                                    data: likes,
+                                    borderColor: 'green',
+                                    backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                                    fill: true,
+                                    tension: 0.3
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { position: 'top' }
+                            },
+                            scales: {
+                                x: {
+                                    title: { display: true, text: "Fecha" }
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    title: { display: true, text: "Cantidad" }
+                                }
+                            }
+                        }
+                    });
+                } catch (error) {
+                    console.error("Error al cargar los datos del gráfico:", error);
                 }
-              ]
-            },
-            options: {
-              responsive: true,
-              plugins: {
-                legend: { display: false }
-              },
-              scales: {
-                x: {
-                  title: { display: true, text: "Fecha" }
-                },
-                y: {
-                  title: { display: true, text: "Cantidad de Mensajes" },
-                  beginAtZero: true // Comenzar el eje Y en cero
-                }
-              }
             }
-          });
-        } catch (error) {
-          console.error("Error al cargar los datos:", error);
-        }
-      }
-  
-      // Selector de mes
-      const selectMonth = document.getElementById("selectMonth");
-      cargarDatosGrafico(selectMonth.value); // Cargar datos iniciales
-  
-      // Actualizar el gráfico cuando cambie el mes
-      selectMonth.addEventListener("change", function () {
-        cargarDatosGrafico(this.value);
-      });
-    });
-  </script>
+
+            const fromInput = document.getElementById("fromDate");
+            const toInput = document.getElementById("toDate");
+            const btnFiltrar = document.getElementById("btnFiltrar");
+
+            function aplicarFiltro() {
+                const from = fromInput.value;
+                const to = toInput.value;
+                if (from && to) {
+                    cargarDatosGrafico(from, to);
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('from', from);
+                    url.searchParams.set('to', to);
+                    window.location.href = url.toString(); // Refresca toda la vista con los nuevos datos
+                }
+            }
+
+            btnFiltrar.addEventListener("click", aplicarFiltro);
+            cargarDatosGrafico(fromInput.value, toInput.value);
+        });
+    </script>
 </body>
 </html>
