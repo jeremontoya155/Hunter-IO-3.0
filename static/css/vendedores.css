@@ -1,0 +1,392 @@
+/* static/css/vendedores.css */
+
+/* --- Variables y Base (Asegúrate que coincidan con tu diseño global) --- */
+:root {
+    --color-background-dark: #0a0a10;
+    --color-background-medium: #111827;
+    --color-background-light: #1f2937;
+    --color-accent: #4caf91;
+    --color-accent-hover: #5cdb95;
+    --color-text-primary: #e5e7eb;
+    --color-text-secondary: #9ca3af;
+    --color-border: rgba(76, 175, 145, 0.2);
+    --color-danger: #dc3545;
+    --color-warning: #ffc107;
+    --color-success: #28a745; /* Mismo que accent o diferente */
+    --spacing-unit: 1rem;
+    --border-radius-small: 4px;
+    --border-radius-medium: 8px;
+    --border-radius-large: 16px;
+    --font-primary: 'Poppins', sans-serif;
+  }
+  
+  /* --- Layout General --- */
+  body {
+    font-family: var(--font-primary);
+    background-color: var(--color-background-dark);
+    color: var(--color-text-primary);
+    line-height: 1.6;
+  }
+  
+  .vendedor-container {
+    max-width: 1200px; /* Más ancho para tablas con más columnas */
+    margin: 2rem auto;
+    padding: 2rem;
+    padding-top: calc(var(--spacing-unit) * 5.5); /* Ajusta según tu navbar */
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+  
+  .vendedor-container h1 {
+    color: var(--color-accent-hover);
+    text-align: center;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-size: 1.8rem;
+  }
+  
+  .role-indicator {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--color-text-secondary);
+  }
+  .role-tag {
+      display: inline-block;
+      padding: 0.2em 0.6em;
+      font-size: 0.8em;
+      font-weight: 600;
+      border-radius: var(--border-radius-small);
+      text-transform: uppercase;
+      color: var(--color-background-dark);
+  }
+  .role-admin { background-color: var(--color-danger); }
+  .role-auditoria { background-color: var(--color-warning); color: #333;}
+  .role-cro { background-color: var(--color-accent); }
+  .role-user { background-color: var(--color-text-secondary); } /* Rol por defecto */
+  
+  
+  .card {
+    background: var(--color-background-medium);
+    border-radius: var(--border-radius-large);
+    padding: 1.8rem 2.2rem;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+  }
+  
+  .card h2 {
+    color: var(--color-text-primary);
+    margin-bottom: 1.8rem;
+    font-weight: 500;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 1.4rem;
+  }
+  .card h2 i {
+    color: var(--color-accent);
+    font-size: 1.1em;
+  }
+  
+  /* --- Estilos de Formularios --- */
+  .form-section form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  
+  .form-row {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap; /* Para que en móvil se pongan uno debajo de otro */
+  }
+  .form-row .form-group {
+      flex: 1; /* Ocupa espacio disponible */
+      min-width: 200px; /* Ancho mínimo antes de envolver */
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .form-group label {
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0.1rem;
+  }
+  
+  .form-group input[type="text"],
+  .form-group input[type="number"],
+  .form-group input[type="date"],
+  .form-group select,
+  .form-group textarea {
+    padding: 0.75rem 1rem;
+    background-color: var(--color-background-light);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-medium);
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    width: 100%; /* Asegura que ocupen el ancho del contenedor */
+  }
+  .form-group select {
+      /* Apariencia nativa o customizada */
+      appearance: none; /* Quita estilo por defecto */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3E%3C/svg%3E"); /* Flecha SVG */
+      background-repeat: no-repeat;
+      background-position: right 0.7rem center;
+      background-size: 1em;
+      padding-right: 2.5rem; /* Espacio para la flecha */
+  }
+  .form-group textarea {
+      resize: vertical; /* Permitir redimensionar solo verticalmente */
+      min-height: 80px;
+  }
+  
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(76, 175, 145, 0.4);
+  }
+  
+  .form-group small {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    opacity: 0.7;
+  }
+  
+  .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      justify-content: flex-end; /* Alinea botones a la derecha */
+  }
+  
+  /* --- Botones --- */
+  .btn {
+    padding: 0.7rem 1.3rem;
+    border: none;
+    border-radius: var(--border-radius-medium);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    justify-content: center;
+    text-decoration: none; /* Para botones que sean links */
+    line-height: 1.4; /* Alineación vertical */
+  }
+  .btn i {
+    font-size: 1.1em; /* Iconos un poco más grandes */
+  }
+  .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .btn-primary {
+    background-color: var(--color-accent);
+    color: var(--color-background-dark);
+  }
+  .btn-primary:hover { background-color: var(--color-accent-hover); }
+  
+  .btn-secondary {
+      background-color: var(--color-background-light);
+      color: var(--color-text-secondary);
+      border: 1px solid var(--color-border);
+  }
+  .btn-secondary:hover {
+      background-color: #374151; /* Un gris un poco más claro */
+      color: var(--color-text-primary);
+  }
+  
+  .btn-warning { background-color: var(--color-warning); color: #333; }
+  .btn-warning:hover { background-color: #ffca2c; }
+  
+  .btn-danger { background-color: var(--color-danger); color: white; }
+  .btn-danger:hover { background-color: #c82333; }
+  
+  .btn-sm {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+  }
+  
+  
+  /* --- Estilos de Tabla --- */
+  .table-wrapper {
+    overflow-x: auto; /* Crucial para tablas anchas en móvil */
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
+  }
+  
+  th, td {
+    padding: 0.9rem 1.1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: middle; /* Centrar verticalmente */
+    white-space: normal; /* Permitir que el texto se ajuste en celdas */
+  }
+  td.notas-col {
+      white-space: normal; /* Permitir que las notas largas se ajusten */
+      min-width: 150px; /* Darle un ancho mínimo */
+  }
+  
+  th {
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    background-color: rgba(31, 41, 55, 0.6); /* Fondo más oscuro para header */
+    position: sticky; /* Header pegajoso si la tabla es scrollable verticalmente */
+    top: 0;
+    z-index: 1;
+  }
+  
+  td {
+      color: var(--color-text-primary);
+      font-size: 0.9rem;
+  }
+  tbody tr:hover {
+    background-color: rgba(31, 41, 55, 0.7); /* Hover más notorio */
+  }
+  
+  /* Listas dentro de celdas (para mensajes/cuenta) */
+  td ul.list-unstyled {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+  }
+  td li {
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+  }
+  td li .count {
+      color: var(--color-accent-hover);
+      font-weight: 600;
+      margin-left: 4px;
+  }
+  td li strong { /* Para el total */
+      color: var(--color-text-primary);
+      margin-top: 5px;
+      border-top: 1px dashed var(--color-border);
+      padding-top: 3px;
+      display: inline-block;
+  }
+  
+  
+  /* --- Etiquetas (Tags) --- */
+  .tag {
+    display: inline-block;
+    padding: 0.25rem 0.7rem;
+    border-radius: 15px; /* Más redondeado */
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin: 2px; /* Espacio entre tags */
+    line-height: 1.3;
+    text-align: center;
+    min-width: 60px;
+  }
+  .tag-cuenta {
+    background-color: var(--color-accent);
+    color: var(--color-background-dark);
+  }
+  .tag-muted {
+    background-color: var(--color-background-light);
+    color: var(--color-text-secondary);
+  }
+  .tag-estado { text-transform: capitalize; } /* Poner primera letra en mayúscula */
+  .tag-estado-activo { background-color: var(--color-success); color: white; }
+  .tag-estado-inactivo { background-color: var(--color-text-secondary); color: var(--color-background-dark); }
+  .tag-estado-prueba { background-color: var(--color-warning); color: #333; }
+  .tag-estado-baja { background-color: var(--color-danger); color: white; }
+  
+  /* --- Barra de Progreso --- */
+  .progress-bar-container {
+    width: 100px; /* Ancho fijo para la barra */
+    height: 18px;
+    background-color: var(--color-background-light);
+    border-radius: 9px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--color-border);
+  }
+  .progress-bar {
+    height: 100%;
+    background-color: var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-background-dark);
+    font-size: 0.7rem;
+    font-weight: 600;
+    transition: width 0.5s ease-out;
+    border-radius: 9px 0 0 9px; /* Redondeo solo a la izquierda */
+  }
+  /* Ajuste para barra completa */
+  .progress-bar[style*="width: 100%"] {
+    border-radius: 9px;
+  }
+  
+  /* --- Alertas --- */
+  .alert {
+      padding: 0.9rem 1.2rem;
+      margin-bottom: 1.5rem;
+      border-radius: var(--border-radius-medium);
+      border: 1px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+  }
+  .alert::before { /* Icono para alertas */
+      font-family: "Font Awesome 6 Free";
+      font-weight: 900;
+      font-size: 1.2em;
+  }
+  .alert-success {
+      background-color: rgba(76, 175, 145, 0.15);
+      border-color: var(--color-accent);
+      color: var(--color-accent-hover);
+  }
+  .alert-success::before { content: "\f058"; } /* check-circle */
+  
+  .alert-danger {
+      background-color: rgba(220, 53, 69, 0.1);
+      border-color: var(--color-danger);
+      color: #f8d7da;
+  }
+  .alert-danger::before { content: "\f071"; } /* exclamation-triangle */
+  
+  /* --- Responsividad --- */
+  @media (max-width: 992px) {
+      .vendedor-container { max-width: 95%; padding: 1.5rem; padding-top: calc(var(--spacing-unit) * 5);}
+      th, td { padding: 0.8rem; }
+      .form-row { flex-direction: column; gap: 1.2rem; } /* Apila los campos en móvil */
+  }
+  
+  @media (max-width: 768px) {
+       .vendedor-container { gap: 1.5rem; }
+       .card { padding: 1.2rem; }
+       .card h2 { font-size: 1.2rem; margin-bottom: 1.2rem; padding-bottom: 0.8rem;}
+       .btn { width: 100%; } /* Botones ocupan todo el ancho */
+       .form-actions { flex-direction: column; }
+       .form-actions .btn { width: 100%; }
+       .form-actions .btn-secondary { margin-top: 0.5rem; }
+       table { white-space: normal; } /* Permitir ajuste de texto en móvil */
+  }

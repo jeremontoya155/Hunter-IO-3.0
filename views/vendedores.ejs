@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HUNTER - Gestión de Vendedores</title>
+    <!-- Tus enlaces CSS (Poppins, FontAwesome, navbar.css, scrollbar.css) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="/static/css/navbar.css" />
+    <link rel="stylesheet" href="/static/css/scrollbar.css" />
+    <!-- CSS específico para esta página -->
+    <link rel="stylesheet" href="/static/css/vendedores.css" />
+    <script defer src="/static/js/navbar.js"></script>
+    <!-- Script opcional para editar (ver más abajo) -->
+    <script defer src="/static/js/vendedores_edit.js"></script>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+
+    <div class="vendedor-container">
+        <h1>Gestión de Vendedores</h1>
+        <p class="role-indicator">Accediendo como: <span class="role-tag role-<%= user.role %>"><%= user.role %></span></p>
+
+        <% if (success) { %>
+            <div class="alert alert-success" role="alert"><%= success %></div>
+        <% } %>
+        <% if (error) { %>
+            <div class="alert alert-danger" role="alert"><%= error %></div>
+        <% } %>
+
+        <%# --- Sección de Formulario (Visible solo para Admin y Auditoría) --- %>
+        <% if (user.role === 'admin' || user.role === 'auditoria') { %>
+            <section class="form-section card" id="form-container">
+                <%# El título cambiará si estamos editando %>
+                <h2 id="form-title"><i class="fas fa-user-plus"></i> Agregar Nuevo Vendedor</h2>
+                <form action="/vendedores" method="POST" id="vendedor-form">
+                    <%# Campo oculto para ID en caso de edición %>
+                    <input type="hidden" id="vendedor_id" name="vendedor_id">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nombre">Nombre del Vendedor:</label>
+                            <input type="text" id="nombre" name="nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="manager_asignado">Manager/Auditor Asignado:</label>
+                            <input type="text" id="manager_asignado" name="manager_asignado">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cuentas_asignadas">Cuentas de Instagram Asignadas (separadas por coma):</label>
+                        <input type="text" id="cuentas_asignadas" name="cuentas_asignadas" placeholder="ej: usuario1, usuario_dos">
+                        <small>Introduce los nombres de usuario exactos.</small>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="porcentaje_cumplimiento">Porcentaje Cumplimiento (%):</label>
+                            <input type="number" id="porcentaje_cumplimiento" name="porcentaje_cumplimiento" min="0" max="100" step="0.01" value="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="objetivo_mensual">Objetivo Mensual (ej: # mensajes):</label>
+                            <input type="number" id="objetivo_mensual" name="objetivo_mensual" min="0" step="1" value="0">
+                        </div>
+                    </div>
+
+                     <div class="form-row">
+                        <div class="form-group">
+                            <label for="fecha_ingreso">Fecha de Ingreso:</label>
+                            <input type="date" id="fecha_ingreso" name="fecha_ingreso">
+                        </div>
+                        <div class="form-group">
+                            <label for="estado">Estado:</label>
+                            <select id="estado" name="estado">
+                                <option value="activo" selected>Activo</option>
+                                <option value="inactivo">Inactivo</option>
+                                <option value="prueba">En Prueba</option>
+                                <option value="baja">De Baja</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notas_auditoria">Notas de Auditoría / Seguimiento:</label>
+                        <textarea id="notas_auditoria" name="notas_auditoria" rows="4"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                         <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar Vendedor</button>
+                         <%# Botón para cancelar edición %>
+                         <button type="button" class="btn btn-secondary" id="cancel-edit-btn" style="display: none;"><i class="fas fa-times"></i> Cancelar Edición</button>
+                    </div>
+                </form>
+            </section>
+        <% } %> <%# --- Fin Sección Formulario --- %>
+
+
+        <%# --- Tabla de Vendedores (Visible para Admin, Auditoría y CRO) --- %>
+        <section class="table-section card">
+            <h2><i class="fas fa-users"></i> Vendedores Registrados</h2>
+            <% if (vendedores && vendedores.length > 0) { %>
+                <div class="table-wrapper">
+                     <table>
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Cuentas Asignadas</th>
+                                <th>Mensajes/Cuenta</th>
+                                <th>% Cumplimiento</th>
+                                <th>Objetivo Mensual</th>
+                                <th>Estado</th>
+                                <th>Fecha Ingreso</th>
+                                <th>Manager</th>
+                                <% if (user.role === 'admin' || user.role === 'auditoria') { %>
+                                  <th>Notas Auditoría</th>
+                                  <th>Últ. Seguimiento</th>
+                                  <th>Acciones</th> <%# Columna de acciones solo para admin/auditor %>
+                                <% } %>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% vendedores.forEach(vendedor => { %>
+                                <tr id="vendedor-row-<%= vendedor.id %>" data-vendedor='<%= JSON.stringify(vendedor) %>'> <%# Guardamos datos para JS %>
+                                    <td><%= vendedor.nombre %></td>
+                                    <td>
+                                        <% if (vendedor.cuentas_asignadas && vendedor.cuentas_asignadas.length > 0) { %>
+                                            <% vendedor.cuentas_asignadas.forEach((cuenta) => { %>
+                                                <span class="tag tag-cuenta"><%= cuenta %></span>
+                                            <% }); %>
+                                        <% } else { %>
+                                            <span class="tag tag-muted">Ninguna</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <% let totalMensajesVendedor = 0; %>
+                                        <% if (vendedor.cuentas_asignadas && vendedor.cuentas_asignadas.length > 0) { %>
+                                           <ul class="list-unstyled">
+                                           <% vendedor.cuentas_asignadas.forEach(cuenta => { %>
+                                                <% const count = messageCounts[cuenta.toLowerCase()] || 0; %> <%# Asegura lowercase lookup %>
+                                                <% totalMensajesVendedor += count; %>
+                                               <li><%= cuenta %>: <span class="count"><%= count %></span></li>
+                                           <% }); %>
+                                            <li><strong>Total: <span class="count"><%= totalMensajesVendedor %></span></strong></li>
+                                           </ul>
+                                       <% } else { %>
+                                           N/A
+                                       <% } %>
+                                    </td>
+                                    <td>
+                                        <div class="progress-bar-container">
+                                          <div class="progress-bar" style="width: <%= vendedor.porcentaje_cumplimiento || 0 %>%;">
+                                            <%= parseFloat(vendedor.porcentaje_cumplimiento || 0).toFixed(1) %>%                                          </div>
+                                        </div>
+                                      </td>
+                                    <td><%= vendedor.objetivo_mensual || 'N/A' %></td>
+                                    <td><span class="tag tag-estado tag-estado-<%= vendedor.estado %>"><%= vendedor.estado %></span></td>
+                                    <td><%= vendedor.fecha_ingreso ? new Date(vendedor.fecha_ingreso).toLocaleDateString() : 'N/A' %></td>
+                                    <td><%= vendedor.manager_asignado || 'N/A' %></td>
+
+                                     <%# Columnas y acciones solo para Admin y Auditoría %>
+                                     <% if (user.role === 'admin' || user.role === 'auditoria') { %>
+                                        <td class="notas-col"><%= vendedor.notas_auditoria ? vendedor.notas_auditoria.substring(0, 50) + '...' : '' %></td>
+                                        <td><%= vendedor.ultimo_seguimiento ? new Date(vendedor.ultimo_seguimiento).toLocaleString() : 'Nunca' %></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-warning edit-btn" data-id="<%= vendedor.id %>" title="Editar Vendedor">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <%# Podrías añadir un botón de eliminar aquí, usualmente requiere confirmación JS %>
+                                            <!--
+                                            <button class="btn btn-sm btn-danger delete-btn" data-id="<%= vendedor.id %>" title="Eliminar Vendedor">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                            -->
+                                        </td>
+                                    <% } %>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <p class="text-center">No hay vendedores registrados todavía.</p>
+            <% } %>
+        </section>
+         <%# --- Fin Tabla Vendedores --- %>
+    </div>
+
+</body>
+</html>

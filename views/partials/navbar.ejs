@@ -16,7 +16,7 @@
           <span>Dashboard</span>
         </a>
         <a href="/index">
-          <i class="fas fa-user"></i>
+          <i class="fas fa-user-plus"></i> <!-- Cambié el icono a user-plus para "Agregar Cuenta" -->
           <span>Agregar Cuenta</span>
         </a>
         <a href="/onboarding">
@@ -24,7 +24,7 @@
           <span>On Boarding</span>
         </a>
         <a href="/nicho">
-          <i class="fas fa-arrow-right"></i>
+          <i class="fas fa-bullseye"></i> <!-- Cambié el icono a bullseye para "Nicho" -->
           <span>Nicho</span>
         </a>
         <!-- <a href="/flujo">
@@ -32,19 +32,31 @@
           <span>Flujo</span>
         </a> -->
 
-        <% if (user && user.username === 'admin') { %>
+        <%# --- ENLACE A VENDEDORES (Visible para Admin, Auditoria, CRO) --- %>
+        <% if (user && (user.role === 'admin' || user.role === 'auditoria' || user.role === 'cro')) { %>
+          <a href="/vendedores">
+            <i class="fas fa-briefcase"></i> <!-- Icono para Vendedores -->
+            <span>Vendedores</span>
+          </a>
+        <% } %>
+        <%# --- FIN ENLACE VENDEDORES --- %>
+
+
+        <%# Enlace a Leads (Solo Admin - Mantenido como estaba) %>
+        <% if (user && user.role === 'admin') { %> <%# Cambiado de user.username a user.role %>
           <a href="/leads">
-            <i class="fas fa-users"></i>
+            <i class="fas fa-star"></i> <!-- Cambié el icono a star para "Leads" -->
             <span>Leads</span>
           </a>
         <% } %>
 
-        <a href="/logout">
+        <a href="/logout" class="logout-link"> <!-- Añadí una clase por si quieres estilizarlo diferente -->
           <i class="fas fa-sign-out-alt"></i>
-          <span>Logout</span>
+          <span>Logout (<%= user ? user.username : 'Usuario' %>)</span> <!-- Muestra username si está logueado -->
         </a>
       </div>
     </div>
   </div>
 </div>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 <script></script>

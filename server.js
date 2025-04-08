@@ -256,6 +256,171 @@ app.get('/resumen', isAuthenticated, async (req, res) => {
   }
 });
 
+app.get('/vendedores', isAuthenticated, async (req, res) => {
+  const userRole = req.session.user.role; // Obtener rol para pasarlo a la vista
+
+  try {
+      // 1. Obtener vendedores desde PostgreSQL
+      const vendedoresResult = await pool.query('SELECT * FROM vendedores ORDER BY nombre ASC');
+      const vendedores = vendedoresResult.rows;
+
+      // 2. Obtener todos los usernames asignados únicos para la consulta a MongoDB
+      let allAssignedUsernames = [];
+      vendedores.forEach(v => {
+          // Asegurarse que cuentas_asignadas es un array antes de intentar acceder
+          if (v.cuentas_asignadas && Array.isArray(v.cuentas_asignadas)) {
+              allAssignedUsernames.push(...v.cuentas_asignadas);
+          }
+      });
+      allAssignedUsernames = [...new Set(allAssignedUsernames)]; // Eliminar duplicados
+
+      // 3. Consultar MongoDB para obtener recuentos de mensajes por cuenta
+      let messageCounts = {}; // { 'username1': count, 'username2': count }
+      if (allAssignedUsernames.length > 0) {
+          const client = new MongoClient(mongoUri, { useUnifiedTopology: true });
+          try {
+              await client.connect();
+              const db = client.db(mongoDbName);
+              const collection = db.collection('historial_acciones');
+
+              const pipeline = [
+                  {
+                      $match: {
+                          username: { $in: allAssignedUsernames },
+                          accion: { $regex: /mensaje/i } // Busca acciones que contengan 'mensaje'
+                          // Podrías añadir filtros de fecha si son relevantes aquí
+                      }
+                  },
+                  {
+                      $group: {
+                          _id: "$username", // Agrupa por username
+                          count: { $sum: 1 }   // Cuenta las ocurrencias
+                      }
+                  },
+                  { $project: { _id: 0, username: "$_id", count: 1 } }
+              ];
+
+              const results = await collection.aggregate(pipeline).toArray();
+              results.forEach(item => {
+                  messageCounts[item.username] = item.count;
+              });
+          } finally {
+              await client.close(); // Asegura que el cliente se cierre
+          }
+      }
+
+      // 4. Renderizar la vista pasando todos los datos necesarios
+      res.render('vendedores', { // Usaremos una única vista 'vendedores.ejs'
+          vendedores: vendedores,
+          messageCounts: messageCounts,
+          user: req.session.user, // Pasamos el objeto user completo (incluye rol)
+          success: req.query.success, // Para mensajes de feedback
+          error: req.query.error     // Para mensajes de feedback
+      });
+
+  } catch (error) {
+      console.error("Error al obtener datos de vendedores:", error);
+      res.status(500).render('error', { // Una vista genérica de error
+          message: 'Error al cargar la página de vendedores',
+          error: error,
+          user: req.session.user // Pasa el usuario también a la vista de error
+      });
+  }
+});
+
+// --- Endpoint POST para Crear/Actualizar Vendedor ---
+// Protegido para que solo admin y auditoria puedan enviar datos.
+// Usaremos el middleware checkRole aquí, ya que es una acción de escritura.
+
+// --- Endpoint POST para Crear/Actualizar Vendedor ---
+// La autenticación general se hace con isAuthenticated
+// La verificación de ROL se hace DENTRO de la función
+app.post('/vendedores', isAuthenticated, async (req, res) => { // Quitamos checkRole de aquí
+
+  // ---> INICIO: Verificación de Rol Interna <---
+  const userRole = req.session.user.role;
+  if (userRole !== 'admin' && userRole !== 'auditoria') {
+      // Si el rol NO es admin NI auditoria, no permitir la acción
+      console.warn(`Intento no autorizado de POST /vendedores por usuario ${req.session.user.username} con rol ${userRole}`);
+      // Puedes enviar un error 403 (Prohibido) o redirigir
+      // Opción 1: Enviar 403
+       return res.status(403).render('error', {
+           message: 'Acceso Denegado',
+           error: { status: 403, stack: 'No tienes permiso para realizar esta acción.'},
+           user: req.session.user // Pasa el usuario a la vista de error
+       });
+      // Opción 2: Redirigir con mensaje de error (menos informativo sobre el porqué)
+      // return res.redirect('/vendedores?error=No tienes permiso para realizar esta acción');
+  }
+  // ---> FIN: Verificación de Rol Interna <---
+
+  // El resto de tu código para manejar el POST sigue aquí...
+  const {
+      vendedor_id,
+      nombre,
+      // ... otros campos ...
+      manager_asignado
+  } = req.body;
+
+  if (!nombre) {
+    return res.redirect('/vendedores?error=El nombre del vendedor es obligatorio');
+  }
+
+  // ... (lógica para procesar cuentas_asignadas) ...
+  let cuentasArray = [];
+  const cuentas_asignadas = req.body.cuentas_asignadas; // Asegúrate de obtenerlo del body
+   if (cuentas_asignadas && typeof cuentas_asignadas === 'string') {
+        cuentasArray = cuentas_asignadas.split(',')
+                                     .map(cuenta => cuenta.trim().toLowerCase())
+                                     .filter(cuenta => cuenta !== '');
+   } else if (Array.isArray(cuentas_asignadas)) {
+        cuentasArray = cuentas_asignadas.filter(cuenta => typeof cuenta === 'string' && cuenta.trim() !== '').map(c => c.toLowerCase());
+   }
+  const cuentasJson = JSON.stringify(cuentasArray);
+
+  // ... (lógica para convertir otros campos: cumplimiento, objetivo, ingreso) ...
+  const cumplimiento = parseFloat(req.body.porcentaje_cumplimiento) || 0.00;
+  const objetivo = parseInt(req.body.objetivo_mensual, 10) || 0;
+  const ingreso = req.body.fecha_ingreso || null;
+  const estado = req.body.estado || 'activo';
+  const notas_auditoria = req.body.notas_auditoria || null;
+
+
+  try {
+      if (vendedor_id) {
+          // Actualizar
+           const queryText = `
+              UPDATE vendedores SET
+                  nombre = $1, cuentas_asignadas = $2, porcentaje_cumplimiento = $3, fecha_ingreso = $4,
+                  estado = $5, notas_auditoria = $6, objetivo_mensual = $7, manager_asignado = $8,
+                  ultimo_seguimiento = CURRENT_TIMESTAMP
+              WHERE id = $9;
+          `;
+          await pool.query(queryText, [
+              nombre, cuentasJson, cumplimiento, ingreso, estado, notas_auditoria,
+              objetivo, manager_asignado, vendedor_id
+          ]);
+          res.redirect('/vendedores?success=Vendedor actualizado correctamente');
+      } else {
+          // Crear
+          const queryText = `
+              INSERT INTO vendedores (
+                  nombre, cuentas_asignadas, porcentaje_cumplimiento, fecha_ingreso,
+                  estado, notas_auditoria, objetivo_mensual, manager_asignado
+              ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;
+          `;
+           await pool.query(queryText, [
+              nombre, cuentasJson, cumplimiento, ingreso, estado, notas_auditoria,
+              objetivo, manager_asignado
+           ]);
+           res.redirect('/vendedores?success=Vendedor agregado correctamente');
+      }
+  } catch (error) {
+      console.error("Error al guardar vendedor:", error);
+      res.redirect(`/vendedores?error=Error al guardar los datos: ${error.message}`);
+  }
+});
+
 
 // Endpoint para obtener datos del gráfico
 app.get('/resumen/data', isAuthenticated, async (req, res) => {
