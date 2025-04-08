@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HUNTER - Gestión de Vendedores y Resumen</title>
+    <title>HUNTER - Gestión de auditoria y Resumen</title>
     <!-- FontAwesome y Google Fonts (Poppins) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -68,7 +68,7 @@
         <!-- ============================================= -->
         <div class="vendedor-section-header">
              <div class="header-title-button">
-                <h2><i class="fas fa-id-card-alt icon-header"></i> Vendedores Individuales</h2>
+                <h2><i class="fas fa-id-card-alt icon-header"></i> Auditoria Individuales</h2>
                 <%# Verificar user y rol antes de mostrar el botón %>
                 <% if (typeof user !== 'undefined' && user && (user.role === 'admin' || user.role === 'auditoria')) { %>
                     <button class="btn btn-primary btn-add-vendedor" onclick="openVendedorModal()">
@@ -165,7 +165,7 @@
          <div class="modal-content" id="vendedorModalContent">
             <form action="/vendedores" method="POST" id="vendedor-form">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="vendedorModalLabel">Agregar Vendedor</h5>
+                    <h5 class="modal-title" id="vendedorModalLabel">Agregar Cliente</h5>
                     <button type="button" class="modal-close-btn" onclick="closeVendedorModal()" title="Cerrar">×</button>
                 </div>
                 <div class="modal-body custom-scrollbar">
