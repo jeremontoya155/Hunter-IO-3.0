@@ -4,190 +4,178 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>HUNTER - Gestión de Vendedores</title>
-    <!-- Tus enlaces CSS (Poppins, FontAwesome, navbar.css, scrollbar.css) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tus CSS (Poppins, FontAwesome, Navbar, Scrollbar) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/navbar.css" />
     <link rel="stylesheet" href="/static/css/scrollbar.css" />
-    <!-- CSS específico para esta página -->
+    <!-- CSS específico para Vendedores (Actualizado para cards y modal simple) -->
     <link rel="stylesheet" href="/static/css/vendedores.css" />
-    <script defer src="/static/js/navbar.js"></script>
-    <!-- Script opcional para editar (ver más abajo) -->
-    <script defer src="/static/js/vendedores_edit.js"></script>
 </head>
 <body>
-    <%- include('partials/navbar') %>
+    <%- include('partials/navbar') %> <%# Asumo que navbar sí es un parcial que funciona %>
 
-    <div class="vendedor-container">
-        <h1>Gestión de Vendedores</h1>
-        <p class="role-indicator">Accediendo como: <span class="role-tag role-<%= user.role %>"><%= user.role %></span></p>
+    <div class="vendedor-main-container">
+        <div class="vendedor-header">
+            <h1>Gestión de Vendedores</h1>
+            <% if (user.role === 'admin' || user.role === 'auditoria') { %>
+                <button class="btn btn-primary" onclick="openVendedorModal()"> <%# Llama a JS para abrir modal %>
+                    <i class="fas fa-user-plus"></i> Agregar Vendedor
+                </button>
+            <% } %>
+        </div>
 
-        <% if (success) { %>
-            <div class="alert alert-success" role="alert"><%= success %></div>
-        <% } %>
-        <% if (error) { %>
-            <div class="alert alert-danger" role="alert"><%= error %></div>
-        <% } %>
+        <% if (success) { %><div class="alert alert-success" role="alert"><%= success %></div><% } %>
+        <% if (error) { %><div class="alert alert-danger" role="alert"><%= error %></div><% } %>
 
-        <%# --- Sección de Formulario (Visible solo para Admin y Auditoría) --- %>
-        <% if (user.role === 'admin' || user.role === 'auditoria') { %>
-            <section class="form-section card" id="form-container">
-                <%# El título cambiará si estamos editando %>
-                <h2 id="form-title"><i class="fas fa-user-plus"></i> Agregar Nuevo Vendedor</h2>
-                <form action="/vendedores" method="POST" id="vendedor-form">
-                    <%# Campo oculto para ID en caso de edición %>
+        <!-- Contenedor de Cards -->
+        <div class="vendedor-cards-grid">
+            <% if (vendedores && vendedores.length > 0) { %>
+                <% vendedores.forEach(vendedor => { %>
+                    <div class="vendedor-card" id="vendedor-card-<%= vendedor.id %>" data-vendedor='<%- JSON.stringify(vendedor) %>'>
+                        <div class="card-header">
+                             <span class="tag tag-estado tag-estado-<%= vendedor.estado %>"><%= vendedor.estado %></span>
+                            <h3 class="vendedor-nombre"><%= vendedor.nombre %></h3>
+                            <% if (vendedor.manager_asignado) { %><small class="manager">Manager: <%= vendedor.manager_asignado %></small><% } %>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-section">
+                                <h4>Cuentas Asignadas (<%= vendedor.num_cuentas %>)</h4>
+                                <% if (vendedor.cuentasDetalle && vendedor.cuentasDetalle.length > 0) { %>
+                                    <ul class="account-list">
+                                        <% vendedor.cuentasDetalle.forEach(cuenta => { %>
+                                            <li>
+                                                <span class="tag tag-cuenta"><%= cuenta.nombre %></span>
+                                                <span class="account-stats" title="Hoy (Msgs/Rpts) / Histórico (Msgs)">
+                                                     (<%= cuenta.mensajesHoy %>/<%= cuenta.respuestasHoy %>/<%= cuenta.mensajesMongoTotal %>)
+                                                </span>
+                                            </li>
+                                        <% }); %>
+                                    </ul>
+                                <% } else { %><p><small>Ninguna.</small></p><% } %>
+                            </div>
+                            <div class="card-section card-stats">
+                                <div><label>Desempeño Hoy:</label><span><%= vendedor.totalMensajesHoy %> Msgs / <%= vendedor.totalRespuestasHoy %> Rpts</span></div>
+                                <div><label>% Cump:</label><div class="progress-bar-container" title="<%= parseFloat(vendedor.porcentaje_cumplimiento || 0).toFixed(1) %>%"><div class="progress-bar" style="width: <%= parseFloat(vendedor.porcentaje_cumplimiento || 0) %>%;"><small><%= parseFloat(vendedor.porcentaje_cumplimiento || 0).toFixed(0) %>%</small></div></div></div>
+                                <div><label>Objetivo:</label><span><%= vendedor.objetivo_mensual || 'N/A' %></span></div>
+                                <% if (vendedor.fecha_ingreso) { %><div><label>Ingreso:</label><span><%= new Date(vendedor.fecha_ingreso).toLocaleDateString() %></span></div><% } %>
+                            </div>
+                            <% if (user.role === 'admin' || user.role === 'auditoria') { %>
+                                <div class="card-section"><label>Notas:</label><p class="notas"><%= vendedor.notas_auditoria || '-' %></p></div>
+                            <% } %>
+                        </div>
+                        <div class="card-footer">
+                             <% if (user.role === 'admin' || user.role === 'auditoria') { %>
+                                <button class="btn btn-sm btn-secondary" onclick="openDesempenoModal('<%= vendedor.id %>')"><i class="fas fa-calendar-plus"></i> Registrar Hoy</button>
+                                <button class="btn btn-sm btn-warning" onclick="openVendedorModal('<%= vendedor.id %>')"><i class="fas fa-edit"></i> Editar Perfil</button>
+                            <% } %>
+                            <a href="/vendedores/<%= vendedor.id %>/historial" class="btn btn-sm btn-info"><i class="fas fa-history"></i> Historial</a>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %><p>No hay vendedores registrados.</p><% } %>
+        </div>
+    </div> <%# Fin vendedor-main-container %>
+
+    <!-- ============================================= -->
+    <!--         MODAL AGREGAR/EDITAR VENDEDOR         -->
+    <!-- ============================================= -->
+    <div id="vendedorModalOverlay" class="modal-overlay"> <%# Div que oscurece el fondo %>
+        <div class="modal-content" id="vendedorModalContent">
+            <form action="/vendedores" method="POST" id="vendedor-form">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="vendedorModalLabel">Agregar Vendedor</h5>
+                    <button type="button" class="modal-close-btn" onclick="closeVendedorModal()">×</button> <%# Botón de cerrar %>
+                </div>
+                <div class="modal-body">
                     <input type="hidden" id="vendedor_id" name="vendedor_id">
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="nombre">Nombre del Vendedor:</label>
-                            <input type="text" id="nombre" name="nombre" required>
+                            <label for="modal_nombre">Nombre Vendedor</label>
+                            <input type="text" id="modal_nombre" name="nombre" required>
                         </div>
                         <div class="form-group">
-                            <label for="manager_asignado">Manager/Auditor Asignado:</label>
-                            <input type="text" id="manager_asignado" name="manager_asignado">
+                             <label for="modal_manager_asignado">Manager Asignado</label>
+                            <input type="text" id="modal_manager_asignado" name="manager_asignado">
                         </div>
                     </div>
-
                     <div class="form-group">
-                        <label for="cuentas_asignadas">Cuentas de Instagram Asignadas (separadas por coma):</label>
-                        <input type="text" id="cuentas_asignadas" name="cuentas_asignadas" placeholder="ej: usuario1, usuario_dos">
-                        <small>Introduce los nombres de usuario exactos.</small>
+                        <label for="modal_cuentas_asignadas">Cuentas Instagram (separadas por coma)</label>
+                        <input type="text" id="modal_cuentas_asignadas" name="cuentas_asignadas" placeholder="usuario1, usuario2">
                     </div>
-
                     <div class="form-row">
-                        <div class="form-group">
-                            <label for="porcentaje_cumplimiento">Porcentaje Cumplimiento (%):</label>
-                            <input type="number" id="porcentaje_cumplimiento" name="porcentaje_cumplimiento" min="0" max="100" step="0.01" value="0.00">
-                        </div>
-                        <div class="form-group">
-                            <label for="objetivo_mensual">Objetivo Mensual (ej: # mensajes):</label>
-                            <input type="number" id="objetivo_mensual" name="objetivo_mensual" min="0" step="1" value="0">
-                        </div>
+                         <div class="form-group">
+                            <label for="modal_porcentaje_cumplimiento">% Cumplimiento</label>
+                            <input type="number" id="modal_porcentaje_cumplimiento" name="porcentaje_cumplimiento" min="0" max="100" step="0.01" value="0.00">
+                         </div>
+                         <div class="form-group">
+                             <label for="modal_objetivo_mensual">Objetivo Mensual</label>
+                            <input type="number" id="modal_objetivo_mensual" name="objetivo_mensual" min="0" step="1" value="0">
+                         </div>
                     </div>
-
-                     <div class="form-row">
-                        <div class="form-group">
-                            <label for="fecha_ingreso">Fecha de Ingreso:</label>
-                            <input type="date" id="fecha_ingreso" name="fecha_ingreso">
-                        </div>
-                        <div class="form-group">
-                            <label for="estado">Estado:</label>
-                            <select id="estado" name="estado">
+                    <div class="form-row">
+                         <div class="form-group">
+                             <label for="modal_fecha_ingreso">Fecha Ingreso</label>
+                            <input type="date" id="modal_fecha_ingreso" name="fecha_ingreso">
+                         </div>
+                         <div class="form-group">
+                             <label for="modal_estado">Estado</label>
+                            <select id="modal_estado" name="estado">
                                 <option value="activo" selected>Activo</option>
                                 <option value="inactivo">Inactivo</option>
                                 <option value="prueba">En Prueba</option>
                                 <option value="baja">De Baja</option>
                             </select>
-                        </div>
+                         </div>
                     </div>
-
                     <div class="form-group">
-                        <label for="notas_auditoria">Notas de Auditoría / Seguimiento:</label>
-                        <textarea id="notas_auditoria" name="notas_auditoria" rows="4"></textarea>
+                        <label for="modal_notas_auditoria">Notas Auditoría</label>
+                        <textarea id="modal_notas_auditoria" name="notas_auditoria" rows="3"></textarea>
                     </div>
-
-                    <div class="form-actions">
-                         <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar Vendedor</button>
-                         <%# Botón para cancelar edición %>
-                         <button type="button" class="btn btn-secondary" id="cancel-edit-btn" style="display: none;"><i class="fas fa-times"></i> Cancelar Edición</button>
-                    </div>
-                </form>
-            </section>
-        <% } %> <%# --- Fin Sección Formulario --- %>
-
-
-        <%# --- Tabla de Vendedores (Visible para Admin, Auditoría y CRO) --- %>
-        <section class="table-section card">
-            <h2><i class="fas fa-users"></i> Vendedores Registrados</h2>
-            <% if (vendedores && vendedores.length > 0) { %>
-                <div class="table-wrapper">
-                     <table>
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Cuentas Asignadas</th>
-                                <th>Mensajes/Cuenta</th>
-                                <th>% Cumplimiento</th>
-                                <th>Objetivo Mensual</th>
-                                <th>Estado</th>
-                                <th>Fecha Ingreso</th>
-                                <th>Manager</th>
-                                <% if (user.role === 'admin' || user.role === 'auditoria') { %>
-                                  <th>Notas Auditoría</th>
-                                  <th>Últ. Seguimiento</th>
-                                  <th>Acciones</th> <%# Columna de acciones solo para admin/auditor %>
-                                <% } %>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% vendedores.forEach(vendedor => { %>
-                                <tr id="vendedor-row-<%= vendedor.id %>" data-vendedor='<%= JSON.stringify(vendedor) %>'> <%# Guardamos datos para JS %>
-                                    <td><%= vendedor.nombre %></td>
-                                    <td>
-                                        <% if (vendedor.cuentas_asignadas && vendedor.cuentas_asignadas.length > 0) { %>
-                                            <% vendedor.cuentas_asignadas.forEach((cuenta) => { %>
-                                                <span class="tag tag-cuenta"><%= cuenta %></span>
-                                            <% }); %>
-                                        <% } else { %>
-                                            <span class="tag tag-muted">Ninguna</span>
-                                        <% } %>
-                                    </td>
-                                    <td>
-                                        <% let totalMensajesVendedor = 0; %>
-                                        <% if (vendedor.cuentas_asignadas && vendedor.cuentas_asignadas.length > 0) { %>
-                                           <ul class="list-unstyled">
-                                           <% vendedor.cuentas_asignadas.forEach(cuenta => { %>
-                                                <% const count = messageCounts[cuenta.toLowerCase()] || 0; %> <%# Asegura lowercase lookup %>
-                                                <% totalMensajesVendedor += count; %>
-                                               <li><%= cuenta %>: <span class="count"><%= count %></span></li>
-                                           <% }); %>
-                                            <li><strong>Total: <span class="count"><%= totalMensajesVendedor %></span></strong></li>
-                                           </ul>
-                                       <% } else { %>
-                                           N/A
-                                       <% } %>
-                                    </td>
-                                    <td>
-                                        <div class="progress-bar-container">
-                                          <div class="progress-bar" style="width: <%= vendedor.porcentaje_cumplimiento || 0 %>%;">
-                                            <%= parseFloat(vendedor.porcentaje_cumplimiento || 0).toFixed(1) %>%                                          </div>
-                                        </div>
-                                      </td>
-                                    <td><%= vendedor.objetivo_mensual || 'N/A' %></td>
-                                    <td><span class="tag tag-estado tag-estado-<%= vendedor.estado %>"><%= vendedor.estado %></span></td>
-                                    <td><%= vendedor.fecha_ingreso ? new Date(vendedor.fecha_ingreso).toLocaleDateString() : 'N/A' %></td>
-                                    <td><%= vendedor.manager_asignado || 'N/A' %></td>
-
-                                     <%# Columnas y acciones solo para Admin y Auditoría %>
-                                     <% if (user.role === 'admin' || user.role === 'auditoria') { %>
-                                        <td class="notas-col"><%= vendedor.notas_auditoria ? vendedor.notas_auditoria.substring(0, 50) + '...' : '' %></td>
-                                        <td><%= vendedor.ultimo_seguimiento ? new Date(vendedor.ultimo_seguimiento).toLocaleString() : 'Nunca' %></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-warning edit-btn" data-id="<%= vendedor.id %>" title="Editar Vendedor">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <%# Podrías añadir un botón de eliminar aquí, usualmente requiere confirmación JS %>
-                                            <!--
-                                            <button class="btn btn-sm btn-danger delete-btn" data-id="<%= vendedor.id %>" title="Eliminar Vendedor">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                            -->
-                                        </td>
-                                    <% } %>
-                                </tr>
-                            <% }); %>
-                        </tbody>
-                    </table>
                 </div>
-            <% } else { %>
-                <p class="text-center">No hay vendedores registrados todavía.</p>
-            <% } %>
-        </section>
-         <%# --- Fin Tabla Vendedores --- %>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeVendedorModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
     </div>
+
+    <!-- ============================================= -->
+    <!--      MODAL REGISTRAR DESEMPEÑO DIARIO         -->
+    <!-- ============================================= -->
+    <div id="desempenoModalOverlay" class="modal-overlay">
+        <div class="modal-content" id="desempenoModalContent">
+            <form id="desempeno-form" onsubmit="submitDesempeno(event)"> <%# Se envía con JS %>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="desempenoModalLabel">Registrar Desempeño Diario</h5>
+                     <button type="button" class="modal-close-btn" onclick="closeDesempenoModal()">×</button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="desempeno_vendedor_id" name="vendedor_id">
+                    <div class="form-group">
+                        <label for="desempeno_fecha">Fecha</label>
+                        <input type="date" id="desempeno_fecha" name="fecha" value="<%= today %>" required>
+                    </div>
+                    <hr>
+                    <div id="desempeno-accounts-container">
+                        <!-- Inputs generados por JS -->
+                        <p><small>Seleccione un vendedor para cargar cuentas.</small></p>
+                    </div>
+                    <div id="desempeno-feedback" class="feedback-message"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeDesempenoModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Desempeño</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script defer src="/static/js/navbar.js"></script> <%# Asumo que este funciona %>
+    <script defer src="/static/js/vendedores_manager.js"></script> <%# El JS que manejará los modales %>
 
 </body>
 </html>

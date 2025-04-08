@@ -256,171 +256,269 @@ app.get('/resumen', isAuthenticated, async (req, res) => {
   }
 });
 
+// --- GET /vendedores (Modificada para Cards y Datos Agregados) ---
 app.get('/vendedores', isAuthenticated, async (req, res) => {
-  const userRole = req.session.user.role; // Obtener rol para pasarlo a la vista
-
   try {
-      // 1. Obtener vendedores desde PostgreSQL
-      const vendedoresResult = await pool.query('SELECT * FROM vendedores ORDER BY nombre ASC');
+      // 1. Obtener vendedores principales
+      const vendedoresResult = await pool.query(`
+          SELECT v.*,
+                 COALESCE(jsonb_array_length(v.cuentas_asignadas), 0) as num_cuentas
+          FROM vendedores v ORDER BY v.nombre ASC
+      `);
       const vendedores = vendedoresResult.rows;
 
-      // 2. Obtener todos los usernames asignados únicos para la consulta a MongoDB
+      // 2. Obtener desempeño de HOY para todos los vendedores y sus cuentas
+      const hoy = new Date().toISOString().slice(0, 10); // Formato YYYY-MM-DD
+      const desempenoHoyResult = await pool.query(`
+          SELECT vendedor_id, insta_username, mensajes_enviados, respuestas_recibidas
+          FROM vendedor_desempeno_diario
+          WHERE fecha = $1
+      `, [hoy]);
+      const desempenoHoyMap = desempenoHoyResult.rows.reduce((map, item) => {
+          if (!map[item.vendedor_id]) map[item.vendedor_id] = {};
+          map[item.vendedor_id][item.insta_username] = {
+              mensajes: item.mensajes_enviados,
+              respuestas: item.respuestas_recibidas
+          };
+          return map;
+      }, {}); // Ej: { vendedorId: { 'cuenta1': {mensajes: 5, respuestas: 1}, 'cuenta2': {...} } }
+
+      // 3. (Opcional pero útil) Obtener total de mensajes de MongoDB para cada cuenta asignada
       let allAssignedUsernames = [];
       vendedores.forEach(v => {
-          // Asegurarse que cuentas_asignadas es un array antes de intentar acceder
           if (v.cuentas_asignadas && Array.isArray(v.cuentas_asignadas)) {
               allAssignedUsernames.push(...v.cuentas_asignadas);
           }
       });
-      allAssignedUsernames = [...new Set(allAssignedUsernames)]; // Eliminar duplicados
+      allAssignedUsernames = [...new Set(allAssignedUsernames.map(u => u.toLowerCase()))];
 
-      // 3. Consultar MongoDB para obtener recuentos de mensajes por cuenta
-      let messageCounts = {}; // { 'username1': count, 'username2': count }
+      let mongoMessageCounts = {};
       if (allAssignedUsernames.length > 0) {
-          const client = new MongoClient(mongoUri, { useUnifiedTopology: true });
-          try {
+           const client = new MongoClient(mongoUri, { useUnifiedTopology: true });
+           try {
               await client.connect();
               const db = client.db(mongoDbName);
               const collection = db.collection('historial_acciones');
-
               const pipeline = [
-                  {
-                      $match: {
-                          username: { $in: allAssignedUsernames },
-                          accion: { $regex: /mensaje/i } // Busca acciones que contengan 'mensaje'
-                          // Podrías añadir filtros de fecha si son relevantes aquí
-                      }
-                  },
-                  {
-                      $group: {
-                          _id: "$username", // Agrupa por username
-                          count: { $sum: 1 }   // Cuenta las ocurrencias
-                      }
-                  },
+                  { $match: { username: { $in: allAssignedUsernames }, accion: { $regex: /mensaje/i } } },
+                  { $group: { _id: { $toLower: "$username" }, count: { $sum: 1 } } }, // Agrupa por username en minúsculas
                   { $project: { _id: 0, username: "$_id", count: 1 } }
               ];
-
               const results = await collection.aggregate(pipeline).toArray();
-              results.forEach(item => {
-                  messageCounts[item.username] = item.count;
-              });
-          } finally {
-              await client.close(); // Asegura que el cliente se cierre
-          }
+              results.forEach(item => { mongoMessageCounts[item.username] = item.count; });
+           } finally { await client.close(); }
       }
 
-      // 4. Renderizar la vista pasando todos los datos necesarios
-      res.render('vendedores', { // Usaremos una única vista 'vendedores.ejs'
-          vendedores: vendedores,
-          messageCounts: messageCounts,
-          user: req.session.user, // Pasamos el objeto user completo (incluye rol)
-          success: req.query.success, // Para mensajes de feedback
-          error: req.query.error     // Para mensajes de feedback
+      // 4. Combinar datos para la vista
+      const vendedoresParaVista = vendedores.map(vendedor => {
+          let cuentasConDatos = [];
+          let totalMensajesHoy = 0;
+          let totalRespuestasHoy = 0;
+          let totalMensajesMongo = 0;
+
+          if (vendedor.cuentas_asignadas && Array.isArray(vendedor.cuentas_asignadas)) {
+              cuentasConDatos = vendedor.cuentas_asignadas.map(cuenta => {
+                  const cuentaLower = cuenta.toLowerCase();
+                  const desempenoCuentaHoy = desempenoHoyMap[vendedor.id]?.[cuentaLower] || { mensajes: 0, respuestas: 0 };
+                  const mensajesMongo = mongoMessageCounts[cuentaLower] || 0;
+
+                  totalMensajesHoy += desempenoCuentaHoy.mensajes;
+                  totalRespuestasHoy += desempenoCuentaHoy.respuestas;
+                  totalMensajesMongo += mensajesMongo;
+
+                  return {
+                      nombre: cuenta,
+                      mensajesHoy: desempenoCuentaHoy.mensajes,
+                      respuestasHoy: desempenoCuentaHoy.respuestas,
+                      mensajesMongoTotal: mensajesMongo
+                  };
+              });
+          }
+
+          return {
+              ...vendedor, // Datos principales del vendedor
+              num_cuentas: vendedor.num_cuentas || 0,
+              cuentasDetalle: cuentasConDatos, // Array con detalle por cuenta
+              totalMensajesHoy,
+              totalRespuestasHoy,
+              totalMensajesMongo
+          };
+      });
+
+
+      res.render('vendedores', { // Renderiza la misma vista, pero ahora preparada para cards
+          vendedores: vendedoresParaVista,
+          user: req.session.user,
+          success: req.query.success,
+          error: req.query.error,
+          today: hoy // Pasamos la fecha de hoy para el formulario de desempeño
       });
 
   } catch (error) {
-      console.error("Error al obtener datos de vendedores:", error);
-      res.status(500).render('error', { // Una vista genérica de error
-          message: 'Error al cargar la página de vendedores',
-          error: error,
-          user: req.session.user // Pasa el usuario también a la vista de error
-      });
+      console.error("Error en GET /vendedores:", error);
+      res.status(500).render('error', { message: 'Error al cargar vendedores', error, user: req.session.user });
   }
 });
 
-// --- Endpoint POST para Crear/Actualizar Vendedor ---
-// Protegido para que solo admin y auditoria puedan enviar datos.
-// Usaremos el middleware checkRole aquí, ya que es una acción de escritura.
-
-// --- Endpoint POST para Crear/Actualizar Vendedor ---
-// La autenticación general se hace con isAuthenticated
-// La verificación de ROL se hace DENTRO de la función
-app.post('/vendedores', isAuthenticated, async (req, res) => { // Quitamos checkRole de aquí
-
-  // ---> INICIO: Verificación de Rol Interna <---
+// --- POST /vendedores (Para Crear/Editar Vendedor - Desde Modal) ---
+app.post('/vendedores', isAuthenticated, async (req, res) => {
+  // Verificación de Rol Interna (Admin/Auditoría)
   const userRole = req.session.user.role;
   if (userRole !== 'admin' && userRole !== 'auditoria') {
-      // Si el rol NO es admin NI auditoria, no permitir la acción
-      console.warn(`Intento no autorizado de POST /vendedores por usuario ${req.session.user.username} con rol ${userRole}`);
-      // Puedes enviar un error 403 (Prohibido) o redirigir
-      // Opción 1: Enviar 403
-       return res.status(403).render('error', {
-           message: 'Acceso Denegado',
-           error: { status: 403, stack: 'No tienes permiso para realizar esta acción.'},
-           user: req.session.user // Pasa el usuario a la vista de error
-       });
-      // Opción 2: Redirigir con mensaje de error (menos informativo sobre el porqué)
-      // return res.redirect('/vendedores?error=No tienes permiso para realizar esta acción');
+      return res.status(403).send('Acción no permitida para tu rol.'); // O redirigir con error
   }
-  // ---> FIN: Verificación de Rol Interna <---
 
-  // El resto de tu código para manejar el POST sigue aquí...
+  // Extraer datos del body (del modal)
   const {
-      vendedor_id,
-      nombre,
-      // ... otros campos ...
-      manager_asignado
+      vendedor_id, nombre, cuentas_asignadas, porcentaje_cumplimiento, fecha_ingreso,
+      estado, notas_auditoria, objetivo_mensual, manager_asignado
   } = req.body;
 
-  if (!nombre) {
-    return res.redirect('/vendedores?error=El nombre del vendedor es obligatorio');
-  }
-
-  // ... (lógica para procesar cuentas_asignadas) ...
+  // ... (Validación y procesamiento de datos igual que antes) ...
+  if (!nombre) return res.redirect('/vendedores?error=El nombre es obligatorio');
   let cuentasArray = [];
-  const cuentas_asignadas = req.body.cuentas_asignadas; // Asegúrate de obtenerlo del body
+  // ... (procesar cuentas_asignadas a cuentasJson) ...
    if (cuentas_asignadas && typeof cuentas_asignadas === 'string') {
-        cuentasArray = cuentas_asignadas.split(',')
-                                     .map(cuenta => cuenta.trim().toLowerCase())
-                                     .filter(cuenta => cuenta !== '');
-   } else if (Array.isArray(cuentas_asignadas)) {
-        cuentasArray = cuentas_asignadas.filter(cuenta => typeof cuenta === 'string' && cuenta.trim() !== '').map(c => c.toLowerCase());
+        cuentasArray = cuentas_asignadas.split(',').map(c => c.trim().toLowerCase()).filter(c => c !== '');
    }
   const cuentasJson = JSON.stringify(cuentasArray);
-
-  // ... (lógica para convertir otros campos: cumplimiento, objetivo, ingreso) ...
-  const cumplimiento = parseFloat(req.body.porcentaje_cumplimiento) || 0.00;
-  const objetivo = parseInt(req.body.objetivo_mensual, 10) || 0;
-  const ingreso = req.body.fecha_ingreso || null;
-  const estado = req.body.estado || 'activo';
-  const notas_auditoria = req.body.notas_auditoria || null;
-
+  const cumplimiento = parseFloat(porcentaje_cumplimiento) || 0.00;
+  const objetivo = parseInt(objetivo_mensual, 10) || 0;
+  const ingreso = fecha_ingreso || null;
 
   try {
-      if (vendedor_id) {
-          // Actualizar
-           const queryText = `
-              UPDATE vendedores SET
-                  nombre = $1, cuentas_asignadas = $2, porcentaje_cumplimiento = $3, fecha_ingreso = $4,
-                  estado = $5, notas_auditoria = $6, objetivo_mensual = $7, manager_asignado = $8,
-                  ultimo_seguimiento = CURRENT_TIMESTAMP
+      if (vendedor_id) { // Actualizar
+          const queryText = `
+              UPDATE vendedores SET nombre = $1, cuentas_asignadas = $2, porcentaje_cumplimiento = $3, fecha_ingreso = $4,
+              estado = $5, notas_auditoria = $6, objetivo_mensual = $7, manager_asignado = $8, updated_at = CURRENT_TIMESTAMP
               WHERE id = $9;
           `;
           await pool.query(queryText, [
               nombre, cuentasJson, cumplimiento, ingreso, estado, notas_auditoria,
               objetivo, manager_asignado, vendedor_id
           ]);
-          res.redirect('/vendedores?success=Vendedor actualizado correctamente');
-      } else {
-          // Crear
+          res.redirect('/vendedores?success=Vendedor actualizado');
+      } else { // Crear
           const queryText = `
-              INSERT INTO vendedores (
-                  nombre, cuentas_asignadas, porcentaje_cumplimiento, fecha_ingreso,
-                  estado, notas_auditoria, objetivo_mensual, manager_asignado
-              ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;
+              INSERT INTO vendedores (nombre, cuentas_asignadas, porcentaje_cumplimiento, fecha_ingreso, estado, notas_auditoria, objetivo_mensual, manager_asignado)
+              VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;
           `;
-           await pool.query(queryText, [
-              nombre, cuentasJson, cumplimiento, ingreso, estado, notas_auditoria,
-              objetivo, manager_asignado
-           ]);
-           res.redirect('/vendedores?success=Vendedor agregado correctamente');
+          await pool.query(queryText, [
+              nombre, cuentasJson, cumplimiento, ingreso, estado, notas_auditoria, objetivo, manager_asignado
+          ]);
+          res.redirect('/vendedores?success=Vendedor agregado');
       }
   } catch (error) {
-      console.error("Error al guardar vendedor:", error);
-      res.redirect(`/vendedores?error=Error al guardar los datos: ${error.message}`);
+      console.error("Error en POST /vendedores:", error);
+      res.redirect(`/vendedores?error=Error al guardar: ${error.message}`);
   }
 });
 
+// --- NUEVO: POST /vendedores/desempeno (Para Registrar Desempeño Diario) ---
+app.post('/vendedores/desempeno', isAuthenticated, async (req, res) => {
+  // Verificación de Rol (Admin/Auditoría pueden registrar)
+  const userRole = req.session.user.role;
+  if (userRole !== 'admin' && userRole !== 'auditoria') {
+      // Podrías devolver un JSON si lo llamas con AJAX
+      return res.status(403).json({ success: false, message: 'Acción no permitida.' });
+  }
+
+  const { vendedor_id, fecha, desempeno } = req.body; // 'desempeno' será un array de objetos: [{cuenta: 'user1', mensajes: 10, respuestas: 2}, ...]
+
+  if (!vendedor_id || !fecha || !Array.isArray(desempeno) || desempeno.length === 0) {
+      return res.status(400).json({ success: false, message: 'Datos incompletos.' });
+  }
+
+  const client = await pool.connect(); // Usar transacción
+  try {
+      await client.query('BEGIN'); // Iniciar transacción
+
+      for (const item of desempeno) {
+          const cuenta = item.cuenta?.trim().toLowerCase();
+          const mensajes = parseInt(item.mensajes, 10) || 0;
+          const respuestas = parseInt(item.respuestas, 10) || 0;
+
+          if (!cuenta) continue; // Saltar si no hay nombre de cuenta
+
+          const queryText = `
+              INSERT INTO vendedor_desempeno_diario (vendedor_id, fecha, insta_username, mensajes_enviados, respuestas_recibidas)
+              VALUES ($1, $2, $3, $4, $5)
+              ON CONFLICT (vendedor_id, fecha, insta_username) DO UPDATE SET
+                  mensajes_enviados = vendedor_desempeno_diario.mensajes_enviados + EXCLUDED.mensajes_enviados, -- O simplemente = EXCLUDED.mensajes_enviados si quieres sobreescribir
+                  respuestas_recibidas = vendedor_desempeno_diario.respuestas_recibidas + EXCLUDED.respuestas_recibidas, -- O = EXCLUDED.respuestas_recibidas
+                  updated_at = CURRENT_TIMESTAMP;
+          `;
+          // OJO: Aquí estoy SUMANDO los valores enviados a los existentes. Si quieres SOBREESCRIBIR, usa:
+          // mensajes_enviados = EXCLUDED.mensajes_enviados,
+          // respuestas_recibidas = EXCLUDED.respuestas_recibidas,
+          await client.query(queryText, [vendedor_id, fecha, cuenta, mensajes, respuestas]);
+      }
+
+      await client.query('COMMIT'); // Confirmar transacción
+      // Si usas AJAX, devuelve JSON. Si no, redirige.
+      res.json({ success: true, message: 'Desempeño registrado/actualizado.' });
+      // O redirigir: res.redirect('/vendedores?success=Desempeño registrado');
+
+  } catch (error) {
+      await client.query('ROLLBACK'); // Revertir en caso de error
+      console.error("Error en POST /vendedores/desempeno:", error);
+      res.status(500).json({ success: false, message: `Error al registrar desempeño: ${error.message}` });
+      // O redirigir: res.redirect(`/vendedores?error=Error al registrar desempeño`);
+  } finally {
+      client.release(); // Liberar cliente de la pool
+  }
+});
+
+
+// --- NUEVO: GET /vendedores/:id/historial ---
+app.get('/vendedores/:id/historial', isAuthenticated, async (req, res) => {
+  const vendedorId = req.params.id;
+  // Opcional: Verificar rol si solo admin/auditoria pueden ver historial
+  // const userRole = req.session.user.role;
+  // if (userRole !== 'admin' && userRole !== 'auditoria') {
+  //     return res.status(403).render('error', {message: 'Acceso denegado', error: {}, user: req.session.user});
+  // }
+
+  try {
+      // 1. Obtener datos del vendedor
+      const vendedorResult = await pool.query('SELECT * FROM vendedores WHERE id = $1', [vendedorId]);
+      if (vendedorResult.rows.length === 0) {
+          return res.status(404).render('error', {message: 'Vendedor no encontrado', error: {}, user: req.session.user});
+      }
+      const vendedor = vendedorResult.rows[0];
+
+      // 2. Obtener historial de desempeño ordenado
+      const historialResult = await pool.query(`
+          SELECT fecha, insta_username, mensajes_enviados, respuestas_recibidas
+          FROM vendedor_desempeno_diario
+          WHERE vendedor_id = $1
+          ORDER BY fecha DESC, insta_username ASC
+      `, [vendedorId]);
+      const historial = historialResult.rows;
+
+      // 3. (Opcional) Agrupar por fecha para la vista
+      const historialAgrupado = historial.reduce((acc, item) => {
+          const fechaStr = item.fecha.toISOString().slice(0, 10);
+          if (!acc[fechaStr]) {
+              acc[fechaStr] = { fecha: fechaStr, entradas: [] };
+          }
+          acc[fechaStr].entradas.push(item);
+          return acc;
+      }, {});
+
+
+      res.render('vendedor_historial', {
+          vendedor: vendedor,
+          historial: Object.values(historialAgrupado).sort((a,b) => b.fecha.localeCompare(a.fecha)), // Ordena por fecha descendente
+          user: req.session.user
+          // Puedes pasar datos para gráficos aquí si los implementas
+      });
+
+  } catch (error) {
+      console.error(`Error en GET /vendedores/${vendedorId}/historial:`, error);
+      res.status(500).render('error', { message: 'Error al cargar historial', error, user: req.session.user });
+  }
+});
 
 // Endpoint para obtener datos del gráfico
 app.get('/resumen/data', isAuthenticated, async (req, res) => {
