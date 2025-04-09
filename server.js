@@ -256,6 +256,153 @@ app.get('/resumen', isAuthenticated, async (req, res) => {
   }
 });
 
+// En tu server.js
+// ... (otros requires, app, pool, isAuthenticated, etc.) ...
+
+// --- GET /auditoria/patrimonio ---
+app.get('/auditoria/patrimonio', isAuthenticated, async (req, res) => {
+  // Verificación de Rol Interna (Solo Admin/Auditoría)
+  const userRole = req.session.user.role;
+  if (userRole !== 'admin' && userRole !== 'auditoria') {
+      return res.status(403).render('error', { message: 'Acceso Denegado', error: { status: 403 }, user: req.session.user });
+  }
+
+  try {
+      const result = await pool.query('SELECT * FROM patrimonio_cuentas ORDER BY tipo_cuenta, nombre_cliente, usuario');
+      const cuentas = result.rows;
+      const today = new Date(); // Fecha de hoy para calcular días restantes
+
+      // Calcular días restantes para códigos de respaldo
+      const cuentasConDiasRestantes = cuentas.map(cuenta => {
+          let dias_restantes = null; // Por defecto es nulo
+          if (cuenta.codigos_actualizados_en && cuenta.codigos_validez_dias > 0) {
+              try {
+                  // Asegurarse que codigos_actualizados_en es un objeto Date
+                  const fechaActualizacion = new Date(cuenta.codigos_actualizados_en);
+                  if (!isNaN(fechaActualizacion.getTime())) { // Validar que la fecha sea válida
+                       // Clonar fecha de actualización y sumar días de validez
+                      const fechaExpiracion = new Date(fechaActualizacion.getTime());
+                      fechaExpiracion.setDate(fechaActualizacion.getDate() + cuenta.codigos_validez_dias);
+
+                      // Calcular diferencia en milisegundos y luego en días (redondear hacia abajo)
+                      const diffTime = fechaExpiracion.getTime() - today.getTime();
+                      // Solo mostrar días restantes positivos o cero
+                      dias_restantes = Math.max(0, Math.floor(diffTime / (1000 * 60 * 60 * 24)));
+                  } else {
+                       console.warn(`Fecha inválida en codigos_actualizados_en para cuenta ${cuenta.usuario}`);
+                  }
+              } catch (dateError) {
+                   console.error(`Error calculando días restantes para ${cuenta.usuario}:`, dateError);
+              }
+          }
+          return {
+              ...cuenta,
+              dias_restantes_codigos: dias_restantes // Añadir la propiedad calculada
+          };
+      });
+
+      res.render('auditoria_patrimonio', {
+          cuentas: cuentasConDiasRestantes,
+          user: req.session.user,
+          success: req.query.success,
+          error: req.query.error
+      });
+
+  } catch (error) {
+      console.error("Error en GET /auditoria/patrimonio:", error);
+      res.status(500).render('error', { message: 'Error al cargar el patrimonio de cuentas', error, user: req.session.user });
+  }
+});
+
+// --- POST /auditoria/patrimonio (Para Agregar/Editar Cuenta) ---
+app.post('/auditoria/patrimonio', isAuthenticated, async (req, res) => {
+  // Verificación de Rol Interna (Solo Admin/Auditoría)
+  const userRole = req.session.user.role;
+  if (userRole !== 'admin' && userRole !== 'auditoria') {
+      return res.status(403).redirect('/auditoria/patrimonio?error=Acción no permitida');
+  }
+
+  // Extraer todos los campos del formulario (modal)
+  const {
+      cuenta_id, // ID oculto para saber si es edición
+      nombre_cliente,
+      usuario,
+      link,
+      tipo_cuenta,
+      correo,
+      contrasena, // ¡¡RECORDATORIO: ENCRIPTAR!!
+      verificacion, // Vendrá como 'on' o undefined si es checkbox
+      celu_abierto,
+      autentificador,
+      codigos_respaldo,
+      codigos_actualizados_en, // Fecha
+      codigos_validez_dias
+  } = req.body;
+
+  // Validación básica
+  if (!usuario || !tipo_cuenta) {
+      return res.redirect('/auditoria/patrimonio?error=Usuario y Tipo de Cuenta son obligatorios');
+  }
+  // Convertir checkboxes a boolean
+  const esVerificado = verificacion === 'on';
+  const tieneCeluAbierto = celu_abierto === 'on';
+  const tieneAutentificador = autentificador === 'on';
+  // Convertir validez a número, con default
+  const validezDias = parseInt(codigos_validez_dias, 10) || 7;
+   // Validar fecha
+   const fechaActualizacionCodigos = codigos_actualizados_en || null; // Permitir nulo si no se ingresa
+
+  try {
+      if (cuenta_id) {
+          // --- Modo Edición ---
+          const queryText = `
+              UPDATE patrimonio_cuentas SET
+                  nombre_cliente = $1, usuario = $2, link = $3, tipo_cuenta = $4, correo = $5,
+                  contrasena = $6, verificacion = $7, celu_abierto = $8, autentificador = $9,
+                  codigos_respaldo = $10, codigos_actualizados_en = $11, codigos_validez_dias = $12,
+                  updated_at = CURRENT_TIMESTAMP
+              WHERE id = $13;
+          `;
+          await pool.query(queryText, [
+              nombre_cliente || null, usuario, link || null, tipo_cuenta, correo || null,
+              contrasena || null, esVerificado, tieneCeluAbierto, tieneAutentificador,
+              codigos_respaldo || null, fechaActualizacionCodigos, validezDias,
+              cuenta_id
+          ]);
+           res.redirect('/auditoria/patrimonio?success=Cuenta actualizada correctamente');
+      } else {
+          // --- Modo Agregar ---
+          const queryText = `
+              INSERT INTO patrimonio_cuentas (
+                  nombre_cliente, usuario, link, tipo_cuenta, correo, contrasena,
+                  verificacion, celu_abierto, autentificador, codigos_respaldo,
+                  codigos_actualizados_en, codigos_validez_dias
+              ) VALUES (
+                  $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12
+              ) RETURNING id;
+          `;
+           await pool.query(queryText, [
+              nombre_cliente || null, usuario, link || null, tipo_cuenta, correo || null,
+              contrasena || null, esVerificado, tieneCeluAbierto, tieneAutentificador,
+              codigos_respaldo || null, fechaActualizacionCodigos, validezDias
+           ]);
+           res.redirect('/auditoria/patrimonio?success=Cuenta agregada correctamente');
+      }
+
+  } catch (error) {
+      console.error("Error en POST /auditoria/patrimonio:", error);
+      // Si es error de duplicado de usuario (unique constraint)
+      if (error.code === '23505' && error.constraint === 'patrimonio_cuentas_usuario_key') {
+           res.redirect('/auditoria/patrimonio?error=El nombre de usuario de Instagram ya existe');
+      } else {
+           res.redirect(`/auditoria/patrimonio?error=Error al guardar la cuenta: ${error.message}`);
+      }
+  }
+});
+
+// Opcional: Endpoint DELETE (requiere JS con Fetch y método DELETE)
+// app.delete('/auditoria/patrimonio/:id', isAuthenticated, async (req, res) => { ... });
+
 // --- GET /vendedores (Modificada para Cards y Datos Agregados) ---
 async function getDashboardData(startDate, endDate) {
   let totalMensajes = 0;

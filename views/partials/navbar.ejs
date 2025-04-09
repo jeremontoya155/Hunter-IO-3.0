@@ -32,6 +32,7 @@
           <span>Flujo</span>
         </a> -->
 
+
         <%# --- ENLACE A VENDEDORES (Visible para Admin, Auditoria, CRO) --- %>
         <% if (user && (user.role === 'admin' || user.role === 'auditoria' || user.role === 'cro')) { %>
           <a href="/vendedores">
@@ -40,7 +41,14 @@
           </a>
         <% } %>
         <%# --- FIN ENLACE VENDEDORES --- %>
-
+<%# --- ENLACE A AUDITORÍA PATRIMONIO (Visible para Admin y Auditoría) --- %>
+        <% if (user && (user.role === 'admin' || user.role === 'auditoria')) { %>
+          <a href="/auditoria/patrimonio">
+            <i class="fas fa-shield-alt"></i> <!-- Icono para Auditoría -->
+            <span>Auditoría Patrimonio</span>
+          </a>
+        <% } %>
+        <%# --- FIN ENLACE AUDITORÍA --- %>
 
         <%# Enlace a Leads (Solo Admin - Mantenido como estaba) %>
         <% if (user && user.role === 'admin') { %> <%# Cambiado de user.username a user.role %>
