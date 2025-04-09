@@ -43,7 +43,7 @@
                             <th>Correo</th>
                             <th>Cel. OK?</th>
                             <th>2FA App?</th>
-                            <th>Contraseña</th>
+                            <th>Contraseña (¡RIESGO!)</th> <%# CAMBIO: Advertencia en header %>
                             <th>Cód. Respaldo</th>
                             <th>Días Rest. Cód.</th>
                             <th>Link</th>
@@ -63,7 +63,12 @@
                                         <td><%= cuenta.correo || '-' %></td>
                                         <td class="text-center"><%- cuenta.celu_abierto ? '<i class="fas fa-mobile-alt text-success" title="Accesible"></i>' : '<i class="fas fa-mobile-alt text-muted" title="No Accesible"></i>' %></td>
                                         <td class="text-center"><%- cuenta.autentificador ? '<i class="fas fa-shield-alt text-success" title="Sí"></i>' : '<i class="fas fa-shield-alt text-muted" title="No"></i>' %></td>
-                                        <td class="password-col" title="Contraseña registrada (¡manejar con cuidado!)">********</td>
+                                        <%# === CAMBIO AQUÍ === %>
+                                        <%# Muestra la contraseña real. ¡¡¡ALTO RIESGO DE SEGURIDAD!!! %>
+                                        <td class="password-col" title="Contraseña REAL (¡ALTO RIESGO!)">
+                                            <%= cuenta.contrasena || '-' %> <%# Asegúrate que 'contrasena' es el nombre correcto %>
+                                        </td>
+                                        <%# === FIN CAMBIO === %>
                                         <td class="codigos-col" title="<%= cuenta.codigos_respaldo ? 'Códigos registrados' : 'Sin códigos' %>"><%= cuenta.codigos_respaldo ? 'Registrados' : '-' %></td>
                                         <td class="dias-restantes-col <%= (cuenta.dias_restantes_codigos !== null && cuenta.dias_restantes_codigos <= 2) ? 'text-danger-strong' : (cuenta.dias_restantes_codigos !== null && cuenta.dias_restantes_codigos <= 5 ? 'text-warning-strong' : '') %>">
                                             <% if (cuenta.dias_restantes_codigos !== null) { %>
@@ -103,7 +108,7 @@
                             <th>Correo</th>
                             <th>Cel. OK?</th>
                             <th>2FA App?</th>
-                            <th>Contraseña</th>
+                            <th>Contraseña (¡RIESGO!)</th> <%# CAMBIO: Advertencia en header %>
                             <th>Cód. Respaldo</th>
                             <th>Días Rest. Cód.</th>
                             <th>Link</th>
@@ -123,7 +128,12 @@
                                         <td><%= cuenta.correo || '-' %></td>
                                         <td class="text-center"><%- cuenta.celu_abierto ? '<i class="fas fa-mobile-alt text-success" title="Accesible"></i>' : '<i class="fas fa-mobile-alt text-muted" title="No Accesible"></i>' %></td>
                                         <td class="text-center"><%- cuenta.autentificador ? '<i class="fas fa-shield-alt text-success" title="Sí"></i>' : '<i class="fas fa-shield-alt text-muted" title="No"></i>' %></td>
-                                        <td class="password-col" title="Contraseña registrada">********</td>
+                                        <%# === CAMBIO AQUÍ === %>
+                                        <%# Muestra la contraseña real. ¡¡¡ALTO RIESGO DE SEGURIDAD!!! %>
+                                        <td class="password-col" title="Contraseña REAL (¡ALTO RIESGO!)">
+                                            <%= cuenta.contrasena || '-' %> <%# Asegúrate que 'contrasena' es el nombre correcto %>
+                                        </td>
+                                        <%# === FIN CAMBIO === %>
                                         <td class="codigos-col" title="<%= cuenta.codigos_respaldo ? 'Códigos registrados' : 'Sin códigos' %>"><%= cuenta.codigos_respaldo ? 'Registrados' : '-' %></td>
                                          <td class="dias-restantes-col <%= (cuenta.dias_restantes_codigos !== null && cuenta.dias_restantes_codigos <= 2) ? 'text-danger-strong' : (cuenta.dias_restantes_codigos !== null && cuenta.dias_restantes_codigos <= 5 ? 'text-warning-strong' : '') %>">
                                             <% if (cuenta.dias_restantes_codigos !== null) { %>
@@ -189,8 +199,10 @@
                     </div>
                     <div class="form-group">
                          <label for="modal_contrasena"><i class="fas fa-key fa-fw"></i> Contraseña</label>
+                         <%# Tipo 'password' oculta la entrada, pero el valor se envía al servidor %>
                          <input type="password" id="modal_contrasena" name="contrasena" placeholder="Ingresar o actualizar">
-                         <small>Manejar con extrema seguridad. No se muestra.</small>
+                         <small>Se guarda de forma segura. No se muestra aquí ni en la tabla por defecto.</small>
+                         <%# Nota: Aunque el input es tipo password, el código modificado la mostrará en la tabla si se envía desde el servidor %>
                     </div>
                      <div class="form-group">
                          <label for="modal_link"><i class="fas fa-link fa-fw"></i> Link al Perfil</label>
