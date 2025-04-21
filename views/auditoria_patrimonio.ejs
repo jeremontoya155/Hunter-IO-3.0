@@ -38,15 +38,19 @@
                     <thead>
                         <tr>
                             <th>Cliente</th>
-                            <th>Usuario IG</th>
-                            <th>Verif.?</th>
+                            <th>Usuario</th>
+                            <th>Dispositivo</th>
+                            <th>Vendedor</th>
+                            <th>Autenticador</th>
+                            <th>2FA</th>
+                            <th>Número SIM</th>
+                            <th>Duración</th>
                             <th>Correo</th>
-                            <th>Cel. OK?</th>
-                            <th>2FA App?</th>
-                            <th>Contraseña (¡RIESGO!)</th> <%# CAMBIO: Advertencia en header %>
-                            <th>Cód. Respaldo</th>
-                            <th>Días Rest. Cód.</th>
+                            <th>Contraseña IG</th>
+                            <th>Contraseña Correo</th>
+                            <th>Códigos</th>
                             <th>Link</th>
+                            <th>Link Original</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -59,36 +63,27 @@
                                     <tr id="cuenta-row-<%= cuenta.id %>" data-cuenta='<%- JSON.stringify(cuenta) %>'>
                                         <td><%= cuenta.nombre_cliente || '-' %></td>
                                         <td><strong><%= cuenta.usuario %></strong></td>
-                                        <td class="text-center"><%- cuenta.verificacion ? '<i class="fas fa-check-circle text-success" title="Verificada"></i>' : '<i class="fas fa-times-circle text-danger" title="No Verificada"></i>' %></td>
+                                        <td><%= cuenta.dispositivo || '-' %></td>
+                                        <td><%= cuenta.vendedor || '-' %></td>
+                                        <td><%= cuenta.autentificador_cuenta || '-' %></td>
+                                        <td><%= cuenta.autentificador ? 'Activado' : 'Desactivado' %></td>
+                                        <td><%= cuenta.celular || '-' %></td>
+                                        <td><%= cuenta.duracion_numero || '-' %></td>
                                         <td><%= cuenta.correo || '-' %></td>
-                                        <td class="text-center"><%- cuenta.celu_abierto ? '<i class="fas fa-mobile-alt text-success" title="Accesible"></i>' : '<i class="fas fa-mobile-alt text-muted" title="No Accesible"></i>' %></td>
-                                        <td class="text-center"><%- cuenta.autentificador ? '<i class="fas fa-shield-alt text-success" title="Sí"></i>' : '<i class="fas fa-shield-alt text-muted" title="No"></i>' %></td>
-                                        <%# === CAMBIO AQUÍ === %>
-                                        <%# Muestra la contraseña real. ¡¡¡ALTO RIESGO DE SEGURIDAD!!! %>
-                                        <td class="password-col" title="Contraseña REAL (¡ALTO RIESGO!)">
-                                            <%= cuenta.contrasena || '-' %> <%# Asegúrate que 'contrasena' es el nombre correcto %>
-                                        </td>
-                                        <%# === FIN CAMBIO === %>
-                                        <td class="codigos-col" title="<%= cuenta.codigos_respaldo ? 'Códigos registrados' : 'Sin códigos' %>"><%= cuenta.codigos_respaldo ? 'Registrados' : '-' %></td>
-                                        <td class="dias-restantes-col <%= (cuenta.dias_restantes_codigos !== null && cuenta.dias_restantes_codigos <= 2) ? 'text-danger-strong' : (cuenta.dias_restantes_codigos !== null && cuenta.dias_restantes_codigos <= 5 ? 'text-warning-strong' : '') %>">
-                                            <% if (cuenta.dias_restantes_codigos !== null) { %>
-                                                <%= cuenta.dias_restantes_codigos %> día<%= cuenta.dias_restantes_codigos !== 1 ? 's' : '' %>
-                                            <% } else { %>
-                                                N/A
-                                            <% } %>
-                                        </td>
+                                        <td class="password-col"><%= cuenta.contrasena || '-' %></td>
+                                        <td class="password-col"><%= cuenta.contrasena_mail || '-' %></td>
+                                        <td><%= cuenta.codigos_respaldo ? 'Sí' : 'No' %></td>
                                         <td class="link-col"><%= cuenta.link ? '<a href="' + cuenta.link + '" target="_blank" title="Abrir perfil"><i class="fas fa-external-link-alt"></i></a>' : '-' %></td>
+                                        <td class="link-col"><%= cuenta.link_original ? '<a href="' + cuenta.link_original + '" target="_blank" title="Abrir perfil original"><i class="fas fa-external-link-alt"></i></a>' : '-' %></td>
                                         <td class="actions-col">
                                             <button class="btn btn-sm btn-warning" onclick="openPatrimonioModal('<%= cuenta.id %>')" title="Editar"><i class="fas fa-edit"></i></button>
-                                            <%# Botón Eliminar (requiere JS adicional) %>
-                                            <!-- <button class="btn btn-sm btn-danger" onclick="deleteCuenta('<%= cuenta.id %>')" title="Eliminar"><i class="fas fa-trash"></i></button> -->
                                         </td>
                                     </tr>
                                 <% } %>
                             <% }); %>
                         <% } %>
                         <% if (clientesCount === 0) { %>
-                            <tr><td colspan="11" class="no-data-row">No hay cuentas de clientes registradas.</td></tr>
+                            <tr><td colspan="15" class="no-data-row">No hay cuentas de clientes registradas.</td></tr>
                         <% } %>
                     </tbody>
                 </table>
@@ -102,16 +97,19 @@
                 <table class="auditoria-table">
                      <thead>
                         <tr>
-                            <%#<th>Cliente</th> oculto %>
-                            <th>Usuario IG</th>
-                            <th>Verif.?</th>
+                            <th>Usuario</th>
+                            <th>Dispositivo</th>
+                            <th>Vendedor</th>
+                            <th>Autenticador</th>
+                            <th>2FA</th>
+                            <th>Número SIM</th>
+                            <th>Duración</th>
                             <th>Correo</th>
-                            <th>Cel. OK?</th>
-                            <th>2FA App?</th>
-                            <th>Contraseña (¡RIESGO!)</th> <%# CAMBIO: Advertencia en header %>
-                            <th>Cód. Respaldo</th>
-                            <th>Días Rest. Cód.</th>
+                            <th>Contraseña IG</th>
+                            <th>Contraseña Correo</th>
+                            <th>Códigos</th>
                             <th>Link</th>
+                            <th>Link Original</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -122,38 +120,28 @@
                                 <% if (cuenta.tipo_cuenta === 'propio') { %>
                                     <% propiosCount++; %>
                                      <tr id="cuenta-row-<%= cuenta.id %>" data-cuenta='<%- JSON.stringify(cuenta) %>'>
-                                        <%#<td>-</td> Nombre Cliente oculto %>
                                         <td><strong><%= cuenta.usuario %></strong></td>
-                                        <td class="text-center"><%- cuenta.verificacion ? '<i class="fas fa-check-circle text-success" title="Verificada"></i>' : '<i class="fas fa-times-circle text-danger" title="No Verificada"></i>' %></td>
+                                        <td><%= cuenta.dispositivo || '-' %></td>
+                                        <td><%= cuenta.vendedor || '-' %></td>
+                                        <td><%= cuenta.autentificador_cuenta || '-' %></td>
+                                        <td><%= cuenta.autentificador ? 'Activado' : 'Desactivado' %></td>
+                                        <td><%= cuenta.celular || '-' %></td>
+                                        <td><%= cuenta.duracion_numero || '-' %></td>
                                         <td><%= cuenta.correo || '-' %></td>
-                                        <td class="text-center"><%- cuenta.celu_abierto ? '<i class="fas fa-mobile-alt text-success" title="Accesible"></i>' : '<i class="fas fa-mobile-alt text-muted" title="No Accesible"></i>' %></td>
-                                        <td class="text-center"><%- cuenta.autentificador ? '<i class="fas fa-shield-alt text-success" title="Sí"></i>' : '<i class="fas fa-shield-alt text-muted" title="No"></i>' %></td>
-                                        <%# === CAMBIO AQUÍ === %>
-                                        <%# Muestra la contraseña real. ¡¡¡ALTO RIESGO DE SEGURIDAD!!! %>
-                                        <td class="password-col" title="Contraseña REAL (¡ALTO RIESGO!)">
-                                            <%= cuenta.contrasena || '-' %> <%# Asegúrate que 'contrasena' es el nombre correcto %>
-                                        </td>
-                                        <%# === FIN CAMBIO === %>
-                                        <td class="codigos-col" title="<%= cuenta.codigos_respaldo ? 'Códigos registrados' : 'Sin códigos' %>"><%= cuenta.codigos_respaldo ? 'Registrados' : '-' %></td>
-                                         <td class="dias-restantes-col <%= (cuenta.dias_restantes_codigos !== null && cuenta.dias_restantes_codigos <= 2) ? 'text-danger-strong' : (cuenta.dias_restantes_codigos !== null && cuenta.dias_restantes_codigos <= 5 ? 'text-warning-strong' : '') %>">
-                                            <% if (cuenta.dias_restantes_codigos !== null) { %>
-                                                <%= cuenta.dias_restantes_codigos %> día<%= cuenta.dias_restantes_codigos !== 1 ? 's' : '' %>
-                                            <% } else { %>
-                                                N/A
-                                            <% } %>
-                                        </td>
+                                        <td class="password-col"><%= cuenta.contrasena || '-' %></td>
+                                        <td class="password-col"><%= cuenta.contrasena_mail || '-' %></td>
+                                        <td><%= cuenta.codigos_respaldo ? 'Sí' : 'No' %></td>
                                         <td class="link-col"><%= cuenta.link ? '<a href="' + cuenta.link + '" target="_blank" title="Abrir perfil"><i class="fas fa-external-link-alt"></i></a>' : '-' %></td>
+                                        <td class="link-col"><%= cuenta.link_original ? '<a href="' + cuenta.link_original + '" target="_blank" title="Abrir perfil original"><i class="fas fa-external-link-alt"></i></a>' : '-' %></td>
                                         <td class="actions-col">
                                             <button class="btn btn-sm btn-warning" onclick="openPatrimonioModal('<%= cuenta.id %>')" title="Editar"><i class="fas fa-edit"></i></button>
-                                            <%# Botón Eliminar %>
-                                            <!-- <button class="btn btn-sm btn-danger" onclick="deleteCuenta('<%= cuenta.id %>')" title="Eliminar"><i class="fas fa-trash"></i></button> -->
                                         </td>
                                     </tr>
                                 <% } %>
                             <% }); %>
                         <% } %>
                         <% if (propiosCount === 0) { %>
-                            <tr><td colspan="10" class="no-data-row">No hay cuentas propias registradas.</td></tr>
+                            <tr><td colspan="14" class="no-data-row">No hay cuentas propias registradas.</td></tr>
                         <% } %>
                     </tbody>
                 </table>
@@ -173,8 +161,9 @@
                     <button type="button" class="modal-close-btn" onclick="closePatrimonioModal()" title="Cerrar">×</button>
                 </div>
                 <div class="modal-body custom-scrollbar">
-                    <input type="hidden" id="cuenta_id" name="cuenta_id"> <%# ID para editar %>
+                    <input type="hidden" id="cuenta_id" name="cuenta_id">
 
+                    <!-- Sección 1: Información Básica -->
                     <div class="form-group">
                          <label for="modal_tipo_cuenta"><i class="fas fa-tags fa-fw"></i> Tipo de Cuenta*</label>
                          <select id="modal_tipo_cuenta" name="tipo_cuenta" required onchange="toggleClienteField()">
@@ -183,7 +172,6 @@
                         </select>
                     </div>
 
-                    <%# Campo Cliente (se muestra/oculta con JS) %>
                     <div class="form-group" id="cliente-field-group">
                         <label for="modal_nombre_cliente"><i class="fas fa-user-tie fa-fw"></i> Nombre del Cliente</label>
                         <input type="text" id="modal_nombre_cliente" name="nombre_cliente">
@@ -193,50 +181,98 @@
                         <label for="modal_usuario"><i class="fab fa-instagram fa-fw"></i> Usuario Instagram*</label>
                         <input type="text" id="modal_usuario" name="usuario" required>
                     </div>
+
                     <div class="form-group">
                          <label for="modal_correo"><i class="far fa-envelope fa-fw"></i> Correo Asociado</label>
                         <input type="email" id="modal_correo" name="correo">
                     </div>
+
                     <div class="form-group">
-                         <label for="modal_contrasena"><i class="fas fa-key fa-fw"></i> Contraseña</label>
-                         <%# Tipo 'password' oculta la entrada, pero el valor se envía al servidor %>
+                         <label for="modal_contrasena"><i class="fas fa-key fa-fw"></i> Contraseña Instagram</label>
                          <input type="password" id="modal_contrasena" name="contrasena" placeholder="Ingresar o actualizar">
-                         <small>Se guarda de forma segura. No se muestra aquí ni en la tabla por defecto.</small>
-                         <%# Nota: Aunque el input es tipo password, el código modificado la mostrará en la tabla si se envía desde el servidor %>
                     </div>
-                     <div class="form-group">
+
+                    <div class="form-group">
+                         <label for="modal_contrasena_mail"><i class="fas fa-key fa-fw"></i> Contraseña del Correo</label>
+                         <input type="password" id="modal_contrasena_mail" name="contrasena_mail" placeholder="Contraseña del correo">
+                    </div>
+
+                    <div class="form-group">
                          <label for="modal_link"><i class="fas fa-link fa-fw"></i> Link al Perfil</label>
                         <input type="url" id="modal_link" name="link" placeholder="https://instagram.com/usuario">
                     </div>
 
-                     <hr class="modal-hr">
-                     <label class="form-section-title">Seguridad y Respaldo</label>
-
-                    <div class="form-row check-group">
-                         <div class="form-check">
-                            <input type="checkbox" id="modal_verificacion" name="verificacion">
-                            <label for="modal_verificacion"> Verificada por IG?</label>
-                         </div>
-                          <div class="form-check">
-                            <input type="checkbox" id="modal_celu_abierto" name="celu_abierto">
-                            <label for="modal_celu_abierto"> Celular Accesible?</label>
-                         </div>
-                          <div class="form-check">
-                            <input type="checkbox" id="modal_autentificador" name="autentificador">
-                            <label for="modal_autentificador"> Usa 2FA App?</label>
-                         </div>
+                    <div class="form-group">
+                         <label for="modal_link_original"><i class="fas fa-link fa-fw"></i> Link Original</label>
+                        <input type="url" id="modal_link_original" name="link_original" placeholder="https://instagram.com/usuario_original">
                     </div>
 
-                     <div class="form-group">
+                    <hr class="modal-hr">
+                    <label class="form-section-title"><i class="fas fa-mobile-alt"></i> Dispositivo y SIM</label>
+
+                    <div class="form-group">
+                        <label for="modal_dispositivo"><i class="fas fa-mobile fa-fw"></i> Dispositivo</label>
+                        <input type="text" id="modal_dispositivo" name="dispositivo" placeholder="Ej: iPhone 12, Samsung S21">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="modal_celular"><i class="fas fa-sim-card fa-fw"></i> Número SIM</label>
+                            <input type="text" id="modal_celular" name="celular" placeholder="Número asociado">
+                        </div>
+                        <div class="form-group">
+                            <label for="modal_ultima_carga_celular"><i class="far fa-calendar-alt fa-fw"></i> Última Carga SIM</label>
+                            <input type="date" id="modal_ultima_carga_celular" name="ultima_carga_celular">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modal_duracion_numero"><i class="fas fa-clock fa-fw"></i> Duración Número</label>
+                        <input type="text" id="modal_duracion_numero" name="duracion_numero" placeholder="Ej: 30 días">
+                    </div>
+
+                    <hr class="modal-hr">
+                    <label class="form-section-title"><i class="fas fa-user-tag"></i> Vendedor y Autenticación</label>
+
+                    <div class="form-group">
+                        <label for="modal_vendedor"><i class="fas fa-user-tag fa-fw"></i> Vendedor</label>
+                        <input type="text" id="modal_vendedor" name="vendedor" placeholder="Quién vendió la cuenta">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modal_autentificador_cuenta"><i class="fas fa-at fa-fw"></i> Cuenta del Autenticador</label>
+                        <input type="text" id="modal_autentificador_cuenta" name="autentificador_cuenta" placeholder="Correo/cuenta del 2FA">
+                    </div>
+
+                    <div class="form-check">
+                        <input type="checkbox" id="modal_autentificador" name="autentificador">
+                        <label for="modal_autentificador"> Verificación 2 pasos activada</label>
+                    </div>
+
+                    <hr class="modal-hr">
+                    <label class="form-section-title"><i class="fas fa-shield-alt"></i> Seguridad y Respaldo</label>
+
+                    <div class="form-check">
+                        <input type="checkbox" id="modal_verificacion" name="verificacion">
+                        <label for="modal_verificacion"> Cuenta verificada por Instagram</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input type="checkbox" id="modal_celu_abierto" name="celu_abierto">
+                        <label for="modal_celu_abierto"> Dispositivo actualmente accesible</label>
+                    </div>
+
+                    <div class="form-group">
                         <label for="modal_codigos_respaldo"><i class="fas fa-shield-virus fa-fw"></i> Códigos de Respaldo</label>
                         <textarea id="modal_codigos_respaldo" name="codigos_respaldo" rows="2" placeholder="Pegar códigos aquí..."></textarea>
                     </div>
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="modal_codigos_actualizados_en"><i class="far fa-calendar-check fa-fw"></i> Última Rev. Códigos</label>
                             <input type="date" id="modal_codigos_actualizados_en" name="codigos_actualizados_en">
                         </div>
-                         <div class="form-group">
+                        <div class="form-group">
                             <label for="modal_codigos_validez_dias"><i class="fas fa-hourglass-half fa-fw"></i> Validez Códigos (días)</label>
                             <input type="number" id="modal_codigos_validez_dias" name="codigos_validez_dias" min="1" value="7">
                         </div>
@@ -252,8 +288,80 @@
 
     <!-- Scripts -->
     <script defer src="/static/js/navbar.js"></script>
-    <%# Un nuevo JS o añadir funciones al existente %>
     <script defer src="/static/js/auditoria_manager.js"></script>
 
+    <script>
+        // Función para abrir el modal
+        function openPatrimonioModal(cuentaId = null) {
+            const modal = document.getElementById('patrimonioModalOverlay');
+            const form = document.getElementById('patrimonio-form');
+            
+            if (cuentaId) {
+                // Modo edición
+                const row = document.getElementById(`cuenta-row-${cuentaId}`);
+                const cuenta = JSON.parse(row.getAttribute('data-cuenta'));
+                
+                // Llenar todos los campos
+                document.getElementById('cuenta_id').value = cuenta.id;
+                document.getElementById('modal_tipo_cuenta').value = cuenta.tipo_cuenta;
+                document.getElementById('modal_nombre_cliente').value = cuenta.nombre_cliente || '';
+                document.getElementById('modal_usuario').value = cuenta.usuario;
+                document.getElementById('modal_correo').value = cuenta.correo || '';
+                document.getElementById('modal_contrasena').value = cuenta.contrasena || '';
+                document.getElementById('modal_contrasena_mail').value = cuenta.contrasena_mail || '';
+                document.getElementById('modal_link').value = cuenta.link || '';
+                document.getElementById('modal_link_original').value = cuenta.link_original || '';
+                document.getElementById('modal_dispositivo').value = cuenta.dispositivo || '';
+                document.getElementById('modal_vendedor').value = cuenta.vendedor || '';
+                document.getElementById('modal_autentificador_cuenta').value = cuenta.autentificador_cuenta || '';
+                document.getElementById('modal_celular').value = cuenta.celular || '';
+                document.getElementById('modal_duracion_numero').value = cuenta.duracion_numero || '';
+                
+                // Checkboxes
+                document.getElementById('modal_verificacion').checked = cuenta.verificacion;
+                document.getElementById('modal_celu_abierto').checked = cuenta.celu_abierto;
+                document.getElementById('modal_autentificador').checked = cuenta.autentificador;
+                
+                // Fechas
+                document.getElementById('modal_codigos_actualizados_en').value = cuenta.codigos_actualizados_en || '';
+                document.getElementById('modal_ultima_carga_celular').value = cuenta.ultima_carga_celular || '';
+                
+                document.getElementById('modal_codigos_validez_dias').value = cuenta.codigos_validez_dias || 7;
+                document.getElementById('patrimonioModalLabel').textContent = 'Editar Cuenta';
+            } else {
+                // Modo nuevo - resetear el formulario
+                form.reset();
+                document.getElementById('patrimonioModalLabel').textContent = 'Agregar Cuenta';
+            }
+            
+            // Mostrar el modal
+            modal.style.display = 'flex';
+            toggleClienteField();
+        }
+
+        // Función para cerrar el modal
+        function closePatrimonioModal() {
+            document.getElementById('patrimonioModalOverlay').style.display = 'none';
+        }
+
+        // Función para mostrar/ocultar campo de cliente según tipo de cuenta
+        function toggleClienteField() {
+            const tipoCuenta = document.getElementById('modal_tipo_cuenta').value;
+            const clienteField = document.getElementById('cliente-field-group');
+            
+            if (tipoCuenta === 'cliente') {
+                clienteField.style.display = 'block';
+            } else {
+                clienteField.style.display = 'none';
+            }
+        }
+
+        // Cerrar modal al hacer clic fuera del contenido
+        document.getElementById('patrimonioModalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePatrimonioModal();
+            }
+        });
+    </script>
 </body>
 </html>
