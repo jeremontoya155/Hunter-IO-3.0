@@ -3,39 +3,44 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard de <%= username %></title>
+    <!-- Cambia el título para que sea más genérico o refleje la sección -->
+    <title>Panel de Rendimiento - <%= username %></title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+    <!-- Mantenemos Tailwind por si acaso, pero el CSS custom dominará -->
+    <script src="https://cdn.tailwindcss.com"></script> 
+    <!-- Flowbite puede que ya no sea necesario si reescribimos mucho CSS -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script> -->
     <link rel="stylesheet" href="/static/css/resumen.css" />
-    <link rel="stylesheet" href="/static/css/scrollbar.css" />
-    <link rel="stylesheet" href="/static/css/navbar.css" />
-    <script src="/static/js/navbar.js"></script>
+    <link rel="stylesheet" href="/static/css/scrollbar.css" /> <!-- Asumiendo que existe y lo quieres -->
+    <link rel="stylesheet" href="/static/css/navbar.css" /> <!-- Asumiendo que existe y lo quieres -->
+    <script src="/static/js/navbar.js"></script> <!-- Asumiendo que existe y lo quieres -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
     </style>
 </head>
-<body>
+<body class="bg-gray-900 text-gray-200 font-poppins">
     <%- include('partials/navbar') %>
 
-    <div class="contenedorBody">
-        <header>
+    <!-- Contenedor principal con padding para la navbar lateral si existe -->
+    <div class="main-content"> 
+        <header class="page-header">
             <div class="header-content">
-                <h1>Dashboard - <%= username %></h1>
-
+                <h1 class="text-2xl font-semibold">Panel de Rendimiento: <%= username %></h1>
+                
+                <!-- Selector de Cuentas -->
                 <section class="accounts-section">
-                    <h2>Cuentas Asociadas:</h2>
+                    <h2 class="text-sm font-medium text-gray-400 mb-2">CUENTAS ASOCIADAS:</h2>
                     <div class="accounts-list">
                         <% if (userAccounts && userAccounts.length > 0) { %> 
                             <% userAccounts.forEach(function(ac) { %>
                                 <a href="/resumen?account=<%= ac.insta_username %>"
                                    class="account-link <%= selectedAccount === ac.insta_username ? 'active' : '' %>">
-                                    <i class="fas fa-user-circle"></i> <%= ac.insta_username %>
+                                    <i class="fas fa-user-circle mr-1"></i> <%= ac.insta_username %>
                                 </a>
                             <% }); %>
                             <a href="/resumen" class="account-link <%= !selectedAccount ? 'active' : '' %>">
-                                Todas las Cuentas
+                                <i class="fas fa-users mr-1"></i> Todas las Cuentas
                             </a>
                         <% } else { %>
                             <p class="no-accounts">No hay cuentas asociadas.</p>
@@ -45,152 +50,272 @@
             </div>
         </header>
 
-        <div class="dashboard-container">
+        <div class="dashboard-grid">
 
-            <!-- 📌 TARJETAS DE MÉTRICAS -->
-            <section class="titleMetrics">
-                <div class="titleMetricsContent">
-                    <div class="rowTitle">
-                        <div class="metricCard">
-                            <h2>Total de Mensajes Enviados</h2>
-                            <p id="totalMensajes"><%= total_mensajes_enviados %></p>
-                        </div>
-                        <div class="metricCard">
-                            <h2>Total de Me Gusta</h2>
-                            <p id="totalLikes"><%= total_likes %></p>
-                        </div>
-                        <div class="metricCard">
-                            <h2>Fecha del Último Mensaje</h2>
-                            <p id="fechaUltimoMensaje"><%= fechaUltimoMensaje %></p>
-                        </div>
-                        <div class="metricCard">
-                            <h2>Destinatario del Último Mensaje</h2>
-                            <p id="destinatarioUltimo"><%= destinatarioUltimo %></p>
-                        </div>
+            <!-- Sección de Filtros -->
+            <section class="filter-section card">
+                 <h2 class="card-title"><i class="fas fa-filter mr-2"></i>Filtrar por Fecha</h2>
+                 <div class="filter-controls">
+                     <div class="date-input">
+                         <label for="fromDate">Desde:</label>
+                         <input type="date" id="fromDate" name="fromDate" value="<%= fromDate %>">
+                     </div>
+                     <div class="date-input">
+                         <label for="toDate">Hasta:</label>
+                         <input type="date" id="toDate" name="toDate" value="<%= toDate %>">
+                     </div>
+                     <button id="btnFiltrar" class="filter-button">
+                         <i class="fas fa-search mr-1"></i> Filtrar
+                     </button>
+                 </div>
+            </section>
+
+            <!-- Sección de Métricas Clave -->
+            <section class="key-metrics-section">
+                 <h2 class="section-title"><i class="fas fa-tachometer-alt mr-2"></i>Resumen General</h2>
+                 <div class="metrics-container">
+                    <% 
+                        // --- Cálculo de Tasa de Likes (Proxy de Efectividad) ---
+                        let totalMensajes = parseInt(total_mensajes_enviados) || 0;
+                        let totalLikesRecibidos = parseInt(total_likes) || 0;
+                        let likeRate = 0;
+                        if (totalMensajes > 0) {
+                            likeRate = (totalLikesRecibidos / totalMensajes) * 100;
+                        }
+                        let likeRateFormatted = likeRate.toFixed(1) + '%';
+                        
+                        // --- Determinar clase para alerta visual ---
+                        let efectividadClass = '';
+                        // Ajusta este umbral según sea necesario
+                        if (likeRate < 10) { // Ejemplo: Menos de 10% se considera bajo
+                            efectividadClass = 'alert-low'; 
+                        } else if (likeRate >= 10 && likeRate < 20) {
+                             efectividadClass = 'alert-medium';
+                        } else if (likeRate >= 20 && likeRate < 30) {
+                             efectividadClass = 'alert-good';
+                        } else if (likeRate >= 30) { // Ajusta si necesitas más niveles
+                             efectividadClass = 'alert-excellent';
+                        }
+                    %>
+
+                    <div class="metric-card">
+                        <h3 class="metric-title">Mensajes Enviados</h3>
+                        <p class="metric-value"><%= totalMensajes %></p>
+                        <i class="fas fa-paper-plane metric-icon"></i>
                     </div>
-                    <div class="MetricUltimoMensaje">
-                        <div class="metricCard">
-                            <h2>Último Mensaje</h2>
-                            <p id="ultimoMensaje"><%= ultimoMensaje %></p>
-                        </div>
+                     <div class="metric-card">
+                        <h3 class="metric-title">"Me Gusta" Recibidos</h3>
+                        <p class="metric-value"><%= totalLikesRecibidos %></p>
+                         <i class="fas fa-thumbs-up metric-icon"></i>
                     </div>
+                    <!-- Tarjeta para Tasa de Likes (Proxy Efectividad) -->
+                    <div class="metric-card <%= efectividadClass %>">
+                        <h3 class="metric-title">Tasa de Likes (Proxy)</h3>
+                        <p class="metric-value"><%= likeRateFormatted %></p>
+                        <i class="fas fa-chart-line metric-icon"></i>
+                        <!-- Nota Opcional -->
+                         <span class="metric-note">Basado en Likes / Mensajes Enviados</span> 
+                    </div>
+                     <div class="metric-card metric-card-small">
+                         <h3 class="metric-title-small">Último Mensaje</h3>
+                         <p class="metric-value-small"><%= fechaUltimoMensaje %></p>
+                         <p class="metric-detail-small">A: <%= destinatarioUltimo %></p>
+                     </div>
+                 </div>
+            </section>
+
+            <!-- Sección del Gráfico -->
+            <section class="chart-section card">
+                <h2 class="card-title"><i class="fas fa-chart-line mr-2"></i>Actividad por Día</h2>
+                <div class="chart-container">
+                     <canvas id="graficoMensajes"></canvas>
                 </div>
             </section>
 
-            <!-- 📌 TARJETAS DE CANTIDAD DE MENSAJES POR TIPO -->
-            <section class="tipoMensajes">
-                <div class="metricCard">
-                    <h2>Mensajes de Comunicación</h2>
-                    <p id="mensajesComunicacion"><%= mensajesPorTipo.comunicacion %></p>
-                </div>
-                <div class="metricCard">
-                    <h2>Mensajes de Venta</h2>
-                    <p id="mensajesVenta"><%= mensajesPorTipo.venta %></p>
-                </div>
-                <div class="metricCard">
-                    <h2>Mensajes Imperativos</h2>
-                    <p id="mensajesImperativos"><%= mensajesPorTipo.imperativo %></p>
-                </div>
+            <!-- Sección de Mensajes por Tipo -->
+            <section class="message-types-section card">
+                 <h2 class="card-title"><i class="fas fa-tags mr-2"></i>Mensajes por Tipo</h2>
+                 <div class="types-container">
+                     <div class="type-item">
+                         <span class="type-label">Comunicación:</span>
+                         <span class="type-value"><%= mensajesPorTipo.comunicacion %></span>
+                     </div>
+                     <div class="type-item">
+                         <span class="type-label">Venta:</span>
+                         <span class="type-value"><%= mensajesPorTipo.venta %></span>
+                     </div>
+                     <div class="type-item">
+                         <span class="type-label">Imperativo:</span>
+                         <span class="type-value"><%= mensajesPorTipo.imperativo %></span>
+                     </div>
+                 </div>
             </section>
-
-            <!-- 📌 Selector de Rango de Fechas -->
-            <section class="selector-fechas">
-                <label for="fromDate">Desde:</label>
-                <input type="date" id="fromDate" value="<%= fromDate %>">
-                <label for="toDate">Hasta:</label>
-                <input type="date" id="toDate" value="<%= toDate %>">
-                <button id="btnFiltrar">Filtrar</button>
-            </section>
-
-            <!-- 📌 GRÁFICO: MENSAJES + ME GUSTA -->
-            <section class="grafico-mensajes">
-                <h2>Mensajes y Me Gusta por Día</h2>
-                <canvas id="graficoMensajes"></canvas>
-            </section>
-
-            <!-- 📌 LISTADO DE MENSAJES -->
-            <section class="mensajes-section">
-                <h2>Mensajes Enviados</h2>
-                <div id="mensajesSend">
+            
+            <!-- Sección de Últimos Mensajes Enviados -->
+            <section class="recent-messages-section card">
+                <h2 class="card-title"><i class="fas fa-history mr-2"></i>Últimos Mensajes Enviados</h2>
+                <div id="mensajesSend" class="messages-list">
                     <% if (ultimos_mensajes && ultimos_mensajes.length > 0) { %> 
                         <% const mensajesLimitados = ultimos_mensajes.slice(0, 10); %>
                         <% mensajesLimitados.forEach(function(mensaje) { %>
                             <div class="mensaje-item">
                                 <div class="mensaje-header">
-                                    <span class="mensaje-destinatario"><%= mensaje.destinatario %></span>
+                                    <span class="mensaje-destinatario"><i class="fas fa-user mr-1"></i> <%= mensaje.destinatario %></span>
                                     <span class="mensaje-fecha"><%= mensaje.fecha %></span>
                                 </div>
-                                <div class="mensaje-contenido"><%= mensaje.mensaje %></div>
+                                <p class="mensaje-contenido"><%= mensaje.mensaje %></p>
                             </div>
                         <% }); %>
                     <% } else { %>
-                        <p>No hay mensajes disponibles.</p>
+                        <p class="no-messages">No hay mensajes recientes para mostrar.</p>
                     <% } %>
                 </div>
             </section>
 
-        </div>
-    </div>
+             <!-- Sección Opcional: Último Mensaje Completo -->
+             <section class="last-message-section card">
+                 <h2 class="card-title"><i class="fas fa-envelope-open-text mr-2"></i>Contenido del Último Mensaje</h2>
+                 <p class="last-message-content"><%= ultimoMensaje %></p>
+                 <span class="last-message-recipient">Para: <%= destinatarioUltimo %></span>
+             </section>
 
-    <!-- 📌 CHART.JS -->
+        </div> <!-- Fin de dashboard-grid -->
+    </div> <!-- Fin de main-content -->
+
+    <!-- Chart.JS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script> <!-- Necesario para ejes de tiempo -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const ctx = document.getElementById("graficoMensajes").getContext("2d");
             let chart;
 
-            async function cargarDatosGrafico(from, to) {
-                try {
-                    const response = await fetch(`/resumen/data?from=${from}&to=${to}`);
-                    const { datosGrafico } = await response.json();
+            // --- Colores para el gráfico (ajusta a tu paleta) ---
+            const messagesColor = '#2dd4bf'; // Teal
+            const likesColor = '#60a5fa';   // Blue
 
-                    const fechas = datosGrafico.map(d => d.fecha);
+            async function cargarDatosGrafico(from, to) {
+                // Añadir manejo de cuenta seleccionada si es necesario en la URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const account = urlParams.get('account');
+                let fetchUrl = `/resumen/data?from=${from}&to=${to}`;
+                if (account) {
+                    fetchUrl += `&account=${account}`; // Asumiendo que el backend puede filtrar por cuenta
+                }
+
+                try {
+                    const response = await fetch(fetchUrl);
+                    if (!response.ok) {
+                       throw new Error(`Error ${response.status}: ${response.statusText}`);
+                    }
+                    const data = await response.json();
+                    
+                    // Asegúrate que la estructura sea la esperada { datosGrafico: [...] }
+                    const datosGrafico = data.datosGrafico || []; 
+
+                    // Convertir fechas si no vienen en formato adecuado para Chart.js
+                    const labels = datosGrafico.map(d => d.fecha); // Asumiendo que 'fecha' es YYYY-MM-DD
                     const mensajes = datosGrafico.map(d => d.mensajes);
                     const likes = datosGrafico.map(d => d.likes);
 
-                    if (chart) chart.destroy();
+                    if (chart) chart.destroy(); // Destruir gráfico anterior
 
                     chart = new Chart(ctx, {
                         type: 'line',
                         data: {
-                            labels: fechas,
+                            labels: labels,
                             datasets: [
                                 {
                                     label: 'Mensajes Enviados',
                                     data: mensajes,
-                                    borderColor: 'blue',
-                                    backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                                    borderColor: messagesColor,
+                                    backgroundColor: messagesColor + '33', // Color con opacidad
                                     fill: true,
-                                    tension: 0.3
+                                    tension: 0.3,
+                                    pointRadius: 3,
+                                    pointBackgroundColor: messagesColor,
                                 },
                                 {
                                     label: 'Me Gusta',
                                     data: likes,
-                                    borderColor: 'green',
-                                    backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                                    borderColor: likesColor,
+                                    backgroundColor: likesColor + '33', // Color con opacidad
                                     fill: true,
-                                    tension: 0.3
+                                    tension: 0.3,
+                                     pointRadius: 3,
+                                    pointBackgroundColor: likesColor,
                                 }
                             ]
                         },
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false, // Para controlar mejor altura
                             plugins: {
-                                legend: { position: 'top' }
+                                legend: { 
+                                    position: 'top',
+                                    labels: {
+                                        color: '#e0e0e0', // Color de texto leyenda
+                                        usePointStyle: true,
+                                    }
+                                },
+                                tooltip: {
+                                     mode: 'index',
+                                     intersect: false,
+                                     backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                     titleFont: { size: 14 },
+                                     bodyFont: { size: 12 },
+                                     padding: 10,
+                                }
                             },
                             scales: {
                                 x: {
-                                    title: { display: true, text: "Fecha" }
+                                    type: 'time', // Usar eje de tiempo
+                                    time: {
+                                         unit: 'day', // Ajustar unidad según el rango (day, week, month)
+                                         tooltipFormat: 'PPP', // Formato de fecha en tooltip (ej: Jan 1, 2024)
+                                         displayFormats: {
+                                             day: 'MMM d' // Formato en el eje (ej: Jan 1)
+                                         }
+                                    },
+                                    title: { 
+                                        display: true, 
+                                        text: "Fecha",
+                                        color: '#9ca3af' // Gris claro para título
+                                    },
+                                    ticks: { 
+                                        color: '#9ca3af', // Color de las etiquetas del eje X
+                                        maxRotation: 0, // Evitar rotación si caben
+                                        autoSkip: true, // Ocultar algunas etiquetas si hay muchas
+                                        maxTicksLimit: 10 // Limitar número de ticks visibles
+                                    },
+                                    grid: {
+                                        color: 'rgba(255, 255, 255, 0.1)' // Color rejilla X
+                                    }
                                 },
                                 y: {
                                     beginAtZero: true,
-                                    title: { display: true, text: "Cantidad" }
+                                    title: { 
+                                        display: true, 
+                                        text: "Cantidad",
+                                        color: '#9ca3af' 
+                                    },
+                                     ticks: { color: '#9ca3af' }, // Color de las etiquetas del eje Y
+                                    grid: {
+                                        color: 'rgba(255, 255, 255, 0.1)' // Color rejilla Y
+                                    }
                                 }
+                            },
+                            interaction: { // Para mejor hover
+                                mode: 'nearest',
+                                axis: 'x',
+                                intersect: false
                             }
                         }
                     });
                 } catch (error) {
                     console.error("Error al cargar los datos del gráfico:", error);
+                    // Podrías mostrar un mensaje de error en la UI aquí
+                     document.getElementById("graficoMensajes").outerHTML = '<p class="error-message">No se pudieron cargar los datos del gráfico.</p>';
                 }
             }
 
@@ -202,16 +327,32 @@
                 const from = fromInput.value;
                 const to = toInput.value;
                 if (from && to) {
-                    cargarDatosGrafico(from, to);
+                    // Actualizar la URL y recargar la página completa
                     const url = new URL(window.location.href);
                     url.searchParams.set('from', from);
                     url.searchParams.set('to', to);
-                    window.location.href = url.toString(); // Refresca toda la vista con los nuevos datos
+                    // Conservar el parámetro 'account' si existe
+                    const currentAccount = new URLSearchParams(window.location.search).get('account');
+                    if (currentAccount) {
+                         url.searchParams.set('account', currentAccount);
+                    } else {
+                         url.searchParams.delete('account'); // Asegurarse de quitarlo si no estaba
+                    }
+                    window.location.href = url.toString(); 
+                } else {
+                    alert("Por favor, selecciona ambas fechas.");
                 }
             }
 
             btnFiltrar.addEventListener("click", aplicarFiltro);
-            cargarDatosGrafico(fromInput.value, toInput.value);
+
+            // Cargar gráfico inicial con las fechas que vienen del servidor
+            if (fromInput.value && toInput.value) {
+                 cargarDatosGrafico(fromInput.value, toInput.value);
+            } else {
+                 console.warn("Fechas iniciales no definidas, no se carga el gráfico.");
+                 // Opcional: cargar con un rango por defecto si las fechas están vacías
+            }
         });
     </script>
 </body>
