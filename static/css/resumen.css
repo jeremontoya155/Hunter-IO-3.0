@@ -184,15 +184,21 @@ html, body {
   gap: 18px;
 }
 
+/* -- AJUSTES METRIC CARD -- */
 .metric-card {
   background-color: #1f2937;
   border-radius: 10px;
-  padding: 20px;
+  /* Reducir padding vertical, mantener horizontal */
+  padding: 15px 20px;
   text-align: center;
-  position: relative; /* Para posicionar icono y nota */
+  position: relative;
   border: 1px solid rgba(255, 255, 255, 0.08);
   transition: all 0.3s ease;
-  overflow: hidden; /* Para contener efectos si los hubiera */
+  overflow: hidden;
+  display: flex; /* Usar flex para controlar mejor el espacio */
+  flex-direction: column; /* Apilar título, valor, nota */
+  justify-content: center; /* Centrar contenido verticalmente */
+  min-height: 120px; /* Añadir una altura mínima para consistencia */
 }
 
 .metric-card:hover {
@@ -202,57 +208,80 @@ html, body {
 }
 
 .metric-title {
-  font-size: 0.9rem; /* 14px */
+  font-size: 0.85rem; /* Ligeramente más pequeño o igual */
   font-weight: 500;
-  color: #9ca3af; /* Gris medio */
-  margin-bottom: 8px;
+  color: #9ca3af;
+  /* Reducir margen inferior */
+  margin-bottom: 4px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  order: 1; /* Asegurar que el título esté arriba */
 }
 
 .metric-value {
-  font-size: 2rem; /* 32px */
+  /* Aumentar tamaño de fuente significativamente */
+  font-size: 2.75rem; /* 44px - Ajusta este valor según veas */
   font-weight: 700;
   color: #fff;
-  margin-bottom: 10px;
-  line-height: 1.1;
+  /* Reducir margen inferior y altura de línea */
+  margin-bottom: 5px;
+  line-height: 1.0; /* Muy importante para quitar espacio extra */
+  order: 2; /* Asegurar que el valor esté después del título */
+  flex-grow: 1; /* Permitir que ocupe espacio vertical si es necesario */
+  display: flex; /* Para centrar el número si es corto */
+  align-items: center;
+  justify-content: center;
 }
 
 .metric-icon {
   position: absolute;
-  top: 15px;
-  right: 15px;
-  font-size: 1.5rem; /* 24px */
-  color: rgba(255, 255, 255, 0.15); /* Icono sutil */
+  /* Posición ajustada para no chocar con número grande */
+  top: 10px;
+  right: 10px;
+  font-size: 1.3rem; /* 20-21px - Ligeramente más pequeño quizás */
+  color: rgba(255, 255, 255, 0.1); /* Más sutil aún */
+  opacity: 0.7;
 }
 
 .metric-note {
-  display: block; /* Asegurar que esté en su línea */
-  font-size: 0.75rem; /* 12px */
-  color: #6b7280; /* Gris oscuro */
-  margin-top: 5px;
+  display: block;
+  font-size: 0.7rem; /* 11px - Más pequeño */
+  color: #6b7280;
+  margin-top: auto; /* Empujar la nota hacia abajo */
+  padding-top: 5px; /* Espacio sobre la nota */
+  order: 3; /* Asegurar que la nota esté abajo */
 }
 
-/* Estilos para Tarjetas Pequeñas (ej. Último Mensaje) */
 .metric-card-small {
-  padding: 15px;
+  padding: 15px 20px; /* Aumentar un poco el padding si es necesario */
   text-align: left;
+  min-height: auto; /* Quitar altura mínima si no aplica */
+  display: flex; /* Usar flex para alinear */
+  flex-direction: column;
+  justify-content: center; /* Centrar verticalmente */
 }
+
 .metric-title-small {
-   font-size: 0.85rem; /* 13-14px */
+   font-size: 0.9rem; /* 14px - Mantener o aumentar ligeramente */
    font-weight: 500;
-   color: #9ca3af; 
-   margin-bottom: 5px;
+   color: #9ca3af;
+   /* Reducir margen si es necesario */
+   margin-bottom: 6px;
 }
+
 .metric-value-small {
-  font-size: 1rem; /* 16px */
-  font-weight: 600;
-  color: #fff;
-  margin-bottom: 3px;
+  font-size: 1.15rem; /* 18-19px - Ligeramente más pequeño en móvil */
 }
 .metric-detail-small {
-   font-size: 0.8rem; /* 13px */
-   color: #9ca3af;
+  font-size: 0.9rem; /* 14px */
+}
+
+
+.metric-detail-small {
+   /* Aumentar tamaño del destinatario */
+   font-size: 1rem; /* 16px */
+   color: #9ca3af; /* Mantener gris o cambiar si prefieres */
+   line-height: 1.3;
 }
 
 /* --- Alertas Visuales para Tasa de Likes --- */
@@ -271,10 +300,9 @@ html, body {
 .metric-card.alert-medium .metric-title { color: #fed7aa; }
 
 .metric-card.alert-good {
-  /* background-color: #065f46;  Verde oscuro */
   border-left: 4px solid #2dd4bf; /* Borde izquierdo teal (principal) */
+  /* Color de fondo y texto por defecto */
 }
-/* No necesita cambio de color de texto si el fondo es el normal */
 
 .metric-card.alert-excellent {
   background-color: #065f46; /* Verde oscuro */
@@ -362,18 +390,24 @@ html, body {
   flex-wrap: wrap; /* Por si no cabe en una línea */
 }
 
+/* -- AJUSTE MENSAJE DESTINATARIO/FECHA -- */
 .mensaje-destinatario {
+  /* Cambiar a color neutro */
   font-weight: 600;
-  color: #5eead4; /* Teal más claro para destacar */
+  color: #e5e7eb; /* Gris claro principal */
   font-size: 0.9rem;
   display: inline-flex;
   align-items: center;
+  margin-right: 10px; /* Espacio entre usuario y fecha */
 }
 
 .mensaje-fecha {
-  color: #9ca3af;
-  font-size: 0.75rem; /* 12px */
+  /* Cambiar a color destacado */
+  color: #5eead4; /* Teal claro */
+  font-size: 0.8rem; /* 13px - Un poco más grande si quieres */
+  font-weight: 500; /* Ligeramente más peso */
 }
+/* -- FIN AJUSTE -- */
 
 .mensaje-contenido {
   color: #d1d5db; /* Gris claro */
@@ -422,7 +456,7 @@ html, body {
    .key-metrics-section .metrics-container {
        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
    }
-    .metric-value { font-size: 1.75rem; } /* 28px */
+    .metric-value { font-size: 2.5rem; } /* 40px - Ajustar si es necesario */
 }
 
 @media (max-width: 768px) {
@@ -449,10 +483,26 @@ html, body {
        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
        gap: 12px;
    }
-    .metric-value { font-size: 1.5rem; } /* 24px */
-    .metric-title { font-size: 0.8rem; } /* 13px */
-    .metric-card { padding: 15px; }
+    /* -- AJUSTE RESPONSIVE METRICAS -- */
+    .metric-value {
+      font-size: 2.25rem; /* 36px - Reducir un poco en móviles */
+  }
+  .metric-card {
+      min-height: 100px; /* Reducir altura mínima en móvil */
+      padding: 12px 15px; /* Reducir padding en móvil */
+  }
+  .metric-title {
+      font-size: 0.75rem; /* 12px */
+  }
+  /* -- FIN AJUSTE -- */
 
+  .mensaje-header {
+      align-items: flex-start; /* Mejor alineación en móvil si se apilan */
+  }
+  .mensaje-fecha {
+      margin-top: 3px; /* Pequeño espacio si la fecha queda abajo */
+      font-size: 0.75rem; /* Más pequeño si es necesario */
+  }
     .chart-container { height: 300px; }
 }
 
