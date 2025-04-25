@@ -153,3 +153,126 @@
 .sidebar:not(.collapsed) .nav-links a span {
   display: inline-block;
 }
+
+/* Estilos para el sidebar colapsado y los tooltips */
+.sidebar.collapsed {
+  width: 60px !important; /* Ancho cuando está colapsado */
+  transition: width 0.3s ease;
+}
+
+.sidebar.collapsed .nav-links span {
+  display: none; /* Oculta los textos normalmente */
+}
+
+.sidebar.collapsed .nav-links a {
+  position: relative;
+}
+
+/* Tooltip que aparece al hacer hover */
+.sidebar.collapsed .nav-links a:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 10px;
+  white-space: nowrap;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+/* Pequeño triángulo para el tooltip */
+.sidebar.collapsed .nav-links a:hover::before {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border-right: 5px solid rgba(0, 0, 0, 0.8);
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  z-index: 1001;
+  pointer-events: none;
+}
+
+/* Tooltip para items del menú colapsado */
+.collapsed .nav-link {
+  position: relative;
+}
+
+.collapsed .nav-link:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 15px;
+  white-space: nowrap;
+  background: #2c3e50;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  z-index: 100;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  animation: fadeIn 0.3s ease;
+}
+
+/* Pequeña flecha del tooltip */
+.collapsed .nav-link:hover::before {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border-right: 6px solid #2c3e50;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+
+.sidebar.collapsed .nav-links span {
+  display: none;
+}
+/* Muestra el contenido del atributo data-tooltip */
+.sidebar.collapsed .nav-link:hover::after {
+  content: attr(data-tooltip); /* <-- Clave aquí */
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 15px; /* Espacio desde el borde del sidebar */
+  white-space: nowrap;
+  background: #2c3e50; /* Estilos del tooltip */
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Crea la flecha del tooltip */
+.sidebar.collapsed .nav-link:hover::before {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border-right: 6px solid #2c3e50;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  z-index: 1001;
+  margin-left: 9px; /* Ajuste para que la flecha toque el tooltip (15px - 6px)*/
+}
