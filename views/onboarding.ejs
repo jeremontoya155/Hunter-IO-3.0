@@ -49,7 +49,7 @@
           /* opacity: 1; animation: none; */
       }
 
-      /* --- Estilos Título Principal (Versión Corregida y Solicitada) --- */
+      /* --- Estilos Título Principal (MODIFICADO SEGÚN SOLICITUD) --- */
       #main-heading {
           font-size: 3.2em; /* Tamaño base grande */
           line-height: 1.25;
@@ -57,23 +57,23 @@
           color: #ffffff; /* Color por defecto si no aplica a hijos */
           text-align: center;
       }
-      #main-heading .intro-text { /* "WELCOME TO" */
+      #main-heading .intro-text { /* "BIENVENIDO A" / "WELCOME TO" */
           font-size: 0.75em;  /* Relativo al h1, más grande que el original */
           font-weight: 600;   /* Un poco más grueso */
           text-transform: uppercase; /* Mayúsculas */
           letter-spacing: 1.5px;   /* Espaciado entre letras */
-          color: #e0e0e0;         /* Color claro */
-          opacity: 0.9;
+          color: #2ecc71;         /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< COLOR CAMBIADO A VERDE */
+          /* opacity: 0.9; */     /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Opacidad eliminada/comentada para que el verde sea más sólido */
           display: block;      /* Poner en su propia línea */
           margin-bottom: 8px;  /* Espacio antes de HUNTER */
       }
       #main-heading .highlight { /* "HUNTER" */
           font-weight: 700;    /* Grueso */
           display: block;      /* Asegurar su propia línea */
-          color: #2ecc71;      /* Color VERDE principal */
-          /* Efecto Brillo VERDE */
-          text-shadow: 0 0 12px rgba(46, 204, 113, 0.7), /* Brillo principal */
-                       0 0 25px rgba(46, 204, 113, 0.5); /* Brillo más difuso */
+          color: #2ecc71;      /* Color VERDE principal (se mantiene) */
+          /* EFECTO DE BRILLO ELIMINADO */
+          /* text-shadow: 0 0 12px rgba(46, 204, 113, 0.7), */ /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ELIMINADO */
+                       /* 0 0 25px rgba(46, 204, 113, 0.5); */ /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ELIMINADO */
       }
       .slogan { /* Eslogan debajo */
           display: block;
@@ -211,6 +211,7 @@
 
     <!-- Script Principal (Acordeón, Completado, Idioma) -->
     <script>
+        // ... (EL CÓDIGO JAVASCRIPT PERMANECE IGUAL) ...
         document.addEventListener('DOMContentLoaded', function() {
 
             // ============================================
@@ -221,7 +222,7 @@
                 step1Title: "Inicia Sesión y Desbloquea el Poder", step1Intro: "Para comenzar tu cacería de resultados, sigue estos pasos:", step1List: ["<strong>Accede a Instagram:</strong> Introduce tus credenciales de forma segura.", "<strong>Mensajes Personalizados:</strong> Sube tu archivo con mensajes irresistibles.", "<strong>Preguntas Clave:</strong> Define las preguntas que activarán tu estrategia.", "<strong>Lista de Objetivos:</strong> Carga tu archivo con las cuentas a contactar.", "<strong>¡Inicia Sesión!:</strong> Presiona el botón y deja que HUNTER haga su magia."], step1TutorialLinkText: "Ver Tutorial Paso 1",
                 step2Title: "Explora tu Centro de Mando: El Dashboard", step2Intro: "Una vez dentro, el <strong>DASHBOARD</strong> será tu torre de control:", step2List: ["<strong>Métricas Clave:</strong> Visualiza mensajes enviados y rendimiento al instante.", "<strong>Estadísticas Precisas:</strong> Entiende qué funciona y optimiza tu enfoque.", "<strong>Actividad y Crecimiento:</strong> Observa el impacto directo en tu perfil."], step2TutorialLinkText: "Ver Tutorial Paso 2",
                 step3Title: "Navega con Agilidad: Panel Lateral", step3Intro: "El panel lateral izquierdo es tu arsenal de herramientas:", step3List: ["<strong>Dashboard:</strong> Tu vista principal, siempre accesible.", "<strong>Perfil y Análisis:</strong> Profundiza en el crecimiento y la interacción.", "<strong>Configuración:</strong> Personaliza HUNTER a tu medida."], step3TutorialLinkText: "Ver Tutorial Paso 3",
-                footerCta: "<i class='fas fa-fighter-jet'></i> Tus metas son nuestro blanco <i class='fas fa-fighter-jet'></i>" // Solo CTA
+                footerCta: " Tus metas son nuestro blanco " // Solo CTA
             };
             const englishElements = {
                 title: "HUNTER - Welcome and First Steps", mainHeading: "<span class='intro-text'>Welcome to</span> <span class='highlight'>HUNTER</span><span class='slogan'>Where we don't wait for opportunities — we create and hunt them</span>",
