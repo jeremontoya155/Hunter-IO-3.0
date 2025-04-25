@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar Nicho ✨</title>
+    <title>Hunter Suite - Inicio ✨</title> <!-- Título más general -->
     <!-- Enlaces a hojas de estilo -->
-    <link rel="stylesheet" href="/static/css/nichos.css"> <!-- Tu CSS moderno -->
+    <link rel="stylesheet" href="/static/css/nichos.css"> <!-- Mantenemos tu CSS base -->
     <link rel="stylesheet" href="/static/css/navbar.css">
     <link rel="stylesheet" href="/static/css/scrollbar.css" />
     <!-- FontAwesome para íconos -->
@@ -14,108 +14,319 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Estilos Adicionales para la pantalla de selección y ocultar/mostrar -->
+    <style>
+        /* --- Estilos para la pantalla de selección --- */
+        .choice-container {
+            display: flex; /* Usa flexbox para centrar */
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 80px); /* Ajusta según altura de tu navbar */
+            padding: 40px 20px;
+            gap: 30px; /* Espacio entre las tarjetas */
+            flex-wrap: wrap; /* Para que se ajusten en pantallas pequeñas */
+        }
+
+        .choice-card {
+            background-color: rgba(255, 255, 255, 0.05); /* Similar al form-card */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 35px 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 300px; /* Ancho fijo para las tarjetas */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .choice-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.15); /* Sombra sutil al pasar el ratón */
+        }
+
+        .choice-card .icon-choice {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: #2ecc71; /* Verde característico */
+        }
+
+        .choice-card h3 {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .choice-card p {
+            font-size: 0.95em;
+            color: #bdc3c7;
+            line-height: 1.6;
+        }
+
+        /* --- Estilos para ocultar/mostrar secciones --- */
+        .form-section {
+            display: none; /* Oculto por defecto */
+            /* Los estilos del form-container original se aplicarán cuando se muestre */
+             padding-top: 20px; /* Añadir espacio desde la navbar si es necesario */
+             padding-bottom: 40px;
+        }
+
+        .form-section.active {
+            display: block; /* Mostrar la sección activa */
+        }
+
+        /* --- Estilo Botón Volver --- */
+        .back-button {
+            display: inline-block; /* Para que respete márgenes */
+            background-color: #7f8c8d; /* Un color secundario/neutro */
+            color: #ffffff;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1em;
+            font-weight: 500;
+            font-family: 'Poppins', sans-serif;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 20px; /* Espacio arriba */
+            margin-right: 10px; /* Espacio respecto al botón de guardar */
+            text-decoration: none; /* Si se usa como enlace */
+            text-align: center;
+        }
+
+        .back-button:hover {
+            background-color: #95a5a6;
+            transform: translateY(-2px);
+        }
+
+        .back-button i {
+            margin-right: 8px;
+        }
+
+        /* Ajuste para que el botón volver esté al lado del submit si se quiere */
+        .form-actions {
+             display: flex;
+             justify-content: flex-start; /* O 'flex-end' si los quieres a la derecha */
+             align-items: center;
+             margin-top: 20px; /* Ajusta el espacio superior si es necesario */
+        }
+
+
+    </style>
+
     <script src="/static/js/navbar.js" defer></script>
-    <script src="/static/js/file-input-label.js" defer></script> <!-- JS Opcional para nombre de archivo -->
+    <script src="/static/js/file-input-label.js" defer></script>
 </head>
 <body>
     <!-- Navbar incluida -->
     <%- include('partials/navbar') %>
 
-    <!-- Contenedor principal con nuevo estilo -->
-    <div class="form-container">
-        <div class="form-card">
-            <h2><i class="fas fa-bullseye icon-title"></i> Registrar Nuevo Nicho</h2>
-            <p class="subtitle">Define los detalles de tu público objetivo.</p>
+    <!-- Contenedor de Selección Inicial -->
+    <div class="choice-container" id="choice-container">
+        <div class="choice-card" data-target="hunter-form-section">
+            <i class="fas fa-rocket icon-choice"></i>
+            <h3>Crear Hunter</h3>
+            <p>Configura una nueva instancia de Hunter para empezar.</p>
+        </div>
+        <div class="choice-card" data-target="blanco-form-section">
+            <i class="fas fa-bullseye icon-choice"></i>
+            <h3>Crear tu Blanco</h3>
+            <p>Define un nuevo nicho objetivo con sus características.</p>
+        </div>
+    </div>
 
-            <!-- Formulario con estructura mejorada y ID -->
-            <form action="/nicho" method="POST" enctype="multipart/form-data" class="nicho-form" id="nicho-form">
-                                                                                                <!-- ^^^ ID añadido aquí -->
-                <div class="form-group">
-                    <label for="ubicacion"><i class="fas fa-map-marker-alt"></i> Ubicación:</label>
-                    <input type="text" id="ubicacion" name="ubicacion" placeholder="Ej: Ciudad de México, Remoto" required>
-                </div>
+    <!-- Sección para el Formulario "Crear Hunter" (Inicialmente Oculta) -->
+    <section id="hunter-form-section" class="form-section">
+        <div class="form-container">
+            <div class="form-card">
+                <h2><i class="fas fa-rocket icon-title"></i> Crear Nuevo Hunter</h2>
+                <p class="subtitle">Inicia una nueva configuración.</p>
 
-                <div class="form-group">
-                    <label for="tipo_personas"><i class="fas fa-lightbulb"></i> Intereses (separados por coma):</label>
-                    <textarea id="tipo_personas" name="tipo_personas" placeholder="Ej: Desarrollo web, Marketing digital, Viajes sostenibles" required rows="3"></textarea>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group half-width">
-                        <label for="edad_min"><i class="fas fa-arrow-down-1-9"></i> Edad Mínima:</label>
-                        <input type="number" id="edad_min" name="edad_min" placeholder="Ej: 21" min="0">
+                <form action="/ruta-para-hunter" method="POST" class="hunter-form" id="hunter-form"> <!-- CAMBIA action -->
+                    <div class="form-group">
+                        <label for="hunter_name"><i class="fas fa-signature"></i> Nombre del Hunter:</label>
+                        <input type="text" id="hunter_name" name="hunter_name" placeholder="Ej: Hunter para Ventas B2B" required>
+                        <small>Este campo es un ejemplo, ¡ajústalo a lo que necesites!</small>
                     </div>
-                    <div class="form-group half-width">
-                        <label for="edad_max"><i class="fas fa-arrow-up-9-1"></i> Edad Máxima:</label>
-                        <input type="number" id="edad_max" name="edad_max" placeholder="Ej: 45" min="0">
+
+                    <!-- Más campos si necesitas para "Hunter" -->
+
+                    <div class="form-actions">
+                         <button type="button" class="back-button" data-action="show-choice">
+                             <i class="fas fa-arrow-left"></i> Volver
+                         </button>
+                         <button type="submit" class="submit-button">
+                             <i class="fas fa-cogs"></i> Iniciar Hunter
+                         </button>
                     </div>
-                </div>
+                </form>
+            </div>
+        </div>
+    </section>
 
-                <div class="form-group">
-                    <label for="mensaje"><i class="fas fa-envelope-open-text"></i> Mensaje Descriptivo:</label>
-                    <textarea id="mensaje" name="mensaje" placeholder="Describe el nicho y el propósito de este registro..." required rows="4"></textarea>
-                </div>
+    <!-- Sección para el Formulario "Crear tu Blanco" (Inicialmente Oculta) -->
+    <section id="blanco-form-section" class="form-section">
+        <!-- Contenedor principal con nuevo estilo -->
+        <div class="form-container">
+            <div class="form-card">
+                <h2><i class="fas fa-bullseye icon-title"></i> Registrar Nuevo Nicho (Blanco)</h2> <!-- Título ajustado -->
+                <p class="subtitle">Define los detalles de tu público objetivo.</p>
 
-                <!-- Subida de archivo PDF con estilo mejorado -->
-                <div class="form-group file-upload-wrapper">
-                    <label for="archivo_pdf" class="file-upload-label">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <span>Adjuntar PDF (Opcional)</span>
-                    </label>
-                    <input type="file" id="archivo_pdf" name="archivo_pdf" accept=".pdf" class="file-input-hidden">
-                    <span id="file-name-display" class="file-name">Ningún archivo seleccionado</span>
-                </div>
+                <!-- Formulario original con estructura mejorada y ID -->
+                <form action="/nicho" method="POST" enctype="multipart/form-data" class="nicho-form" id="nicho-form">
+                    <div class="form-group">
+                        <label for="ubicacion"><i class="fas fa-map-marker-alt"></i> Ubicación:</label>
+                        <input type="text" id="ubicacion" name="ubicacion" placeholder="Ej: Ciudad de México, Remoto" required>
+                    </div>
 
-                <!-- Botón de envío con estilo -->
-                <button type="submit" class="submit-button">
-                    <i class="fas fa-save"></i> Guardar Nicho
-                </button>
+                    <div class="form-group">
+                        <label for="tipo_personas"><i class="fas fa-lightbulb"></i> Intereses (separados por coma):</label>
+                        <textarea id="tipo_personas" name="tipo_personas" placeholder="Ej: Desarrollo web, Marketing digital, Viajes sostenibles" required rows="3"></textarea>
+                    </div>
 
-            </form>
-        </div> <!-- Fin de .form-card -->
-    </div> <!-- Fin de .form-container -->
+                    <div class="form-row">
+                        <div class="form-group half-width">
+                            <label for="edad_min"><i class="fas fa-arrow-down-1-9"></i> Edad Mínima:</label>
+                            <input type="number" id="edad_min" name="edad_min" placeholder="Ej: 21" min="0">
+                        </div>
+                        <div class="form-group half-width">
+                            <label for="edad_max"><i class="fas fa-arrow-up-9-1"></i> Edad Máxima:</label>
+                            <input type="number" id="edad_max" name="edad_max" placeholder="Ej: 45" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mensaje"><i class="fas fa-envelope-open-text"></i> Mensaje Descriptivo:</label>
+                        <textarea id="mensaje" name="mensaje" placeholder="Describe el nicho y el propósito de este registro..." required rows="4"></textarea>
+                    </div>
+
+                    <!-- Subida de archivo PDF con estilo mejorado -->
+                    <div class="form-group file-upload-wrapper">
+                        <label for="archivo_pdf" class="file-upload-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Adjuntar PDF (Opcional)</span>
+                        </label>
+                        <input type="file" id="archivo_pdf" name="archivo_pdf" accept=".pdf" class="file-input-hidden">
+                        <span id="file-name-display" class="file-name">Ningún archivo seleccionado</span>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="form-actions">
+                        <button type="button" class="back-button" data-action="show-choice">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </button>
+                        <button type="submit" class="submit-button">
+                            <i class="fas fa-save"></i> Guardar Nicho
+                        </button>
+                    </div>
+
+                </form>
+            </div> <!-- Fin de .form-card -->
+        </div> <!-- Fin de .form-container -->
+    </section>
 
     <!-- =============================================================== -->
-    <!-- SCRIPT PARA MOSTRAR ALERTA SIMPLE DESPUÉS DEL ENVÍO (CLIENT-SIDE) -->
+    <!-- SCRIPT PARA MOSTRAR/OCULTAR SECCIONES Y ALERTA SIMPLE -->
     <!-- =============================================================== -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Parte 1: Revisar si venimos de un envío ---
-            // Busca una 'bandera' en el sessionStorage que indica que el form se acaba de enviar.
+            const choiceContainer = document.getElementById('choice-container');
+            const choiceCards = document.querySelectorAll('.choice-card');
+            const formSections = document.querySelectorAll('.form-section');
+            const backButtons = document.querySelectorAll('.back-button[data-action="show-choice"]');
+            const nichoForm = document.getElementById('nicho-form'); // Formulario específico del nicho
+
+            // --- Función para mostrar una sección y ocultar las demás ---
+            function showSection(targetId) {
+                // Ocultar contenedor de elección
+                if (choiceContainer) {
+                    choiceContainer.style.display = 'none';
+                }
+                // Ocultar todas las secciones de formulario
+                formSections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                // Mostrar la sección objetivo
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                } else {
+                     console.warn(`Sección con ID '${targetId}' no encontrada.`);
+                     showChoiceScreen(); // Volver a mostrar opciones si no se encuentra
+                }
+            }
+
+            // --- Función para mostrar la pantalla de elección ---
+            function showChoiceScreen() {
+                 // Ocultar todas las secciones de formulario
+                 formSections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                 // Mostrar contenedor de elección
+                if (choiceContainer) {
+                    choiceContainer.style.display = 'flex'; // O 'block' según tu layout original
+                }
+            }
+
+
+            // --- Event Listeners para las Tarjetas de Elección ---
+            choiceCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const targetId = card.dataset.target;
+                    if (targetId) {
+                        showSection(targetId);
+                    }
+                });
+            });
+
+             // --- Event Listeners para los Botones "Volver" ---
+            backButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    showChoiceScreen();
+                });
+            });
+
+
+            // --- Lógica de Alerta para el Formulario de Nicho (EXISTENTE) ---
+
+            // Parte 1: Revisar si venimos de un envío del *formulario de nicho*
             const formSubmittedFlag = sessionStorage.getItem('nichoJustSubmitted');
 
             if (formSubmittedFlag === 'true') {
-                // Si la bandera existe, muestra la alerta simple.
-                // ¡Recuerda! Esta alerta nativa NO SE PUEDE ESTILIZAR con CSS.
+                // Muestra la alerta solo si la bandera existe
                 alert('¡Nicho registrado correctamente!'); // Mensaje de confirmación
-
-                // Es crucial limpiar la bandera después de mostrar la alerta.
-                // Si no, la alerta aparecería cada vez que el usuario recargue la página
-                // manualmente durante esa sesión del navegador.
+                // Limpia la bandera
                 sessionStorage.removeItem('nichoJustSubmitted');
+                // Opcional: podrías querer volver a la pantalla de selección aquí
+                // showChoiceScreen();
+                 // O podrías querer mostrar directamente el form de nicho de nuevo (menos común)
+                 // showSection('blanco-form-section');
             }
 
-            // --- Parte 2: Poner la bandera cuando se envíe el formulario ---
-            // Busca el formulario por su ID.
-            const nichoForm = document.getElementById('nicho-form');
-
-            // Asegúrate de que el formulario exista antes de añadir el listener.
+            // Parte 2: Poner la bandera cuando se envíe el *formulario de nicho*
             if (nichoForm) {
-                // Añade un 'escuchador' que se activa justo cuando el usuario hace clic en 'submit'.
                 nichoForm.addEventListener('submit', () => {
-                    // Antes de que la página se recargue o redirija por el envío del formulario,
-                    // guarda la 'bandera' en el sessionStorage.
+                    // Guarda la bandera ANTES de que la página recargue/redirija
                     sessionStorage.setItem('nichoJustSubmitted', 'true');
-                    // NOTA: Esto asume que el envío tendrá éxito. No verifica la respuesta del servidor.
                 });
             } else {
-                // Mensaje útil en la consola si el script no encuentra el formulario.
-                console.warn("Advertencia: El formulario con ID 'nicho-form' no fue encontrado en el DOM.");
+                console.warn("Advertencia: El formulario con ID 'nicho-form' no fue encontrado.");
             }
+
+            // --- Asegurar estado inicial correcto (Mostrar opciones al cargar) ---
+            // Si ninguna sección está marcada para mostrar por defecto (ej. por error previo o recarga),
+            // asegurarse de que la pantalla de elección se muestre.
+            const isActiveSection = document.querySelector('.form-section.active');
+            if (!isActiveSection && choiceContainer) {
+                 showChoiceScreen();
+            }
+
+
         });
     </script>
     <!-- =============================================================== -->
-    <!-- FIN DEL SCRIPT DE ALERTA -->
+    <!-- FIN DEL SCRIPT -->
     <!-- =============================================================== -->
 
 </body>
