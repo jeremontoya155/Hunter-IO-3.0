@@ -15,10 +15,10 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- Estilos Externos -->
-    <link rel="stylesheet" href="/static/css/navbar.css" /> <!-- Asegúrate que esta ruta es correcta -->
-    <link rel="stylesheet" href="/static/css/onboarding.css" /> <!-- Asegúrate que esta ruta es correcta -->
-    <link rel="stylesheet" href="/static/css/scrollbar.css" /> <!-- Asegúrate que esta ruta es correcta -->
+    <!-- Estilos Externos (Asegúrate que estas rutas son correctas) -->
+    <link rel="stylesheet" href="/static/css/navbar.css" />
+    <link rel="stylesheet" href="/static/css/onboarding.css" />
+    <link rel="stylesheet" href="/static/css/scrollbar.css" />
 
     <!-- Estilos Internos (Completos y con Footer ajustado) -->
     <style>
@@ -45,127 +45,155 @@
       }
       header {
           margin-bottom: 40px;
-          /* Si tenías animación aquí y la quieres quitar, asegúrate de que no esté */
-          /* opacity: 1; animation: none; */
       }
 
-      /* --- Estilos Título Principal (MODIFICADO SEGÚN SOLICITUD) --- */
+      /* --- Estilos Título Principal --- */
       #main-heading {
-          font-size: 3.2em; /* Tamaño base grande */
-          line-height: 1.25;
-          margin-bottom: 35px; /* Más espacio debajo */
-          color: #ffffff; /* Color por defecto si no aplica a hijos */
-          text-align: center;
+          font-size: 3.2em; line-height: 1.25; margin-bottom: 35px;
+          color: #ffffff; text-align: center;
       }
-      #main-heading .intro-text { /* "BIENVENIDO A" / "WELCOME TO" */
-          font-size: 0.75em;  /* Relativo al h1, más grande que el original */
-          font-weight: 600;   /* Un poco más grueso */
-          text-transform: uppercase; /* Mayúsculas */
-          letter-spacing: 1.5px;   /* Espaciado entre letras */
-          color: #2ecc71;         /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< COLOR CAMBIADO A VERDE */
-          /* opacity: 0.9; */     /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Opacidad eliminada/comentada para que el verde sea más sólido */
-          display: block;      /* Poner en su propia línea */
-          margin-bottom: 8px;  /* Espacio antes de HUNTER */
+      #main-heading .intro-text {
+          font-size: 0.75em; font-weight: 600; text-transform: uppercase;
+          letter-spacing: 1.5px; color: #2ecc71; display: block; margin-bottom: 8px;
       }
-      #main-heading .highlight { /* "HUNTER" */
-          font-weight: 700;    /* Grueso */
-          display: block;      /* Asegurar su propia línea */
-          color: #2ecc71;      /* Color VERDE principal (se mantiene) */
-          /* EFECTO DE BRILLO ELIMINADO */
-          /* text-shadow: 0 0 12px rgba(46, 204, 113, 0.7), */ /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ELIMINADO */
-                       /* 0 0 25px rgba(46, 204, 113, 0.5); */ /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ELIMINADO */
+      #main-heading .highlight {
+          font-weight: 700; display: block; color: #2ecc71;
       }
-      .slogan { /* Eslogan debajo */
-          display: block;
-          font-size: 0.5em; /* Relativo al h1 (ajustar si se ve muy pequeño) */
-          font-weight: 400;
-          margin-top: 12px; /* Espacio después de HUNTER */
-          opacity: 0.75;
-          color: #bdc3c7; /* Color del eslogan */
+      .slogan {
+          display: block; font-size: 0.5em; font-weight: 400;
+          margin-top: 12px; opacity: 0.75; color: #bdc3c7;
       }
 
       /* --- Estilos Acordeón --- */
       .onboarding-step {
-          background-color: rgba(255, 255, 255, 0.05);
-          margin-bottom: 15px;
-          border-radius: 10px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          overflow: hidden;
+          background-color: rgba(255, 255, 255, 0.05); margin-bottom: 15px;
+          border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1);
+          overflow: hidden; transition: opacity 0.3s ease; /* Para el estado disabled */
       }
       .step-header {
-          display: flex;
-          align-items: center;
-          padding: 15px 20px;
-          cursor: pointer;
-          transition: background-color 0.3s ease;
-          position: relative;
+          display: flex; align-items: center; padding: 15px 20px;
+          cursor: pointer; transition: background-color 0.3s ease; position: relative;
       }
-      .step-header:hover { background-color: rgba(255, 255, 255, 0.1); }
+      /* QUITAR HOVER SI ESTÁ DESHABILITADO (se controla con .disabled) */
+      .onboarding-step:not(.disabled) .step-header:hover { background-color: rgba(255, 255, 255, 0.1); }
+
       .step-header .step-number {
-          background-color: #3498db;
-          color: white;
-          border-radius: 50%;
-          width: 30px;
-          height: 30px;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: 600;
-          margin-right: 15px;
-          flex-shrink: 0;
-           transition: background-color 0.3s ease;
+          background-color: #3498db; color: white; border-radius: 50%;
+          width: 30px; height: 30px; display: inline-flex; align-items: center;
+          justify-content: center; font-weight: 600; margin-right: 15px;
+          flex-shrink: 0; transition: background-color 0.3s ease;
       }
       .step-header .step-title {
-          flex-grow: 1;
-          margin: 0;
-          font-size: 1.2em;
-          font-weight: 600;
-          color: #ffffff;
-           transition: opacity 0.3s ease, text-decoration 0.3s ease;
+          flex-grow: 1; margin: 0; font-size: 1.2em; font-weight: 600;
+          color: #ffffff; transition: opacity 0.3s ease;
       }
       .step-header .step-icon {
-          margin-left: auto;
-          transition: transform 0.3s ease;
-          font-size: 1.1em;
-          padding-left: 15px;
-          color: #bdc3c7;
+          margin-left: auto; transition: transform 0.3s ease; font-size: 1.1em;
+          padding-left: 15px; color: #bdc3c7;
       }
-      .step-header .completion-checkbox {
-          margin-left: 10px;
-          transform: scale(1.3);
-          cursor: pointer;
-          vertical-align: middle;
-      }
+      /* YA NO HAY CHECKBOX GLOBAL EN EL HEADER */
+      /* .step-header .completion-checkbox { ... } */
+
       .step-body {
-          max-height: 0;
-          overflow: hidden;
+          max-height: 0; overflow: hidden;
           transition: max-height 0.4s ease-out, padding 0.4s ease-out;
-           padding: 0 20px 0 65px;
+          padding: 0 20px 0 65px; /* Ajustar padding izquierdo si es necesario */
       }
       .step-body.expanded {
-          max-height: 600px;
-           padding: 15px 20px 20px 65px;
+          max-height: 800px; /* Aumentado por si hay muchas sub-tareas */
+          padding: 15px 20px 20px 65px; /* Ajustar padding izquierdo si es necesario */
           transition: max-height 0.4s ease-in, padding 0.4s ease-in;
       }
       .step-body-content {
            border-top: 1px solid rgba(255, 255, 255, 0.1);
            padding-top: 15px;
       }
-      .step-body-content p, .step-body-content ul, .step-body-content ol {
-          margin-bottom: 15px;
-          color: #bdc3c7;
-          line-height: 1.6;
+      .step-body-content p {
+          margin-bottom: 15px; color: #bdc3c7; line-height: 1.6;
       }
-      .step-body-content strong { color: #ecf0f1; font-weight: 600; }
-      .step-body-content ol, .step-body-content ul { padding-left: 20px; }
-      .tutorial-link { display: inline-block; margin-top: 15px; font-size: 0.9em; color: #3498db; text-decoration: none; font-weight: 500; }
-      .tutorial-link i { margin-right: 5px; }
-      .tutorial-link:hover { text-decoration: underline; color: #5dade2; }
+       .step-body-content strong { color: #ecf0f1; font-weight: 600; }
 
-      /* --- Estilos Paso Completado y Expandido --- */
-      .onboarding-step.completed .step-header .step-title { text-decoration: line-through; opacity: 0.6; }
-      .onboarding-step.completed .step-header .step-number { background-color: #2ecc71; }
+      /* --- NUEVO: Estilos para la Lista de Tareas (feature-list) --- */
+      .feature-list {
+          list-style: none; /* Sin bullets */
+          padding-left: 0; /* Sin indentación por defecto */
+          margin-top: 15px;
+      }
+      .feature-list li {
+          background-color: rgba(255, 255, 255, 0.07); /* Fondo sutil para cada item */
+          border-left: 3px solid #3498db; /* Borde izquierdo de acento */
+          padding: 10px 15px;
+          margin-bottom: 10px; /* Espacio entre items */
+          border-radius: 4px;
+          display: flex; /* Para alinear checkbox y texto */
+          align-items: center; /* Alinear verticalmente */
+          gap: 12px; /* Espacio entre checkbox y texto */
+          transition: background-color 0.3s ease, opacity 0.3s ease; /* Transición suave */
+      }
+      .feature-list li input[type="checkbox"] {
+          flex-shrink: 0; /* Evita que el checkbox se encoja */
+          margin: 0; /* Resetea márgenes */
+          transform: scale(1.2); /* Hacerlo un poco más grande */
+          cursor: pointer;
+          accent-color: #2ecc71; /* Color del check cuando está marcado */
+          transition: opacity 0.3s ease;
+      }
+      .feature-list li label { /* Usamos label para asociar con checkbox */
+          flex-grow: 1; /* El texto ocupa el espacio restante */
+          color: #bdc3c7; /* Color del texto de la tarea */
+          line-height: 1.5;
+          cursor: pointer; /* Hacer click en el texto también marca/desmarca */
+          transition: color 0.3s ease, text-decoration 0.3s ease, opacity 0.3s ease;
+      }
+
+      /* --- NUEVO: Estilos para Tarea Completada --- */
+      .feature-list li.completed label {
+          text-decoration: line-through;
+          opacity: 0.6;
+          color: #95a5a6; /* Color más apagado */
+      }
+      .feature-list li.completed {
+         border-left-color: #2ecc71; /* Cambiar color del borde al completar */
+         background-color: rgba(46, 204, 113, 0.1); /* Fondo verdoso sutil */
+      }
+
+      /* --- Estilos Paso Expandido --- */
       .onboarding-step .step-header .step-icon.expanded-icon { transform: rotate(90deg); }
+
+       /* --- NUEVO: Estilos Paso Deshabilitado --- */
+      .onboarding-step.disabled {
+          opacity: 0.6; /* Hacer todo el paso más tenue */
+          pointer-events: none; /* Deshabilitar cualquier interacción directa con el bloque */
+      }
+      .onboarding-step.disabled .step-header {
+          cursor: not-allowed; /* Cursor de no permitido en el header */
+          /* No es necesario pointer-events: none aquí si ya está en el padre */
+      }
+       .onboarding-step.disabled .step-header .step-number {
+           background-color: #7f8c8d; /* Número en gris */
+           color: #bdc3c7;
+       }
+       .onboarding-step.disabled .step-header .step-title {
+           color: #95a5a6; /* Título más apagado */
+       }
+       /* Habilitar interacción SÓLO con elementos dentro del paso deshabilitado si es necesario,
+          pero para este caso, queremos todo bloqueado */
+      .onboarding-step.disabled .step-body,
+      .onboarding-step.disabled .feature-list li input[type="checkbox"],
+      .onboarding-step.disabled .feature-list li label,
+      .onboarding-step.disabled .tutorial-link {
+          pointer-events: none; /* Asegurar que nada dentro sea clickeable */
+          cursor: not-allowed;
+      }
+      .onboarding-step.disabled .feature-list li input[type="checkbox"] {
+          opacity: 0.5; /* Checkbox más tenue */
+      }
+
+      /* --- Estilos Tutorial Link --- */
+      .tutorial-link { display: inline-block; margin-top: 15px; font-size: 0.9em; color: #3498db; text-decoration: none; font-weight: 500; transition: color 0.3s ease; pointer-events: auto; /* Asegurar que sea clickeable si el paso NO está disabled */ }
+      .tutorial-link i { margin-right: 5px; }
+      .onboarding-step:not(.disabled) .tutorial-link:hover { text-decoration: underline; color: #5dade2; }
+
 
       /* --- Estilos Selector de Idioma --- */
       .language-switcher {
@@ -188,125 +216,271 @@
 
       /* --- Estilos Footer (Simplificado) --- */
       .onboarding-footer {
-          margin-top: 40px;
-          text-align: center;
-          padding-top: 20px;
+          margin-top: 40px; text-align: center; padding-top: 20px;
           border-top: 1px solid rgba(255, 255, 255, 0.1);
       }
       .onboarding-footer .cta-footer {
-          font-weight: 600;
-          color: #ffffff;
-          margin-top: 0;
-          font-size: 1.1em;
-          line-height: 1.6;
+          font-weight: 600; color: #ffffff; margin-top: 0;
+          font-size: 1.1em; line-height: 1.6;
       }
-      .onboarding-footer .cta-footer i {
-          color: #e74c3c;
-          margin: 0 8px;
-          vertical-align: middle;
-      }
+      /* Íconos eliminados del footer para simplificar, ajusta si los necesitas de vuelta */
+      /* .onboarding-footer .cta-footer i { ... } */
 </style>
-    <!-- Script Navbar -->
-    <script defer src="/static/js/navbar.js"></script> <!-- Asegúrate que esta ruta es correcta -->
+    <!-- Script Navbar (Asegúrate que esta ruta es correcta) -->
+    <script defer src="/static/js/navbar.js"></script>
 
-    <!-- Script Principal (Acordeón, Completado, Idioma) -->
+    <!-- Script Principal (Acordeón, Completado POR TAREA, Habilitación Secuencial, Idioma) -->
     <script>
-        // ... (EL CÓDIGO JAVASCRIPT PERMANECE IGUAL) ...
         document.addEventListener('DOMContentLoaded', function() {
 
             // ============================================
-            //   TEXTOS (Footer simplificado)
+            //   TEXTOS (Ajustados para listas sin HTML interno)
             // ============================================
             const spanishElements = {
                 title: "HUNTER - Bienvenida y Primeros Pasos", mainHeading: "<span class='intro-text'>Bienvenido a</span> <span class='highlight'>HUNTER</span><span class='slogan'>Donde no esperamos oportunidades — las creamos y las cazamos</span>",
-                step1Title: "Inicia Sesión y Desbloquea el Poder", step1Intro: "Para comenzar tu cacería de resultados, sigue estos pasos:", step1List: ["<strong>Accede a Instagram:</strong> Introduce tus credenciales de forma segura.", "<strong>Mensajes Personalizados:</strong> Sube tu archivo con mensajes irresistibles.", "<strong>Preguntas Clave:</strong> Define las preguntas que activarán tu estrategia.", "<strong>Lista de Objetivos:</strong> Carga tu archivo con las cuentas a contactar.", "<strong>¡Inicia Sesión!:</strong> Presiona el botón y deja que HUNTER haga su magia."], step1TutorialLinkText: "Ver Tutorial Paso 1",
-                step2Title: "Explora tu Centro de Mando: El Dashboard", step2Intro: "Una vez dentro, el <strong>DASHBOARD</strong> será tu torre de control:", step2List: ["<strong>Métricas Clave:</strong> Visualiza mensajes enviados y rendimiento al instante.", "<strong>Estadísticas Precisas:</strong> Entiende qué funciona y optimiza tu enfoque.", "<strong>Actividad y Crecimiento:</strong> Observa el impacto directo en tu perfil."], step2TutorialLinkText: "Ver Tutorial Paso 2",
-                step3Title: "Navega con Agilidad: Panel Lateral", step3Intro: "El panel lateral izquierdo es tu arsenal de herramientas:", step3List: ["<strong>Dashboard:</strong> Tu vista principal, siempre accesible.", "<strong>Perfil y Análisis:</strong> Profundiza en el crecimiento y la interacción.", "<strong>Configuración:</strong> Personaliza HUNTER a tu medida."], step3TutorialLinkText: "Ver Tutorial Paso 3",
+                step1Title: "Inicia Sesión y Desbloquea el Poder", step1Intro: "Para comenzar tu cacería de resultados, completa estas tareas:",
+                step1List: [ // Solo texto, el HTML (checkbox + label) se genera en JS
+                    "Accede a Instagram: Introduce tus credenciales de forma segura.",
+                    "Mensajes Personalizados: Sube tu archivo con mensajes irresistibles.",
+                    "Preguntas Clave: Define las preguntas que activarán tu estrategia.",
+                    "Lista de Objetivos: Carga tu archivo con las cuentas a contactar.",
+                    "¡Inicia Sesión!: Presiona el botón y deja que HUNTER haga su magia."
+                ], step1TutorialLinkText: "Ver Tutorial Paso 1",
+                step2Title: "Explora tu Centro de Mando: El Dashboard", step2Intro: "Una vez dentro, el <strong>DASHBOARD</strong> será tu torre de control. Revisa estos puntos:",
+                step2List: [ // Solo texto
+                    "Métricas Clave: Visualiza mensajes enviados y rendimiento al instante.",
+                    "Estadísticas Precisas: Entiende qué funciona y optimiza tu enfoque.",
+                    "Actividad y Crecimiento: Observa el impacto directo en tu perfil."
+                ], step2TutorialLinkText: "Ver Tutorial Paso 2",
+                step3Title: "Navega con Agilidad: Panel Lateral", step3Intro: "El panel lateral izquierdo es tu arsenal de herramientas. Familiarízate con:",
+                step3List: [ // Solo texto
+                    "Dashboard: Tu vista principal, siempre accesible.",
+                    "Perfil y Análisis: Profundiza en el crecimiento y la interacción.",
+                    "Configuración: Personaliza HUNTER a tu medida."
+                ], step3TutorialLinkText: "Ver Tutorial Paso 3",
                 footerCta: " Tus metas son nuestro blanco " // Solo CTA
             };
             const englishElements = {
-                title: "HUNTER - Welcome and First Steps", mainHeading: "<span class='intro-text'>Welcome to</span> <span class='highlight'>HUNTER</span><span class='slogan'>Where we don't wait for opportunities — we create and hunt them</span>",
-                step1Title: "Log In and Unlock the Power", step1Intro: "To start your results hunt, follow these steps:", step1List: ["<strong>Access Instagram:</strong> Enter your credentials securely.", "<strong>Customized Messages:</strong> Upload your file with irresistible messages.", "<strong>Key Questions:</strong> Define the questions that will activate your strategy.", "<strong>Target List:</strong> Load your file with accounts to contact.", "<strong>Log In!</strong> Press the button and let HUNTER work its magic."], step1TutorialLinkText: "Watch Step 1 Tutorial",
-                step2Title: "Explore your Command Center: The Dashboard", step2Intro: "Once inside, the <strong>DASHBOARD</strong> will be your control tower:", step2List: ["<strong>Key Metrics:</strong> Visualize sent messages and performance instantly.", "<strong>Precise Statistics:</strong> Understand what works and optimize your approach.", "<strong>Activity and Growth:</strong> Observe the direct impact on your profile."], step2TutorialLinkText: "Watch Step 2 Tutorial",
-                step3Title: "Navigate with Agility: Side Panel", step3Intro: "The left side panel is your toolkit arsenal:", step3List: ["<strong>Dashboard:</strong> Your main view, always accessible.", "<strong>Profile and Analysis:</strong> Dive deep into growth and interaction.", "<strong>Settings:</strong> Customize HUNTER to your measure."], step3TutorialLinkText: "Watch Step 3 Tutorial",
-                footerCta: "<i class='fas fa-fighter-jet'></i> Your goals are our target <i class='fas fa-fighter-jet'></i>" // Solo CTA
+                title: "HUNTER - Welcome and First Steps", mainHeading: "<span class='intro-text'>WELCOME TO</span> <span class='highlight'>HUNTER</span><span class='slogan'>Where we don't wait for opportunities — we create and hunt them</span>",
+                step1Title: "Log In and Unlock the Power", step1Intro: "To start your results hunt, complete these tasks:",
+                step1List: [ // Just text
+                    "Access Instagram: Enter your credentials securely.",
+                    "Customized Messages: Upload your file with irresistible messages.",
+                    "Key Questions: Define the questions that will activate your strategy.",
+                    "Target List: Load your file with accounts to contact.",
+                    "Log In!: Press the button and let HUNTER work its magic."
+                ], step1TutorialLinkText: "Watch Step 1 Tutorial",
+                step2Title: "Explore your Command Center: The Dashboard", step2Intro: "Once inside, the <strong>DASHBOARD</strong> will be your control tower. Review these points:",
+                step2List: [ // Just text
+                    "Key Metrics: Visualize sent messages and performance instantly.",
+                    "Precise Statistics: Understand what works and optimize your approach.",
+                    "Activity and Growth: Observe the direct impact on your profile."
+                ], step2TutorialLinkText: "Watch Step 2 Tutorial",
+                step3Title: "Navigate with Agility: Side Panel", step3Intro: "The left side panel is your toolkit arsenal. Familiarize yourself with:",
+                step3List: [ // Just text
+                    "Dashboard: Your main view, always accessible.",
+                    "Profile and Analysis: Dive deep into growth and interaction.",
+                    "Settings: Customize HUNTER to your measure."
+                ], step3TutorialLinkText: "Watch Step 3 Tutorial",
+                footerCta: "Your goals are our target" // Just CTA (removed icons for simplicity)
             };
 
             // ============================================
             //   MANEJO DEL ESTADO (localStorage)
             // ============================================
-            const storageKeys = { expanded: 'hunterOnboardingExpandedSteps', completed: 'hunterOnboardingCompletedSteps', language: 'preferredLanguage' };
-            function getStoredState(key, defaultValue) { try { const stored = localStorage.getItem(key); if (stored === null) return defaultValue; return JSON.parse(stored); } catch (e) { console.error(`Error reading state (${key}):`, e); return defaultValue; } }
-            function saveState(key, state) { try { localStorage.setItem(key, JSON.stringify(state)); } catch (e) { console.error(`Error saving state (${key}):`, e); } }
+            const storageKeys = {
+                expanded: 'hunterOnboardingExpandedSteps',
+                // NUEVO: Estado de completado por tarea
+                tasksCompleted: 'hunterOnboardingTasksCompleted',
+                language: 'preferredLanguage'
+            };
+
+            function getStoredState(key, defaultValue) {
+                try {
+                    const stored = localStorage.getItem(key);
+                    // Si no hay nada guardado o es inválido, devuelve el valor por defecto
+                    if (stored === null || stored === undefined) return defaultValue;
+                    // Intenta parsear, si falla, devuelve el valor por defecto
+                    try {
+                         return JSON.parse(stored);
+                    } catch(parseError) {
+                         console.warn(`Invalid JSON in localStorage for key ${key}, returning default.`);
+                         return defaultValue;
+                    }
+                } catch (e) {
+                    console.error(`Error reading state (${key}):`, e);
+                    return defaultValue;
+                }
+            }
+
+            function saveState(key, state) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(state));
+                } catch (e) {
+                    console.error(`Error saving state (${key}):`, e);
+                }
+            }
+
+            // Estado inicial (o cargado desde localStorage)
             let expandedState = getStoredState(storageKeys.expanded, {});
-            let completedState = getStoredState(storageKeys.completed, {});
+             // NUEVO: tasksCompleted guarda arrays de booleanos por paso
+             // Ejemplo: { "1": [false, false, true], "2": [false, true], "3": [] }
+             // Se inicializará dinámicamente basado en los textos
+            let tasksCompletedState = getStoredState(storageKeys.tasksCompleted, {});
 
             // ============================================
-            //   LÓGICA DEL ACORDEÓN Y COMPLETADO
+            //   REFERENCIAS A ELEMENTOS DEL DOM
             // ============================================
-             const steps = document.querySelectorAll('.onboarding-step');
-             steps.forEach(step => {
-                 const header = step.querySelector('.step-header');
-                 const body = step.querySelector('.step-body');
-                 const checkbox = step.querySelector('.completion-checkbox');
-                 const stepNumber = header?.dataset.step;
-                 const arrowIcon = header?.querySelector('.step-icon');
-                 if (!header || !body || !checkbox || !stepNumber) { return; }
-                 if (expandedState[stepNumber]) { body.classList.add('expanded'); if (arrowIcon) arrowIcon.classList.add('expanded-icon'); }
-                 if (completedState[stepNumber]) { step.classList.add('completed'); checkbox.checked = true; }
-                 header.addEventListener('click', (e) => {
-                     if (e.target === checkbox || e.target.tagName === 'INPUT') return; // Prevenir si se clickea el checkbox
-                     const isExpanded = body.classList.toggle('expanded');
-                     if (arrowIcon) arrowIcon.classList.toggle('expanded-icon', isExpanded);
-                     expandedState[stepNumber] = isExpanded;
-                     saveState(storageKeys.expanded, expandedState);
-                 });
-                 checkbox.addEventListener('change', () => {
-                     const isCompleted = checkbox.checked;
-                     step.classList.toggle('completed', isCompleted);
-                     completedState[stepNumber] = isCompleted;
-                     saveState(storageKeys.completed, completedState);
-                 });
-             });
+            const steps = document.querySelectorAll('.onboarding-step');
+            const stepElements = {
+                '1': { section: document.getElementById('step-1-section'), header: document.querySelector('#step-1-section .step-header'), body: document.querySelector('#step-1-section .step-body'), list: document.getElementById('step1-list'), intro: document.getElementById('step1-intro'), title: document.getElementById('step1-title'), tutorialLink: document.getElementById('tutorial-link-1') },
+                '2': { section: document.getElementById('step-2-section'), header: document.querySelector('#step-2-section .step-header'), body: document.querySelector('#step-2-section .step-body'), list: document.getElementById('step2-list'), intro: document.getElementById('step2-intro'), title: document.getElementById('step2-title'), tutorialLink: document.getElementById('tutorial-link-2') },
+                '3': { section: document.getElementById('step-3-section'), header: document.querySelector('#step-3-section .step-header'), body: document.querySelector('#step-3-section .step-body'), list: document.getElementById('step3-list'), intro: document.getElementById('step3-intro'), title: document.getElementById('step3-title'), tutorialLink: document.getElementById('tutorial-link-3') }
+            };
 
             // ============================================
-            //   FUNCIÓN PARA CAMBIAR IDIOMA
+            //   LÓGICA DE HABILITACIÓN/DESHABILITACIÓN DE PASOS
+            // ============================================
+             function isStepComplete(stepNumber) {
+                const tasks = tasksCompletedState[stepNumber] || [];
+                // Un paso está completo si tiene tareas Y todas están marcadas como true
+                 return tasks.length > 0 && tasks.every(task => task === true);
+             }
+
+            function updateStepStates() {
+                const isStep1Complete = isStepComplete('1');
+                const isStep2Complete = isStepComplete('2');
+
+                 // Habilitar/Deshabilitar Paso 2
+                const step2Section = stepElements['2'].section;
+                if (isStep1Complete) {
+                    step2Section.classList.remove('disabled');
+                    // Asegurar que los elementos internos sean interactivos (por si acaso)
+                    step2Section.style.pointerEvents = '';
+                 } else {
+                    step2Section.classList.add('disabled');
+                    step2Section.style.pointerEvents = 'none'; // Redundante con CSS pero más seguro
+                     // Si se deshabilita, colapsarlo si estaba expandido
+                    if (stepElements['2'].body.classList.contains('expanded')) {
+                        stepElements['2'].body.classList.remove('expanded');
+                        stepElements['2'].header.querySelector('.step-icon')?.classList.remove('expanded-icon');
+                        expandedState['2'] = false;
+                        saveState(storageKeys.expanded, expandedState); // Guardar estado colapsado
+                    }
+                 }
+
+                // Habilitar/Deshabilitar Paso 3
+                const step3Section = stepElements['3'].section;
+                if (isStep1Complete && isStep2Complete) {
+                    step3Section.classList.remove('disabled');
+                    step3Section.style.pointerEvents = '';
+                } else {
+                    step3Section.classList.add('disabled');
+                     step3Section.style.pointerEvents = 'none';
+                     // Si se deshabilita, colapsarlo si estaba expandido
+                     if (stepElements['3'].body.classList.contains('expanded')) {
+                        stepElements['3'].body.classList.remove('expanded');
+                        stepElements['3'].header.querySelector('.step-icon')?.classList.remove('expanded-icon');
+                        expandedState['3'] = false;
+                        saveState(storageKeys.expanded, expandedState); // Guardar estado colapsado
+                     }
+                 }
+
+                 // (Opcional) Marcar visualmente el número del paso si está completo
+                 Object.keys(stepElements).forEach(num => {
+                    const stepHeader = stepElements[num].header;
+                    const stepNumberEl = stepHeader?.querySelector('.step-number');
+                    if (stepNumberEl) {
+                        if (isStepComplete(num)) {
+                            stepNumberEl.style.backgroundColor = '#2ecc71'; // Verde completado
+                        } else {
+                             // Volver al color original (o gris si está deshabilitado)
+                             stepNumberEl.style.backgroundColor = stepElements[num].section.classList.contains('disabled') ? '#7f8c8d' : '#3498db';
+                         }
+                    }
+                 });
+            }
+
+
+            // ============================================
+            //   FUNCIÓN PARA CAMBIAR IDIOMA (MODIFICADA)
             // ============================================
             window.changeLanguage = function(lang) {
                 if (lang !== 'es' && lang !== 'en') { return; }
                 const elements = lang === 'es' ? spanishElements : englishElements;
 
-                // --- Actualizar Textos ---
+                // --- Actualizar Textos Generales ---
                 document.title = elements.title;
                 document.documentElement.setAttribute('lang', lang);
                 document.getElementById('main-heading').innerHTML = elements.mainHeading;
+
+                // --- Actualizar Contenido de los Pasos ---
                 ['1', '2', '3'].forEach(num => {
-                     const titleEl = document.getElementById(`step${num}-title`);
-                     const introEl = document.getElementById(`step${num}-intro`);
-                     const listEl = document.getElementById(`step${num}-list`);
-                     const tutorialLinkEl = document.getElementById(`tutorial-link-${num}`);
-                     if (titleEl) titleEl.textContent = elements[`step${num}Title`];
-                     if (introEl) introEl.innerHTML = elements[`step${num}Intro`];
-                     if (listEl) {
-                         const currentListItems = listEl.children;
-                         const newListData = elements[`step${num}List`];
-                         newListData.forEach((item, index) => {
-                             if (currentListItems[index]) {
-                                 const iconHTML = currentListItems[index].querySelector('i')?.outerHTML || '';
-                                 currentListItems[index].innerHTML = `${iconHTML} ${item}`;
-                             } else {
-                                 const newLi = document.createElement('li');
-                                 const defaultIconHTML = ''; // Podrías definir iconos por defecto si los necesitas
-                                 newLi.innerHTML = `${defaultIconHTML} ${item}`;
-                                 listEl.appendChild(newLi);
-                             }
-                         });
-                         while (listEl.children.length > newListData.length) { listEl.removeChild(listEl.lastChild); }
-                     }
-                     if (tutorialLinkEl) tutorialLinkEl.innerHTML = `<i class="fas fa-video"></i> ${elements[`step${num}TutorialLinkText`]}`;
+                    const stepData = stepElements[num];
+                    if (!stepData) return;
+
+                    // Título e Introducción
+                    if (stepData.title) stepData.title.textContent = elements[`step${num}Title`];
+                    if (stepData.intro) stepData.intro.innerHTML = elements[`step${num}Intro`];
+
+                    // Lista de Tareas (Reconstruir con Checkboxes)
+                    const listEl = stepData.list;
+                    const newListData = elements[`step${num}List`];
+                    if (listEl) {
+                         listEl.innerHTML = ''; // Limpiar lista existente
+
+                         // Asegurar que el array de estado exista para este paso y tenga la longitud correcta
+                         if (!tasksCompletedState[num] || tasksCompletedState[num].length !== newListData.length) {
+                             // Si no existe o la longitud no coincide con los nuevos textos,
+                             // inicializa/resetea el estado para este paso.
+                             // ¡Precaución! Esto puede perder el progreso si se cambia de idioma
+                             // y la cantidad de tareas cambia entre idiomas (lo cual no debería pasar).
+                             // Una estrategia más robusta podría intentar mapear tareas si fuera necesario.
+                             tasksCompletedState[num] = Array(newListData.length).fill(false);
+                             console.warn(`Reinitializing task state for step ${num} due to language change or inconsistency.`);
+                             // No guardar inmediatamente, esperar a la interacción del usuario o guardar al final
+                         }
+                         const currentStepTasks = tasksCompletedState[num];
+
+                         newListData.forEach((itemText, index) => {
+                            const li = document.createElement('li');
+                            const checkboxId = `step-${num}-task-${index}`;
+                            const isChecked = currentStepTasks[index] === true; // Comprobar estado
+
+                            const checkbox = document.createElement('input');
+                            checkbox.type = 'checkbox';
+                            checkbox.id = checkboxId;
+                            checkbox.checked = isChecked;
+                            checkbox.dataset.step = num; // Guardar a qué paso pertenece
+                            checkbox.dataset.index = index; // Guardar índice de la tarea
+
+                            const label = document.createElement('label');
+                            label.htmlFor = checkboxId;
+                            label.innerHTML = itemText; // Usar innerHTML por si el texto tiene <strong> etc.
+
+                            li.appendChild(checkbox);
+                            li.appendChild(label);
+
+                            if (isChecked) {
+                                li.classList.add('completed'); // Aplicar estilo si está completada
+                            }
+
+                            // Añadir Event Listener al Checkbox NUEVO
+                            checkbox.addEventListener('change', handleTaskCheckboxChange);
+
+                            listEl.appendChild(li);
+                        });
+                    }
+
+                    // Enlace Tutorial
+                    if (stepData.tutorialLink) {
+                        stepData.tutorialLink.innerHTML = `<i class="fas fa-video"></i> ${elements[`step${num}TutorialLinkText`]}`;
+                        // Asegurarse de que la URL base sea correcta (si cambia por idioma, ajusta aquí)
+                        // stepData.tutorialLink.href = ...;
+                    }
                 });
 
-                // --- Actualizar Footer (solo cta) ---
+                // --- Actualizar Footer ---
                 const footerCtaEl = document.getElementById('footer-cta');
                 if (footerCtaEl) { footerCtaEl.innerHTML = elements.footerCta; }
 
@@ -322,14 +496,113 @@
 
                 // --- Guardar Idioma ---
                 localStorage.setItem(storageKeys.language, lang);
+
+                // --- RE-APLICAR ESTADOS (Importante después de reconstruir el DOM) ---
+                applyInitialStates();
+                // saveState(storageKeys.tasksCompleted, tasksCompletedState); // Guardar estado de tareas si se reinicializó
             };
 
+
             // ============================================
-            //   CARGA INICIAL DEL IDIOMA
+            //   MANEJADOR DE EVENTOS PARA CHECKBOX DE TAREAS
+            // ============================================
+            function handleTaskCheckboxChange(event) {
+                 const checkbox = event.target;
+                 const stepNumber = checkbox.dataset.step;
+                 const taskIndex = parseInt(checkbox.dataset.index, 10);
+                 const isChecked = checkbox.checked;
+                 const listItem = checkbox.closest('li');
+
+                 // Actualizar el estado guardado
+                 if (tasksCompletedState[stepNumber] && tasksCompletedState[stepNumber][taskIndex] !== undefined) {
+                     tasksCompletedState[stepNumber][taskIndex] = isChecked;
+                     saveState(storageKeys.tasksCompleted, tasksCompletedState); // Guardar cambio
+                 } else {
+                     console.error("State array mismatch for task:", stepNumber, taskIndex);
+                     // Podrías intentar reinicializar aquí si es necesario, pero es mejor prevenirlo.
+                 }
+
+                 // Actualizar estilo visual del item li
+                 listItem.classList.toggle('completed', isChecked);
+
+                 // Re-evaluar y actualizar qué pasos deben estar habilitados/deshabilitados
+                 updateStepStates();
+             }
+
+
+            // ============================================
+            //   CONFIGURACIÓN INICIAL Y EVENT LISTENERS
+            // ============================================
+            function applyInitialStates() {
+                 // 1. Aplicar estado expandido/colapsado
+                 steps.forEach(step => {
+                     const header = step.querySelector('.step-header');
+                     const body = step.querySelector('.step-body');
+                     const stepNumber = header?.dataset.step;
+                     const arrowIcon = header?.querySelector('.step-icon');
+
+                     if (!header || !body || !stepNumber) return;
+
+                     // Aplicar estado expandido desde localStorage
+                     if (expandedState[stepNumber]) {
+                         body.classList.add('expanded');
+                         if (arrowIcon) arrowIcon.classList.add('expanded-icon');
+                     } else {
+                         body.classList.remove('expanded');
+                          if (arrowIcon) arrowIcon.classList.remove('expanded-icon');
+                     }
+
+                     // Añadir listener para expandir/colapsar (solo si no está deshabilitado)
+                     header.addEventListener('click', () => {
+                         // Prevenir si el paso está deshabilitado
+                         if (step.classList.contains('disabled')) {
+                             return;
+                         }
+                         const isExpanded = body.classList.toggle('expanded');
+                         if (arrowIcon) arrowIcon.classList.toggle('expanded-icon', isExpanded);
+                         expandedState[stepNumber] = isExpanded;
+                         saveState(storageKeys.expanded, expandedState);
+                     });
+                 });
+
+                 // 2. Aplicar estado completado a tareas (esto ya se hace en changeLanguage al crear los checkboxes)
+                 // Pero nos aseguramos que las clases .completed estén bien en los LI
+                 Object.keys(tasksCompletedState).forEach(stepNum => {
+                     const tasks = tasksCompletedState[stepNum];
+                     const listEl = stepElements[stepNum]?.list;
+                     if (listEl && tasks) {
+                         tasks.forEach((isDone, index) => {
+                             const li = listEl.querySelector(`li:nth-child(${index + 1})`);
+                             if(li) {
+                                 li.classList.toggle('completed', isDone);
+                                 const checkbox = li.querySelector('input[type="checkbox"]');
+                                 if (checkbox) checkbox.checked = isDone; // Asegurar consistencia del checkbox
+                             }
+                         });
+                     }
+                 });
+
+
+                 // 3. Añadir listeners a checkboxes (esto también se hace en changeLanguage)
+                 // Por si acaso, podemos re-asegurarlo aquí, aunque no debería ser necesario
+                 // document.querySelectorAll('.feature-list input[type="checkbox"]').forEach(cb => {
+                 //     cb.removeEventListener('change', handleTaskCheckboxChange); // Evitar duplicados
+                 //     cb.addEventListener('change', handleTaskCheckboxChange);
+                 // });
+
+                 // 4. Aplicar estado habilitado/deshabilitado INICIAL
+                 updateStepStates();
+             }
+
+
+            // ============================================
+            //   INICIALIZACIÓN AL CARGAR LA PÁGINA
             // ============================================
             const savedLanguage = localStorage.getItem(storageKeys.language);
-            const initialLang = (savedLanguage === 'es' || savedLanguage === 'en') ? savedLanguage : 'en';
-            window.changeLanguage(initialLang);
+            const initialLang = (savedLanguage === 'es' || savedLanguage === 'en') ? savedLanguage : 'en'; // Default a 'en'
+            window.changeLanguage(initialLang); // Esto carga textos, crea listas con checkboxes y aplica estados iniciales
+
+            // applyInitialStates(); // Llamado dentro de changeLanguage ahora
 
         });
     </script>
@@ -338,15 +611,11 @@
     <!-- Incluir Navbar (Asegúrate que el partial exista y funcione) -->
     <%- include('partials/navbar') %>
 
-    <!-- Selector de Idioma (Fijo y Estilizado) -->
+    <!-- Selector de Idioma -->
     <div class="language-switcher">
-        <button id="btn-es" class="lang-btn" onclick="changeLanguage('es')">
-            <span>SP</span>
-        </button>
+        <button id="btn-es" class="lang-btn" onclick="changeLanguage('es')"><span>SP</span></button>
         <div class="separator"></div>
-        <button id="btn-en" class="lang-btn" onclick="changeLanguage('en')">
-            <span>EN</span>
-        </button>
+        <button id="btn-en" class="lang-btn" onclick="changeLanguage('en')"><span>EN</span></button>
     </div>
 
     <!-- Contenido Principal del Onboarding -->
@@ -355,9 +624,7 @@
 
         <!-- Encabezado (Se llena con JS) -->
         <header>
-          <h1 id="main-heading">
-             <!-- El JS lo llenará al cargar -->
-          </h1>
+          <h1 id="main-heading"><!-- JS lo llenará --></h1>
         </header>
 
         <!-- Pasos del Onboarding (Acordeón) -->
@@ -365,60 +632,64 @@
 
           <!-- Paso 1 -->
           <section class="onboarding-step" id="step-1-section">
+            <!-- data-step es crucial para el JS -->
             <div class="step-header" data-step="1">
               <span class="step-number">1</span>
-              <h2 id="step1-title" class="step-title"></h2> <!-- JS llenará -->
+              <h2 id="step1-title" class="step-title"><!-- JS llenará --></h2>
               <span class="step-icon"><i class="fas fa-chevron-right"></i></span>
-              <input type="checkbox" class="completion-checkbox" aria-label="Mark step 1 as complete">
+              <!-- Checkbox global ELIMINADO del header -->
             </div>
             <div class="step-body">
                 <div class="step-body-content">
-                    <p id="step1-intro"></p> <!-- JS llenará -->
-                    <ol id="step1-list"></ol> <!-- JS llenará -->
-                    <p><a id="tutorial-link-1" href="#REEMPLAZAR_CON_URL_VIDEO_1" class="tutorial-link"></a></p> <!-- JS llenará -->
+                    <p id="step1-intro"><!-- JS llenará --></p>
+                    <!-- CAMBIADO a UL con clase feature-list -->
+                    <ul id="step1-list" class="feature-list"><!-- JS llenará con LI > INPUT + LABEL --></ul>
+                    <p><a id="tutorial-link-1" href="#REEMPLAZAR_CON_URL_VIDEO_1" class="tutorial-link"><!-- JS llenará --></a></p>
                 </div>
             </div>
           </section>
 
-          <!-- Paso 2 -->
+          <!-- Paso 2 (Inicialmente deshabilitado por JS si Paso 1 no está completo) -->
            <section class="onboarding-step" id="step-2-section">
             <div class="step-header" data-step="2">
               <span class="step-number">2</span>
-              <h2 id="step2-title" class="step-title"></h2> <!-- JS llenará -->
+              <h2 id="step2-title" class="step-title"><!-- JS llenará --></h2>
               <span class="step-icon"><i class="fas fa-chevron-right"></i></span>
-              <input type="checkbox" class="completion-checkbox" aria-label="Mark step 2 as complete">
+              <!-- Checkbox global ELIMINADO -->
             </div>
             <div class="step-body">
                  <div class="step-body-content">
-                    <p id="step2-intro"></p> <!-- JS llenará -->
-                    <ul id="step2-list" class="feature-list"></ul> <!-- JS llenará -->
-                    <p><a id="tutorial-link-2" href="#REEMPLAZAR_CON_URL_VIDEO_2" class="tutorial-link"></a></p> <!-- JS llenará -->
+                    <p id="step2-intro"><!-- JS llenará --></p>
+                    <!-- Ya usaba UL con feature-list -->
+                    <ul id="step2-list" class="feature-list"><!-- JS llenará con LI > INPUT + LABEL --></ul>
+                    <p><a id="tutorial-link-2" href="#REEMPLAZAR_CON_URL_VIDEO_2" class="tutorial-link"><!-- JS llenará --></a></p>
                 </div>
             </div>
           </section>
 
-          <!-- Paso 3 -->
+          <!-- Paso 3 (Inicialmente deshabilitado por JS si Paso 1 o 2 no están completos) -->
           <section class="onboarding-step" id="step-3-section">
             <div class="step-header" data-step="3">
                <span class="step-number">3</span>
-              <h2 id="step3-title" class="step-title"></h2> <!-- JS llenará -->
+              <h2 id="step3-title" class="step-title"><!-- JS llenará --></h2>
                <span class="step-icon"><i class="fas fa-chevron-right"></i></span>
-               <input type="checkbox" class="completion-checkbox" aria-label="Mark step 3 as complete">
+               <!-- Checkbox global ELIMINADO -->
             </div>
              <div class="step-body">
                  <div class="step-body-content">
-                     <p id="step3-intro"></p> <!-- JS llenará -->
-                     <ul id="step3-list" class="feature-list"></ul> <!-- JS llenará -->
-                     <p><a id="tutorial-link-3" href="#REEMPLAZAR_CON_URL_VIDEO_3" class="tutorial-link"></a></p> <!-- JS llenará -->
+                     <p id="step3-intro"><!-- JS llenará --></p>
+                     <!-- Ya usaba UL con feature-list -->
+                     <ul id="step3-list" class="feature-list"><!-- JS llenará con LI > INPUT + LABEL --></ul>
+                     <p><a id="tutorial-link-3" href="#REEMPLAZAR_CON_URL_VIDEO_3" class="tutorial-link"><!-- JS llenará --></a></p>
                  </div>
              </div>
           </section>
 
         </main>
 
-        <!-- Pie de Página (Simplificado: solo el CTA) -->
-        <footer class="onboarding-footer fade-in" style="animation-delay: 0.6s;">
-            <p id="footer-cta" class="cta-footer"></p> <!-- JS llenará -->
+        <!-- Pie de Página -->
+        <footer class="onboarding-footer">
+            <p id="footer-cta" class="cta-footer"><!-- JS llenará --></p>
         </footer>
 
       </div> <!-- Fin .onboarding-container -->
