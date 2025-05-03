@@ -1,20 +1,63 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en"> <!-- Default language set to English -->
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Panel de Rendimiento - <%= username %></title>
+    <!-- Title will be set dynamically by JS -->
+    <title>Performance Dashboard - <%= username %></title>
 
     <!-- Tailwind (opcional si CSS custom domina) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Estilos personalizados -->
-    <link rel="stylesheet" href="/static/css/resumen.css" /> <!-- Asumiendo que define estilos base como .metric-card, etc. -->
+    <link rel="stylesheet" href="/static/css/resumen.css" />
     <link rel="stylesheet" href="/static/css/scrollbar.css" />
     <link rel="stylesheet" href="/static/css/navbar.css" />
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <!-- Google Fonts -->
- 
+
+    <style>
+        /* Simple style for the language button */
+        .lang-switch-button {
+            background-color: #4a5568; /* gray-700 */
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.25rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border: none;
+            margin-left: 1rem; /* Add some space */
+            transition: background-color 0.2s ease;
+        }
+        .lang-switch-button:hover {
+            background-color: #2d3748; /* gray-800 */
+        }
+        .filter-controls {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            align-items: center; /* Align items vertically */
+            gap: 1rem; /* Space between items */
+        }
+        .filter-control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem; /* Space between label and input */
+        }
+        .filter-button {
+             margin-left: auto; /* Push button to the right on wider screens if space allows */
+             /* Or remove margin-left: auto if you want it inline */
+        }
+        @media (max-width: 768px) { /* Adjust breakpoint as needed */
+             .filter-controls {
+                  flex-direction: column; /* Stack filters vertically on small screens */
+                  align-items: stretch; /* Make items take full width */
+             }
+             .filter-button {
+                  margin-left: 0; /* Reset margin */
+                  margin-top: 0.5rem; /* Add some top margin */
+             }
+        }
+    </style>
 </head>
 <body class="font-poppins"> <!-- Clases base movidas a body -->
     <%- include('partials/navbar') %>
@@ -23,14 +66,18 @@
     <div class="main-content">
         <header class="page-header">
             <div class="header-content">
-                <h1 class="text-2xl font-semibold">Panel de Rendimiento: <%= username %></h1>
+                 <!-- Title structure for dynamic update -->
+                <h1 class="text-2xl font-semibold">
+                    <span data-translate-key="dashboardHeaderPrefix">Performance Dashboard</span>: <%= username %>
+                </h1>
+                <button id="langSwitchBtn" class="lang-switch-button" title="Change Language / Cambiar Idioma">EN / ES</button>
             </div>
         </header>
 
         <div class="dashboard-grid">
                   <!-- Fila 2: Resumen General (Ocupa todo el ancho) -->
                   <section class="key-metrics-section">
-                    <h2 class="section-title"><i class="fas fa-tachometer-alt mr-2"></i>Resumen General</h2>
+                    <h2 class="section-title"><i class="fas fa-tachometer-alt mr-2"></i><span data-translate-key="summaryTitle">General Summary</span></h2>
                     <div class="metrics-container">
                        <%
                            let totalMensajes = parseInt(total_mensajes_enviados) || 0;
@@ -44,37 +91,37 @@
                            else { efectividadClass = 'alert-excellent'; }
                        %>
                        <div class="metric-card">
-                           <h3 class="metric-title">Mensajes Enviados</h3>
+                           <h3 class="metric-title" data-translate-key="messagesSent">Messages Sent</h3>
                            <p class="metric-value"><%= totalMensajes %></p>
                            <i class="fas fa-paper-plane metric-icon"></i>
                        </div>
                         <div class="metric-card">
-                           <h3 class="metric-title">"Me Gusta" Recibidos</h3>
+                           <h3 class="metric-title" data-translate-key="likesReceived">"Likes" Received</h3>
                            <p class="metric-value"><%= totalLikesRecibidos %></p>
                             <i class="fas fa-thumbs-up metric-icon"></i>
                        </div>
                        <div class="metric-card <%= efectividadClass %>">
-                           <h3 class="metric-title">Tasa de Likes (Proxy)</h3>
+                           <h3 class="metric-title" data-translate-key="likeRateProxy">Like Rate (Proxy)</h3>
                            <p class="metric-value"><%= likeRateFormatted %></p>
                            <i class="fas fa-chart-line metric-icon"></i>
-                            <span class="metric-note">Basado en Likes / Mensajes Enviados</span>
+                            <span class="metric-note" data-translate-key="likeRateNote">Based on Likes / Messages Sent</span>
                        </div>
                         <div class="metric-card metric-card-small">
-                            <h3 class="metric-title-small">Último Mensaje</h3>
+                            <h3 class="metric-title-small" data-translate-key="lastMessageSimple">Last Message</h3>
                             <!-- Mostrar fecha/hora completa aquí, ya que es un resumen -->
                             <p class="metric-value-small"><%= fechaUltimoMensaje %></p>
-                            <p class="metric-detail-small">A: <%= destinatarioUltimo %></p>
+                            <p class="metric-detail-small"><span data-translate-key="toRecipient">To</span>: <%= destinatarioUltimo %></p>
                         </div>
                     </div>
                </section>
 
                <section class="filter-section card">
-                <h2 class="card-title"><i class="fas fa-filter mr-2"></i>Filtros</h2>
+                <h2 class="card-title"><i class="fas fa-filter mr-2"></i><span data-translate-key="filtersTitle">Filters</span></h2>
                 <div class="filter-controls">
                     <div class="filter-control-group">
-                        <label for="accountSelector">Cuenta:</label>
+                        <label for="accountSelector" data-translate-key="accountLabel">Account:</label>
                         <select id="accountSelector" name="account">
-                            <option value="" <%= !selectedAccount ? 'selected' : '' %>>Todas las Cuentas</option>
+                            <option value="" <%= !selectedAccount ? 'selected' : '' %> data-translate-key="allAccountsOption">All Accounts</option>
                             <% if (userAccounts && userAccounts.length > 0) { %>
                                 <% userAccounts.forEach(function(ac) { %>
                                     <option value="<%= ac.insta_username %>" <%= selectedAccount === ac.insta_username ? 'selected' : '' %>>
@@ -85,46 +132,51 @@
                         </select>
                     </div>
                     <div class="filter-control-group">
-                        <label for="fromDate">Desde:</label>
+                        <label for="fromDate" data-translate-key="fromLabel">From:</label>
                         <input type="date" id="fromDate" name="fromDate" value="<%= fromDate %>">
                     </div>
                     <div class="filter-control-group">
-                        <label for="toDate">Hasta:</label>
+                        <label for="toDate" data-translate-key="toLabel">To:</label>
                         <input type="date" id="toDate" name="toDate" value="<%= toDate %>">
                     </div>
                     <button id="btnFiltrar" class="filter-button">
-                        <i class="fas fa-search mr-1"></i> Filtrar
+                        <i class="fas fa-search mr-1"></i> <span data-translate-key="filterButton">Filter</span>
                     </button>
                 </div>
-           </section> 
+           </section>
      <!-- Fila 3: Gráfico (Ocupa todo el ancho) -->
      <section class="chart-section card">
-        <h2 class="card-title"><i class="fas fa-chart-line mr-2"></i>Actividad por Día</h2>
+        <h2 class="card-title"><i class="fas fa-chart-line mr-2"></i><span data-translate-key="activityChartTitle">Activity per Day</span></h2>
         <div class="chart-container">
              <canvas id="graficoMensajes"></canvas>
+             <!-- Placeholder text will be managed by JS -->
         </div>
     </section>
 
           <!-- Fila 4 (lg+): Contenido Último Mensaje | Mensajes por Tipo -->
           <section class="last-message-section card">
-            <h2 class="card-title"><i class="fas fa-envelope-open-text mr-2"></i>Contenido del Último Mensaje</h2>
-            <p class="last-message-content"><%= ultimoMensaje %></p>
-            <span class="last-message-recipient">Para: <%= destinatarioUltimo %></span>
+            <h2 class="card-title"><i class="fas fa-envelope-open-text mr-2"></i><span data-translate-key="lastMessageContentTitle">Last Message Content</span></h2>
+            <% if (ultimoMensaje) { %>
+                <p class="last-message-content"><%= ultimoMensaje %></p>
+                <span class="last-message-recipient"><span data-translate-key="toRecipient">To</span>: <%= destinatarioUltimo %></span>
+            <% } else { %>
+                <p class="no-messages" data-translate-key="noLastMessage">No last message to display.</p>
+            <% } %>
         </section>
 
        <section class="message-types-section card">
-            <h2 class="card-title"><i class="fas fa-tags mr-2"></i>Mensajes por Tipo</h2>
+            <h2 class="card-title"><i class="fas fa-tags mr-2"></i><span data-translate-key="messagesByTypeTitle">Messages by Type</span></h2>
             <div class="types-container">
                 <div class="type-item">
-                    <span class="type-label">Comunicación:</span>
+                    <span class="type-label" data-translate-key="messageTypeCom">Communication:</span>
                     <span class="type-value"><%= mensajesPorTipo.comunicacion %></span>
                 </div>
                 <div class="type-item">
-                    <span class="type-label">Venta:</span>
+                    <span class="type-label" data-translate-key="messageTypeSale">Sale:</span>
                     <span class="type-value"><%= mensajesPorTipo.venta %></span>
                 </div>
                 <div class="type-item">
-                    <span class="type-label">Imperativo:</span>
+                    <span class="type-label" data-translate-key="messageTypeImp">Imperative:</span>
                     <span class="type-value"><%= mensajesPorTipo.imperativo %></span>
                 </div>
             </div>
@@ -134,7 +186,7 @@
 
 
             <section class="recent-messages-section card">
-                <h2 class="card-title"><i class="fas fa-history mr-2"></i>Últimos Mensajes Enviados</h2>
+                <h2 class="card-title"><i class="fas fa-history mr-2"></i><span data-translate-key="recentMessagesTitle">Recent Messages Sent</span></h2>
                 <div id="mensajesSend" class="messages-list">
                     <% if (ultimos_mensajes && ultimos_mensajes.length > 0) { %>
                         <% const mensajesLimitados = ultimos_mensajes.slice(0, 10); %>
@@ -159,16 +211,10 @@
                             </div>
                         <% }); %>
                     <% } else { %>
-                        <p class="no-messages">No hay mensajes recientes para mostrar.</p>
+                        <p class="no-messages" data-translate-key="noRecentMessages">No recent messages to display.</p>
                     <% } %>
                 </div>
             </section>
-
-      
-
-       
-
-      
 
         </div> <!-- Fin de dashboard-grid -->
     </div> <!-- Fin de main-content -->
@@ -179,22 +225,192 @@
     <!-- Scripts -->
     <script src="/static/js/navbar.js"></script> <!-- Asumiendo que existe y es necesario -->
     <script>
-        // --- CÓDIGO JAVASCRIPT (Sin cambios funcionales, solo mejoras visuales en tooltip) ---
+        // --- LANGUAGE & CHART SCRIPT ---
+        const username = "<%= username %>"; // Make username available to JS
+
+        const translations = {
+            en: {
+                htmlLang: "en",
+                titlePrefix: "Performance Dashboard",
+                dashboardHeaderPrefix: "Performance Dashboard",
+                summaryTitle: "General Summary",
+                messagesSent: "Messages Sent",
+                likesReceived: "\"Likes\" Received",
+                likeRateProxy: "Like Rate (Proxy)",
+                likeRateNote: "Based on Likes / Messages Sent",
+                lastMessageSimple: "Last Message",
+                toRecipient: "To",
+                filtersTitle: "Filters",
+                accountLabel: "Account:",
+                allAccountsOption: "All Accounts",
+                fromLabel: "From:",
+                toLabel: "To:",
+                filterButton: "Filter",
+                activityChartTitle: "Activity per Day",
+                chartLabelMessages: "Messages Sent",
+                chartLabelLikes: "Likes",
+                chartAxisX: "Date",
+                chartAxisY: "Count",
+                lastMessageContentTitle: "Last Message Content",
+                noLastMessage: "No last message to display.",
+                messagesByTypeTitle: "Messages by Type",
+                messageTypeCom: "Communication:",
+                messageTypeSale: "Sale:",
+                messageTypeImp: "Imperative:",
+                recentMessagesTitle: "Recent Messages Sent",
+                noRecentMessages: "No recent messages to display.",
+                selectDateRangePrompt: "Select a date range to view the chart.",
+                loadingErrorPrompt: "Could not load chart data.",
+                dateFilterAlert: "Please select both dates to filter.",
+                canvasNotFoundWarn: "Canvas 'graficoMensajes' not found.",
+                dataLoadErrorConsole: "Error loading chart data:",
+            },
+            es: {
+                htmlLang: "es",
+                titlePrefix: "Panel de Rendimiento",
+                dashboardHeaderPrefix: "Panel de Rendimiento",
+                summaryTitle: "Resumen General",
+                messagesSent: "Mensajes Enviados",
+                likesReceived: "\"Me Gusta\" Recibidos",
+                likeRateProxy: "Tasa de Likes (Proxy)",
+                likeRateNote: "Basado en Likes / Mensajes Enviados",
+                lastMessageSimple: "Último Mensaje",
+                toRecipient: "A",
+                filtersTitle: "Filtros",
+                accountLabel: "Cuenta:",
+                allAccountsOption: "Todas las Cuentas",
+                fromLabel: "Desde:",
+                toLabel: "Hasta:",
+                filterButton: "Filtrar",
+                activityChartTitle: "Actividad por Día",
+                chartLabelMessages: "Mensajes Enviados",
+                chartLabelLikes: "Me Gusta",
+                chartAxisX: "Fecha",
+                chartAxisY: "Cantidad",
+                lastMessageContentTitle: "Contenido del Último Mensaje",
+                noLastMessage: "No hay último mensaje para mostrar.",
+                messagesByTypeTitle: "Mensajes por Tipo",
+                messageTypeCom: "Comunicación:",
+                messageTypeSale: "Venta:",
+                messageTypeImp: "Imperativo:",
+                recentMessagesTitle: "Últimos Mensajes Enviados",
+                noRecentMessages: "No hay mensajes recientes para mostrar.",
+                selectDateRangePrompt: "Selecciona un rango de fechas para ver el gráfico.",
+                loadingErrorPrompt: "No se pudieron cargar los datos del gráfico.",
+                dateFilterAlert: "Por favor, selecciona ambas fechas para filtrar.",
+                canvasNotFoundWarn: "Canvas 'graficoMensajes' no encontrado.",
+                dataLoadErrorConsole: "Error al cargar los datos del gráfico:",
+            }
+        };
+
+        let currentLanguage = localStorage.getItem('preferredLanguage') || 'en'; // Default to English
+        let chartInstance; // Keep track of the chart instance
+
+        function setLanguage(lang) {
+            if (!translations[lang]) lang = 'en'; // Fallback to English
+            currentLanguage = lang;
+            localStorage.setItem('preferredLanguage', lang);
+            const langData = translations[lang];
+
+            // Update HTML lang attribute
+            document.documentElement.lang = langData.htmlLang;
+
+            // Update Title
+            document.title = `${langData.titlePrefix} - ${username}`;
+
+            // Update all elements with data-translate-key
+            document.querySelectorAll('[data-translate-key]').forEach(el => {
+                const key = el.getAttribute('data-translate-key');
+                if (langData[key]) {
+                    // Use innerHTML if the element might contain other nodes (like icons), otherwise textContent is safer
+                    if (el.children.length > 0 && !el.matches('option, button span')) { // Adjust selector if needed
+                         // Find the text node to update, be careful not to overwrite icons etc.
+                         // This simple approach assumes the text is the main content.
+                         // A more robust solution might involve specific spans for text.
+                         // For now, let's find the first text node or update textContent for simple cases.
+                         let textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '');
+                         if(textNode) {
+                            textNode.textContent = langData[key];
+                         } else if (el.tagName === 'SPAN' || el.tagName === 'LABEL' || el.tagName === 'H3' || el.tagName === 'H2' || el.tagName === 'P' || el.tagName === 'BUTTON') {
+                            // For simpler elements, try setting textContent directly
+                            // Check if the button has an icon before the span
+                            if (el.tagName === 'BUTTON' && el.querySelector('i') && el.querySelector('span')) {
+                                el.querySelector('span').textContent = langData[key];
+                            } else {
+                                el.textContent = langData[key]; // Might overwrite icons if not handled carefully above
+                            }
+                         } else if (el.tagName === 'OPTION') {
+                            el.textContent = langData[key];
+                         }
+                    } else {
+                        el.textContent = langData[key];
+                    }
+                 } else {
+                     console.warn(`Translation key "${key}" not found for language "${lang}".`);
+                 }
+             });
+
+             // Special handling for header which includes dynamic username
+             const headerPrefixSpan = document.querySelector('[data-translate-key="dashboardHeaderPrefix"]');
+             if (headerPrefixSpan && langData.dashboardHeaderPrefix) {
+                headerPrefixSpan.textContent = langData.dashboardHeaderPrefix;
+             }
+
+             // Update Chart if it exists
+             if (chartInstance) {
+                try {
+                    chartInstance.options.plugins.legend.labels.text = langData.chartLabelMessages; // Assuming you want this? Usually the dataset label is enough.
+                    chartInstance.options.scales.x.title.text = langData.chartAxisX;
+                    chartInstance.options.scales.y.title.text = langData.chartAxisY;
+                    // Update dataset labels
+                    chartInstance.data.datasets[0].label = langData.chartLabelMessages;
+                    chartInstance.data.datasets[1].label = langData.chartLabelLikes;
+                    chartInstance.update();
+                } catch (error) {
+                    console.error("Error updating chart language:", error);
+                }
+            } else {
+                // If chart doesn't exist yet, update the placeholder text
+                updateChartPlaceholder();
+            }
+        }
+
+        function updateChartPlaceholder() {
+             const chartContainer = document.querySelector('.chart-container');
+             if (chartContainer && !chartInstance) { // Only update if no chart
+                 const canvas = chartContainer.querySelector('canvas');
+                 const currentParams = new URLSearchParams(window.location.search);
+                 const initialFrom = document.getElementById("fromDate").value;
+                 const initialTo = document.getElementById("toDate").value;
+
+                 if (canvas && (!initialFrom || !initialTo)) {
+                     chartContainer.innerHTML = `<canvas id="graficoMensajes"></canvas><p style="text-align: center; color: #9ca3af; padding: 2rem;">${translations[currentLanguage].selectDateRangePrompt}</p>`;
+                 } else if (!canvas) {
+                    // If canvas was missing entirely (maybe error during init)
+                    // chartContainer.innerHTML = `<p style="text-align: center; color: #f87171; padding: 2rem;">${translations[currentLanguage].canvasNotFoundWarn}</p>`; // Or a generic error
+                 }
+                 // If dates ARE selected but chartInstance is null, it might be loading or failed
+             }
+        }
+
+
         document.addEventListener("DOMContentLoaded", function () {
             const ctx = document.getElementById("graficoMensajes")?.getContext("2d");
-            let chart;
             const messagesColor = '#2dd4bf'; // Teal
             const likesColor = '#60a5fa';   // Blue
 
             async function cargarDatosGrafico(from, to, account) {
                 let fetchUrl = `/resumen/data?from=${from}&to=${to}`;
                 if (account) fetchUrl += `&account=${account}`;
+
+                const chartContainer = document.querySelector('.chart-container');
+                 // Ensure canvas exists before proceeding
                 if (!ctx) {
-                    console.warn("Canvas 'graficoMensajes' no encontrado.");
-                    const chartContainer = document.querySelector('.chart-container');
-                    if (chartContainer) chartContainer.innerHTML = '<p style="text-align: center; color: #9ca3af; padding: 2rem;">Selecciona un rango de fechas para ver el gráfico.</p>';
+                    console.warn(translations[currentLanguage].canvasNotFoundWarn);
+                    if (chartContainer) chartContainer.innerHTML = `<p style="text-align: center; color: #9ca3af; padding: 2rem;">${translations[currentLanguage].selectDateRangePrompt}</p>`; // Use translated message
                     return;
                 }
+
 
                 try {
                     const response = await fetch(fetchUrl);
@@ -205,24 +421,52 @@
                     const mensajes = datosGrafico.map(d => d.mensajes);
                     const likes = datosGrafico.map(d => d.likes);
 
-                    if (chart) chart.destroy();
-                    chart = new Chart(ctx, {
+                    if (chartInstance) chartInstance.destroy(); // Use chartInstance variable
+
+                    // Get translated labels for the chart
+                    const currentLangData = translations[currentLanguage];
+
+                    chartInstance = new Chart(ctx, { // Assign to chartInstance
                         type: 'line',
                         data: { labels, datasets: [
-                                { label: 'Mensajes Enviados', data: mensajes, borderColor: messagesColor, backgroundColor: messagesColor + '33', fill: true, tension: 0.3, pointRadius: 3, pointBackgroundColor: messagesColor },
-                                { label: 'Me Gusta', data: likes, borderColor: likesColor, backgroundColor: likesColor + '33', fill: true, tension: 0.3, pointRadius: 3, pointBackgroundColor: likesColor }
+                                { label: currentLangData.chartLabelMessages, data: mensajes, borderColor: messagesColor, backgroundColor: messagesColor + '33', fill: true, tension: 0.3, pointRadius: 3, pointBackgroundColor: messagesColor },
+                                { label: currentLangData.chartLabelLikes, data: likes, borderColor: likesColor, backgroundColor: likesColor + '33', fill: true, tension: 0.3, pointRadius: 3, pointBackgroundColor: likesColor }
                             ] },
                         options: {
                             responsive: true, maintainAspectRatio: false,
-                            plugins: { legend: { position: 'top', labels: { color: '#e0e0e0', usePointStyle: true } }, tooltip: { mode: 'index', intersect: false, backgroundColor: 'rgba(0, 0, 0, 0.8)', titleFont: { size: 14 }, bodyFont: { size: 12 }, padding: 10, boxPadding: 4 } },
-                            scales: { x: { type: 'time', time: { unit: 'day', tooltipFormat: 'PPP', displayFormats: { day: 'MMM d' } }, title: { display: true, text: "Fecha", color: '#9ca3af' }, ticks: { color: '#9ca3af', maxRotation: 0, autoSkip: true, maxTicksLimit: 10 }, grid: { color: 'rgba(255, 255, 255, 0.05)' } }, y: { beginAtZero: true, title: { display: true, text: "Cantidad", color: '#9ca3af' }, ticks: { color: '#9ca3af' }, grid: { color: 'rgba(255, 255, 255, 0.05)' } } },
+                            plugins: {
+                                legend: { position: 'top', labels: { color: '#e0e0e0', usePointStyle: true } },
+                                tooltip: { mode: 'index', intersect: false, backgroundColor: 'rgba(0, 0, 0, 0.8)', titleFont: { size: 14 }, bodyFont: { size: 12 }, padding: 10, boxPadding: 4 }
+                            },
+                            scales: {
+                                x: { type: 'time', time: { unit: 'day', tooltipFormat: 'PPP', displayFormats: { day: 'MMM d' } }, title: { display: true, text: currentLangData.chartAxisX, color: '#9ca3af' }, ticks: { color: '#9ca3af', maxRotation: 0, autoSkip: true, maxTicksLimit: 10 }, grid: { color: 'rgba(255, 255, 255, 0.05)' } },
+                                y: { beginAtZero: true, title: { display: true, text: currentLangData.chartAxisY, color: '#9ca3af' }, ticks: { color: '#9ca3af' }, grid: { color: 'rgba(255, 255, 255, 0.05)' } }
+                            },
                             interaction: { mode: 'nearest', axis: 'x', intersect: false }
                         }
                     });
+                    // Ensure chart container doesn't show placeholder text if chart loads successfully
+                    const existingPlaceholder = chartContainer.querySelector('p');
+                    if (existingPlaceholder) existingPlaceholder.remove();
+
                 } catch (error) {
-                    console.error("Error al cargar los datos del gráfico:", error);
-                    const chartContainer = document.querySelector('.chart-container');
-                    if (chartContainer) chartContainer.innerHTML = '<p class="error-message" style="color: #f87171; text-align: center; padding: 2rem;">No se pudieron cargar los datos del gráfico.</p>';
+                    console.error(translations[currentLanguage].dataLoadErrorConsole, error);
+                    if (chartContainer) {
+                       // Make sure canvas is still there before adding the error message
+                       if (!chartContainer.querySelector('canvas')) {
+                           chartContainer.innerHTML = '<canvas id="graficoMensajes"></canvas>';
+                       }
+                       // Add error message after the canvas
+                       const errorP = document.createElement('p');
+                       errorP.className = "error-message";
+                       errorP.style = "color: #f87171; text-align: center; padding: 2rem;";
+                       errorP.textContent = translations[currentLanguage].loadingErrorPrompt;
+                       // Remove old error message if present
+                       const oldError = chartContainer.querySelector('.error-message');
+                       if(oldError) oldError.remove();
+                       chartContainer.appendChild(errorP);
+                    }
+                    chartInstance = null; // Reset instance on error
                 }
             }
 
@@ -230,52 +474,61 @@
             const fromInput = document.getElementById("fromDate");
             const toInput = document.getElementById("toDate");
             const btnFiltrar = document.getElementById("btnFiltrar");
+            const langSwitchBtn = document.getElementById("langSwitchBtn");
 
-            function aplicarFiltrosYRecargar() {
+            function aplicarFiltrosYRecargar(event) { // Pass event object
                 const selectedAccount = accountSelector.value;
                 const from = fromInput.value;
                 const to = toInput.value;
+
+                // Check if the event target is the filter button AND either date is missing
+                // Use the specific ID 'btnFiltrar'
+                if (event && event.target.closest('#btnFiltrar') && (!from || !to)) {
+                    alert(translations[currentLanguage].dateFilterAlert); // Use translated alert
+                    return; // Stop execution
+                }
+
                 const url = new URL(window.location.origin + window.location.pathname);
                 if (selectedAccount) url.searchParams.set('account', selectedAccount);
                 if (from) url.searchParams.set('from', from);
                 if (to) url.searchParams.set('to', to);
-                // Check if the event target is the filter button AND either date is missing
-                if (event && event.target.id === 'btnFiltrar' && (!from || !to)) {
-                    alert("Por favor, selecciona ambas fechas para filtrar.");
-                    return; // Stop execution if dates are missing when filter button is clicked
-                }
-                 // If triggered by changing account, we don't require both dates (might just be changing account)
-                 // If triggered by filter button, dates are now validated above.
+
                 window.location.href = url.toString();
             }
 
-
             btnFiltrar.addEventListener("click", aplicarFiltrosYRecargar);
-            // Apply filters immediately when account is changed (consider if this is desired behavior)
-            accountSelector.addEventListener("change", aplicarFiltrosYRecargar);
-            // Optional: Apply filters also when dates are changed automatically?
-            // fromInput.addEventListener("change", aplicarFiltrosYRecargar);
-            // toInput.addEventListener("change", aplicarFiltrosYRecargar);
+            accountSelector.addEventListener("change", aplicarFiltrosYRecargar); // Keep immediate reload on account change
 
 
+            // Language Switcher Logic
+            langSwitchBtn.addEventListener('click', () => {
+                const newLang = currentLanguage === 'en' ? 'es' : 'en';
+                setLanguage(newLang);
+                // Optional: If chart exists, reload its data *if needed* or just update labels (already done in setLanguage)
+                // If you want to force a reload (e.g., if data fetching depended on lang):
+                // const initialFrom = fromInput.value;
+                // const initialTo = toInput.value;
+                // if (chartInstance && initialFrom && initialTo) {
+                //     cargarDatosGrafico(initialFrom, initialTo, accountSelector.value);
+                // }
+            });
+
+            // --- Initial Setup ---
+
+            // 1. Set initial language based on localStorage or default
+            setLanguage(currentLanguage); // Apply translations on load
+
+            // 2. Load initial chart data if dates are present
             const currentParams = new URLSearchParams(window.location.search);
             const initialAccount = currentParams.get('account') || '';
             const initialFrom = fromInput.value; // Get value from input field
             const initialTo = toInput.value;   // Get value from input field
 
-            // Carga inicial del gráfico solo si hay canvas Y fechas
-            if (initialFrom && initialTo) { // Quitamos la verificación de 'ctx' aquí, ya se hace dentro de cargarDatosGrafico
+            if (initialFrom && initialTo) {
                  cargarDatosGrafico(initialFrom, initialTo, initialAccount);
             } else {
-                 console.warn("Fechas iniciales no definidas. Gráfico no cargado inicialmente.");
-                 // Mostrar mensaje si no hay fechas iniciales
-                 const chartContainer = document.querySelector('.chart-container');
-                 // Only add message if canvas exists but no dates were provided initially
-                 if (chartContainer && ctx) {
-                      chartContainer.innerHTML = '<p style="text-align: center; color: #9ca3af; padding: 2rem;">Selecciona un rango de fechas para ver el gráfico.</p>';
-                 } else if (chartContainer && !ctx) {
-                    // If canvas doesn't exist, the message is already handled inside cargarDatosGrafico
-                 }
+                 console.warn("Initial dates not set. Chart not loaded initially.");
+                 updateChartPlaceholder(); // Show translated placeholder text
             }
         });
     </script>
