@@ -16,105 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Estilos Adicionales para la pantalla de selección y ocultar/mostrar -->
-    <style>
-        /* --- Estilos para la pantalla de selección --- */
-        .choice-container {
-            display: flex; /* Usa flexbox para centrar */
-            justify-content: center;
-            align-items: center;
-            min-height: calc(100vh - 80px); /* Ajusta según altura de tu navbar */
-            padding: 40px 20px;
-            gap: 30px; /* Espacio entre las tarjetas */
-            flex-wrap: wrap; /* Para que se ajusten en pantallas pequeñas */
-        }
-
-        .choice-card {
-            background-color: rgba(255, 255, 255, 0.05); /* Similar al form-card */
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 35px 40px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            width: 300px; /* Ancho fijo para las tarjetas */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .choice-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.15); /* Sombra sutil al pasar el ratón */
-        }
-
-        .choice-card .icon-choice {
-            font-size: 3em;
-            margin-bottom: 20px;
-            color: #2ecc71; /* Verde característico */
-        }
-
-        .choice-card h3 {
-            font-size: 1.5em;
-            font-weight: 600;
-            color: #ffffff;
-            margin-bottom: 10px;
-        }
-
-        .choice-card p {
-            font-size: 0.95em;
-            color: #bdc3c7;
-            line-height: 1.6;
-        }
-
-        /* --- Estilos para ocultar/mostrar secciones --- */
-        .form-section {
-            display: none; /* Oculto por defecto */
-            /* Los estilos del form-container original se aplicarán cuando se muestre */
-             padding-top: 20px; /* Añadir espacio desde la navbar si es necesario */
-             padding-bottom: 40px;
-        }
-
-        .form-section.active {
-            display: block; /* Mostrar la sección activa */
-        }
-
-        /* --- Estilo Botón Volver --- */
-        .back-button {
-            display: inline-block; /* Para que respete márgenes */
-            background-color: #7f8c8d; /* Un color secundario/neutro */
-            color: #ffffff;
-            border: none;
-            padding: 12px 25px;
-            font-size: 1em;
-            font-weight: 500;
-            font-family: 'Poppins', sans-serif;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            margin-top: 20px; /* Espacio arriba */
-            margin-right: 10px; /* Espacio respecto al botón de guardar */
-            text-decoration: none; /* Si se usa como enlace */
-            text-align: center;
-        }
-
-        .back-button:hover {
-            background-color: #95a5a6;
-            transform: translateY(-2px);
-        }
-
-        .back-button i {
-            margin-right: 8px;
-        }
-
-        /* Ajuste para que el botón volver esté al lado del submit si se quiere */
-        .form-actions {
-             display: flex;
-             justify-content: flex-start; /* O 'flex-end' si los quieres a la derecha */
-             align-items: center;
-             margin-top: 20px; /* Ajusta el espacio superior si es necesario */
-        }
-
-
-    </style>
-
+   
     <script src="/static/js/navbar.js" defer></script>
     <script src="/static/js/file-input-label.js" defer></script>
 </head>
@@ -126,7 +28,7 @@
     <div class="choice-container" id="choice-container">
         <div class="choice-card" data-target="hunter-form-section">
             <i class="fas fa-rocket icon-choice"></i>
-            <h3>Crear Hunter</h3>
+            <h3>Crea tu Flecha</h3>
             <p>Configura una nueva instancia de Hunter para empezar.</p>
         </div>
         <div class="choice-card" data-target="blanco-form-section">
@@ -140,25 +42,25 @@
     <section id="hunter-form-section" class="form-section">
         <div class="form-container">
             <div class="form-card">
-                <h2><i class="fas fa-rocket icon-title"></i> Crear Nuevo Hunter</h2>
-                <p class="subtitle">Inicia una nueva configuración.</p>
+                <h2><i class="fas fa-rocket icon-title"></i> CARGA TU LISTA DE MENSAJES</h2>
+                <p class="subtitle">Inicia una nueva caza.</p>
 
-                <form action="/ruta-para-hunter" method="POST" class="hunter-form" id="hunter-form"> <!-- CAMBIA action -->
+                <form action="/api/flecha/mensajes" method="POST" class="hunter-form" id="hunter-form">
                     <div class="form-group">
-                        <label for="hunter_name"><i class="fas fa-signature"></i> Nombre del Hunter:</label>
-                        <input type="text" id="hunter_name" name="hunter_name" placeholder="Ej: Hunter para Ventas B2B" required>
-                        <small>Este campo es un ejemplo, ¡ajústalo a lo que necesites!</small>
+                        <label for="mensajes"><i class="fas fa-signature"></i> Flechas:</label>
+                        <textarea id="mensajes" name="mensajes" placeholder="Ej: Mensaje1&#10;Mensaje2" required rows="5"></textarea>
+                        <small>Recuerda insertarlos con salto de lineas porfavor</small>
                     </div>
-
+                
                     <!-- Más campos si necesitas para "Hunter" -->
-
+                
                     <div class="form-actions">
-                         <button type="button" class="back-button" data-action="show-choice">
-                             <i class="fas fa-arrow-left"></i> Volver
-                         </button>
-                         <button type="submit" class="submit-button">
-                             <i class="fas fa-cogs"></i> Iniciar Hunter
-                         </button>
+                        <button type="button" class="back-button" data-action="show-choice">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </button>
+                        <button type="submit" class="submit-button">
+                            <i class="fas fa-cogs"></i> Iniciar Hunter
+                        </button>
                     </div>
                 </form>
             </div>
@@ -197,19 +99,12 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="mensaje"><i class="fas fa-envelope-open-text"></i> Mensaje Descriptivo:</label>
-                        <textarea id="mensaje" name="mensaje" placeholder="Describe el nicho y el propósito de este registro..." required rows="4"></textarea>
+                        <label for="mensaje"><i class="fas fa-envelope-open-text"></i> Cuentas Objetivo:</label>
+                        <textarea id="mensaje" name="mensaje" placeholder="Ingresa medainte salto de lineas las cuentas similares a tus nichos" required rows="4"></textarea>
                     </div>
 
                     <!-- Subida de archivo PDF con estilo mejorado -->
-                    <div class="form-group file-upload-wrapper">
-                        <label for="archivo_pdf" class="file-upload-label">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <span>Adjuntar PDF (Opcional)</span>
-                        </label>
-                        <input type="file" id="archivo_pdf" name="archivo_pdf" accept=".pdf" class="file-input-hidden">
-                        <span id="file-name-display" class="file-name">Ningún archivo seleccionado</span>
-                    </div>
+                   
 
                     <!-- Botones de acción -->
                     <div class="form-actions">
@@ -325,9 +220,49 @@
 
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const hunterForm = document.getElementById('hunter-form');
+            
+            if (hunterForm) {
+                hunterForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const textarea = document.getElementById('mensajes');
+                    const cuentas = textarea.value
+                        .split('\n')
+                        .map(cuenta => cuenta.trim())
+                        .filter(cuenta => cuenta.length > 0);
+                    
+                    try {
+                        const response = await fetch('/api/flecha/mensajes', {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ mensajes: cuentas })
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (response.ok) {
+                            alert('Mensajes guardados correctamente!');
+                            // Opcional: limpiar el textarea después del envío
+                            textarea.value = '';
+                        } else {
+                            alert(`Error: ${result.error || 'Error al guardar los mensajes'}`);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Error al conectar con el servidor');
+                    }
+                });
+            }
+        });
+    </script>
     <!-- =============================================================== -->
     <!-- FIN DEL SCRIPT -->
     <!-- =============================================================== -->
 
 </body>
-</html>
+</html> 

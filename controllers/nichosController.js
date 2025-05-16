@@ -69,25 +69,34 @@ exports.postNicho = async (req, res) => {
   }
 };
 
-// Mostrar nichos guardados con opción de asignar usuario (solo para admin)
 exports.getNichosAsignar = async (req, res) => {
   try {
-    // Verificar si el usuario es admin
-    if (req.session.user.role !== 'admin') {
-      return res.status(403).render('nicho', { message: 'Acceso denegado: Solo para administradores' });
+    const userId = req.session.user.id;
+    const isAdmin = req.session.user.role === 'admin';
+
+    let query = 'SELECT * FROM nichos WHERE user_id = $1';
+    let params = [userId];
+
+    // Si es admin, puede ver todos los nichos (opcional, puedes quitarlo si el admin solo debe ver los suyos)
+    if (isAdmin) {
+      query = 'SELECT * FROM nichos';
+      params = [];
     }
 
-    // Obtener los nichos y usuarios
-    const resultNichos = await pool.query('SELECT * FROM nichos');
-    const resultUsers = await pool.query('SELECT id, username FROM users');
-
-    res.render('nichos_asignar', { nichos: resultNichos.rows, users: resultUsers.rows });
+    const result = await pool.query(query, params);
+    
+    res.render('nichos_asignar', { 
+      nichos: result.rows,
+      isAdmin: isAdmin
+    });
   } catch (error) {
-    console.error("Error al cargar datos:", error);
-    res.status(500).render('nichos_asignar', { nichos: [], users: [], message: 'Error al cargar datos' });
+    console.error("Error al cargar nichos:", error);
+    res.status(500).render('nichos_asignar', { 
+      nichos: [],
+      message: 'Error al cargar los nichos' 
+    });
   }
 };
-
 // Asignar nicho a un usuario (solo para admin)
 exports.postAsignarNicho = async (req, res) => {
   const { nicho_id, user_id } = req.body;

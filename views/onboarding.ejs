@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en"> <!-- Idioma por defecto: Inglés -->
+<html lang="en"> <!-- Idioma por defecto: Inglés (JS lo cambiará si hay preferencia guardada) -->
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HUNTER - Welcome and First Steps</title> <!-- Título en Inglés -->
+    <!-- Título se establecerá dinámicamente por JS -->
+    <title>HUNTER - Welcome and First Steps</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,217 +16,19 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- Estilos Externos (Asegúrate que estas rutas son correctas) -->
+    <!-- Estilos Externos -->
     <link rel="stylesheet" href="/static/css/navbar.css" />
-    <link rel="stylesheet" href="/static/css/onboarding.css" />
+    <!-- NUEVO: onboarding.css contendrá todos los estilos de esta página -->
+    <!-- <link rel="stylesheet" href="/static/css/onboarding.css" /> -->
+    <link rel="stylesheet" href="/static/css/onboarding2.css" />
     <link rel="stylesheet" href="/static/css/scrollbar.css" />
 
-    <!-- Estilos Internos (Completos y con Footer ajustado) -->
+    <!-- Estilos Internos (SOLO si necesitas sobreescribir algo muy específico, idealmente vacío) -->
     <style>
-      /* --- Estilos Generales y Contenedores --- */
-      body {
-          font-family: 'Poppins', sans-serif;
-          /* background-color: #1a1a2e; */ /* Asegúrate que el fondo se define aquí o en CSS externo */
-          color: #e0e0e0;
-           margin: 0;
-      }
-      .onboarding-background {
-          padding: 80px 20px 40px;
-          min-height: 100vh;
-          box-sizing: border-box;
-           /* Asegúrate que el fondo (color o imagen) esté definido aquí o en onboarding.css */
-      }
-      .onboarding-container {
-          max-width: 900px;
-          margin: 0 auto;
-          background-color: rgba(0, 0, 0, 0.65);
-          padding: 30px 40px;
-          border-radius: 15px;
-          box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-      }
-      header {
-          margin-bottom: 40px;
-      }
+        /* Mantener estilos muy locales si es estrictamente necesario,
+           idealmente mover todo a onboarding.css */
+    </style>
 
-      /* --- Estilos Título Principal --- */
-      #main-heading {
-          font-size: 3.2em; line-height: 1.25; margin-bottom: 35px;
-          color: #ffffff; text-align: center;
-      }
-      #main-heading .intro-text {
-          font-size: 0.75em; font-weight: 600; text-transform: uppercase;
-          letter-spacing: 1.5px; color: #2ecc71; display: block; margin-bottom: 8px;
-      }
-      #main-heading .highlight {
-          font-weight: 700; display: block; color: #2ecc71;
-      }
-      .slogan {
-          display: block; font-size: 0.5em; font-weight: 400;
-          margin-top: 12px; opacity: 0.75; color: #bdc3c7;
-      }
-
-      /* --- Estilos Acordeón --- */
-      .onboarding-step {
-          background-color: rgba(255, 255, 255, 0.05); margin-bottom: 15px;
-          border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1);
-          overflow: hidden; transition: opacity 0.3s ease; /* Para el estado disabled */
-      }
-      .step-header {
-          display: flex; align-items: center; padding: 15px 20px;
-          cursor: pointer; transition: background-color 0.3s ease; position: relative;
-      }
-      /* QUITAR HOVER SI ESTÁ DESHABILITADO (se controla con .disabled) */
-      .onboarding-step:not(.disabled) .step-header:hover { background-color: rgba(255, 255, 255, 0.1); }
-
-      .step-header .step-number {
-          background-color: #3498db; color: white; border-radius: 50%;
-          width: 30px; height: 30px; display: inline-flex; align-items: center;
-          justify-content: center; font-weight: 600; margin-right: 15px;
-          flex-shrink: 0; transition: background-color 0.3s ease;
-      }
-      .step-header .step-title {
-          flex-grow: 1; margin: 0; font-size: 1.2em; font-weight: 600;
-          color: #ffffff; transition: opacity 0.3s ease;
-      }
-      .step-header .step-icon {
-          margin-left: auto; transition: transform 0.3s ease; font-size: 1.1em;
-          padding-left: 15px; color: #bdc3c7;
-      }
-      /* YA NO HAY CHECKBOX GLOBAL EN EL HEADER */
-      /* .step-header .completion-checkbox { ... } */
-
-      .step-body {
-          max-height: 0; overflow: hidden;
-          transition: max-height 0.4s ease-out, padding 0.4s ease-out;
-          padding: 0 20px 0 65px; /* Ajustar padding izquierdo si es necesario */
-      }
-      .step-body.expanded {
-          max-height: 800px; /* Aumentado por si hay muchas sub-tareas */
-          padding: 15px 20px 20px 65px; /* Ajustar padding izquierdo si es necesario */
-          transition: max-height 0.4s ease-in, padding 0.4s ease-in;
-      }
-      .step-body-content {
-           border-top: 1px solid rgba(255, 255, 255, 0.1);
-           padding-top: 15px;
-      }
-      .step-body-content p {
-          margin-bottom: 15px; color: #bdc3c7; line-height: 1.6;
-      }
-       .step-body-content strong { color: #ecf0f1; font-weight: 600; }
-
-      /* --- NUEVO: Estilos para la Lista de Tareas (feature-list) --- */
-      .feature-list {
-          list-style: none; /* Sin bullets */
-          padding-left: 0; /* Sin indentación por defecto */
-          margin-top: 15px;
-      }
-      .feature-list li {
-          background-color: rgba(255, 255, 255, 0.07); /* Fondo sutil para cada item */
-          border-left: 3px solid #3498db; /* Borde izquierdo de acento */
-          padding: 10px 15px;
-          margin-bottom: 10px; /* Espacio entre items */
-          border-radius: 4px;
-          display: flex; /* Para alinear checkbox y texto */
-          align-items: center; /* Alinear verticalmente */
-          gap: 12px; /* Espacio entre checkbox y texto */
-          transition: background-color 0.3s ease, opacity 0.3s ease; /* Transición suave */
-      }
-      .feature-list li input[type="checkbox"] {
-          flex-shrink: 0; /* Evita que el checkbox se encoja */
-          margin: 0; /* Resetea márgenes */
-          transform: scale(1.2); /* Hacerlo un poco más grande */
-          cursor: pointer;
-          accent-color: #2ecc71; /* Color del check cuando está marcado */
-          transition: opacity 0.3s ease;
-      }
-      .feature-list li label { /* Usamos label para asociar con checkbox */
-          flex-grow: 1; /* El texto ocupa el espacio restante */
-          color: #bdc3c7; /* Color del texto de la tarea */
-          line-height: 1.5;
-          cursor: pointer; /* Hacer click en el texto también marca/desmarca */
-          transition: color 0.3s ease, text-decoration 0.3s ease, opacity 0.3s ease;
-      }
-
-      /* --- NUEVO: Estilos para Tarea Completada --- */
-      .feature-list li.completed label {
-          text-decoration: line-through;
-          opacity: 0.6;
-          color: #95a5a6; /* Color más apagado */
-      }
-      .feature-list li.completed {
-         border-left-color: #2ecc71; /* Cambiar color del borde al completar */
-         background-color: rgba(46, 204, 113, 0.1); /* Fondo verdoso sutil */
-      }
-
-      /* --- Estilos Paso Expandido --- */
-      .onboarding-step .step-header .step-icon.expanded-icon { transform: rotate(90deg); }
-
-       /* --- NUEVO: Estilos Paso Deshabilitado --- */
-      .onboarding-step.disabled {
-          opacity: 0.6; /* Hacer todo el paso más tenue */
-          pointer-events: none; /* Deshabilitar cualquier interacción directa con el bloque */
-      }
-      .onboarding-step.disabled .step-header {
-          cursor: not-allowed; /* Cursor de no permitido en el header */
-          /* No es necesario pointer-events: none aquí si ya está en el padre */
-      }
-       .onboarding-step.disabled .step-header .step-number {
-           background-color: #7f8c8d; /* Número en gris */
-           color: #bdc3c7;
-       }
-       .onboarding-step.disabled .step-header .step-title {
-           color: #95a5a6; /* Título más apagado */
-       }
-       /* Habilitar interacción SÓLO con elementos dentro del paso deshabilitado si es necesario,
-          pero para este caso, queremos todo bloqueado */
-      .onboarding-step.disabled .step-body,
-      .onboarding-step.disabled .feature-list li input[type="checkbox"],
-      .onboarding-step.disabled .feature-list li label,
-      .onboarding-step.disabled .tutorial-link {
-          pointer-events: none; /* Asegurar que nada dentro sea clickeable */
-          cursor: not-allowed;
-      }
-      .onboarding-step.disabled .feature-list li input[type="checkbox"] {
-          opacity: 0.5; /* Checkbox más tenue */
-      }
-
-      /* --- Estilos Tutorial Link --- */
-      .tutorial-link { display: inline-block; margin-top: 15px; font-size: 0.9em; color: #3498db; text-decoration: none; font-weight: 500; transition: color 0.3s ease; pointer-events: auto; /* Asegurar que sea clickeable si el paso NO está disabled */ }
-      .tutorial-link i { margin-right: 5px; }
-      .onboarding-step:not(.disabled) .tutorial-link:hover { text-decoration: underline; color: #5dade2; }
-
-
-      /* --- Estilos Selector de Idioma --- */
-      .language-switcher {
-          position: fixed; top: 20px; right: 20px; z-index: 1000;
-          display: flex; align-items: center; gap: 5px;
-          background-color: rgba(44, 62, 80, 0.85); padding: 6px 12px;
-          border-radius: 20px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-          backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
-      }
-      .language-switcher .lang-btn {
-          background: none; border: none; color: #ecf0f1; cursor: pointer;
-          font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 600;
-          padding: 4px 8px; border-radius: 15px; transition: all 0.3s ease;
-          opacity: 0.6; display: flex; align-items: center;
-      }
-      .language-switcher .lang-btn.active { opacity: 1; }
-      .language-switcher .lang-btn:not(.active):hover { opacity: 0.85; background-color: rgba(255, 255, 255, 0.1); }
-      .language-switcher .separator { width: 1px; height: 16px; background-color: rgba(255, 255, 255, 0.3); }
-      .language-switcher .lang-btn span { line-height: 1; }
-
-      /* --- Estilos Footer (Simplificado) --- */
-      .onboarding-footer {
-          margin-top: 40px; text-align: center; padding-top: 20px;
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
-      }
-      .onboarding-footer .cta-footer {
-          font-weight: 600; color: #ffffff; margin-top: 0;
-          font-size: 1.1em; line-height: 1.6;
-      }
-      /* Íconos eliminados del footer para simplificar, ajusta si los necesitas de vuelta */
-      /* .onboarding-footer .cta-footer i { ... } */
-</style>
     <!-- Script Navbar (Asegúrate que esta ruta es correcta) -->
     <script defer src="/static/js/navbar.js"></script>
 
@@ -237,7 +40,9 @@
             //   TEXTOS (Ajustados para listas sin HTML interno)
             // ============================================
             const spanishElements = {
-                title: "HUNTER - Bienvenida y Primeros Pasos", mainHeading: "<span class='intro-text'>Bienvenido a</span> <span class='highlight'>HUNTER</span><span class='slogan'>Donde no esperamos oportunidades — las creamos y las cazamos</span>",
+                title: "HUNTER - Bienvenida y Primeros Pasos",
+                // HTML ajustado para la nueva estructura del encabezado
+                mainHeadingHTML: `<span class='intro-text'>Bienvenido a</span> <span class='highlight'>HUNTER</span><span class='slogan'>Donde no esperamos oportunidades — las creamos y las cazamos</span>`,
                 step1Title: "Inicia Sesión y Desbloquea el Poder", step1Intro: "Para comenzar tu cacería de resultados, completa estas tareas:",
                 step1List: [ // Solo texto, el HTML (checkbox + label) se genera en JS
                     "Accede a Instagram: Introduce tus credenciales de forma segura.",
@@ -258,10 +63,13 @@
                     "Perfil y Análisis: Profundiza en el crecimiento y la interacción.",
                     "Configuración: Personaliza HUNTER a tu medida."
                 ], step3TutorialLinkText: "Ver Tutorial Paso 3",
-                footerCta: " Tus metas son nuestro blanco " // Solo CTA
+                footerCta: " Tus metas son nuestro blanco ", // Solo CTA
+                contactLinkText: "Contáctanos" // Texto para el enlace de contacto
             };
             const englishElements = {
-                title: "HUNTER - Welcome and First Steps", mainHeading: "<span class='intro-text'>WELCOME TO</span> <span class='highlight'>HUNTER</span><span class='slogan'>Where we don't wait for opportunities — we create and hunt them</span>",
+                title: "HUNTER - Welcome and First Steps",
+                 // HTML ajustado para la nueva estructura del encabezado
+                mainHeadingHTML: `<span class='intro-text'>Welcome to</span> <span class='highlight'>HUNTER</span><span class='slogan'>Where we don't wait for opportunities  we create and hunt them</span>`,
                 step1Title: "Log In and Unlock the Power", step1Intro: "To start your results hunt, complete these tasks:",
                 step1List: [ // Just text
                     "Access Instagram: Enter your credentials securely.",
@@ -282,7 +90,8 @@
                     "Profile and Analysis: Dive deep into growth and interaction.",
                     "Settings: Customize HUNTER to your measure."
                 ], step3TutorialLinkText: "Watch Step 3 Tutorial",
-                footerCta: "Your goals are our target" // Just CTA (removed icons for simplicity)
+                footerCta: "Your goals are our target", // Just CTA (removed icons for simplicity)
+                contactLinkText: "Contact Us" // Text for the contact link
             };
 
             // ============================================
@@ -356,10 +165,10 @@
                 if (isStep1Complete) {
                     step2Section.classList.remove('disabled');
                     // Asegurar que los elementos internos sean interactivos (por si acaso)
-                    step2Section.style.pointerEvents = '';
+                    // step2Section.style.pointerEvents = ''; // Esto ya se maneja en CSS con .disabled
                  } else {
                     step2Section.classList.add('disabled');
-                    step2Section.style.pointerEvents = 'none'; // Redundante con CSS pero más seguro
+                    // step2Section.style.pointerEvents = 'none'; // Redundante con CSS
                      // Si se deshabilita, colapsarlo si estaba expandido
                     if (stepElements['2'].body.classList.contains('expanded')) {
                         stepElements['2'].body.classList.remove('expanded');
@@ -373,10 +182,10 @@
                 const step3Section = stepElements['3'].section;
                 if (isStep1Complete && isStep2Complete) {
                     step3Section.classList.remove('disabled');
-                    step3Section.style.pointerEvents = '';
+                    // step3Section.style.pointerEvents = ''; // Esto ya se maneja en CSS con .disabled
                 } else {
                     step3Section.classList.add('disabled');
-                     step3Section.style.pointerEvents = 'none';
+                    //  step3Section.style.pointerEvents = 'none'; // Redundante con CSS
                      // Si se deshabilita, colapsarlo si estaba expandido
                      if (stepElements['3'].body.classList.contains('expanded')) {
                         stepElements['3'].body.classList.remove('expanded');
@@ -395,7 +204,10 @@
                             stepNumberEl.style.backgroundColor = '#2ecc71'; // Verde completado
                         } else {
                              // Volver al color original (o gris si está deshabilitado)
-                             stepNumberEl.style.backgroundColor = stepElements[num].section.classList.contains('disabled') ? '#7f8c8d' : '#3498db';
+                             // El color gris para deshabilitado está en el CSS, solo volvemos al color original si no está deshabilitado
+                             if (!stepElements[num].section.classList.contains('disabled')) {
+                                  stepNumberEl.style.backgroundColor = '#3498db'; // Color original
+                             }
                          }
                     }
                  });
@@ -412,7 +224,8 @@
                 // --- Actualizar Textos Generales ---
                 document.title = elements.title;
                 document.documentElement.setAttribute('lang', lang);
-                document.getElementById('main-heading').innerHTML = elements.mainHeading;
+                // Usar mainHeadingHTML para el contenido del h1
+                document.getElementById('main-heading').innerHTML = elements.mainHeadingHTML;
 
                 // --- Actualizar Contenido de los Pasos ---
                 ['1', '2', '3'].forEach(num => {
@@ -421,7 +234,7 @@
 
                     // Título e Introducción
                     if (stepData.title) stepData.title.textContent = elements[`step${num}Title`];
-                    if (stepData.intro) stepData.intro.innerHTML = elements[`step${num}Intro`];
+                    if (stepData.intro) stepData.intro.innerHTML = elements[`step${num}Intro`]; // Usar innerHTML para <strong>
 
                     // Lista de Tareas (Reconstruir con Checkboxes)
                     const listEl = stepData.list;
@@ -431,14 +244,10 @@
 
                          // Asegurar que el array de estado exista para este paso y tenga la longitud correcta
                          if (!tasksCompletedState[num] || tasksCompletedState[num].length !== newListData.length) {
-                             // Si no existe o la longitud no coincide con los nuevos textos,
-                             // inicializa/resetea el estado para este paso.
-                             // ¡Precaución! Esto puede perder el progreso si se cambia de idioma
-                             // y la cantidad de tareas cambia entre idiomas (lo cual no debería pasar).
-                             // Una estrategia más robusta podría intentar mapear tareas si fuera necesario.
+                             // Si no existe o la longitud no coincide, inicializa/resetea este paso
                              tasksCompletedState[num] = Array(newListData.length).fill(false);
                              console.warn(`Reinitializing task state for step ${num} due to language change or inconsistency.`);
-                             // No guardar inmediatamente, esperar a la interacción del usuario o guardar al final
+                             // No guardar inmediatamente, updateStepStates() al final guardará si el paso se completa
                          }
                          const currentStepTasks = tasksCompletedState[num];
 
@@ -484,22 +293,25 @@
                 const footerCtaEl = document.getElementById('footer-cta');
                 if (footerCtaEl) { footerCtaEl.innerHTML = elements.footerCta; }
 
+                // NUEVO: Actualizar texto del enlace de contacto
+                const contactLinkEl = document.getElementById('contact-link');
+                 if (contactLinkEl) { contactLinkEl.textContent = elements.contactLinkText; }
+
+
                 // --- Actualizar Botones Idioma ---
                 const btnEs = document.getElementById('btn-es');
                 const btnEn = document.getElementById('btn-en');
                 if (btnEs && btnEn) {
                     btnEs.classList.toggle('active', lang === 'es');
                     btnEn.classList.toggle('active', lang === 'en');
-                    btnEs.style.opacity = lang === 'es' ? '1' : '0.6';
-                    btnEn.style.opacity = lang === 'en' ? '1' : '0.6';
                 }
 
                 // --- Guardar Idioma ---
                 localStorage.setItem(storageKeys.language, lang);
 
-                // --- RE-APLICAR ESTADOS (Importante después de reconstruir el DOM) ---
+                // --- Re-aplicar estado de habilitación/deshabilitación y expandido ---
+                // Esto es crucial después de reconstruir el DOM y actualizar el estado de tareas
                 applyInitialStates();
-                // saveState(storageKeys.tasksCompleted, tasksCompletedState); // Guardar estado de tareas si se reinicializó
             };
 
 
@@ -519,7 +331,6 @@
                      saveState(storageKeys.tasksCompleted, tasksCompletedState); // Guardar cambio
                  } else {
                      console.error("State array mismatch for task:", stepNumber, taskIndex);
-                     // Podrías intentar reinicializar aquí si es necesario, pero es mejor prevenirlo.
                  }
 
                  // Actualizar estilo visual del item li
@@ -539,60 +350,79 @@
                      const header = step.querySelector('.step-header');
                      const body = step.querySelector('.step-body');
                      const stepNumber = header?.dataset.step;
-                     const arrowIcon = header?.querySelector('.step-icon');
+                     const arrowIcon = header?.querySelector('.step-icon i'); // Asegurarse de seleccionar el <i>
 
                      if (!header || !body || !stepNumber) return;
+
+                     // Remover listener existente antes de añadir uno nuevo para evitar duplicados
+                     // Esto es importante si applyInitialStates se llama múltiples veces (como en changeLanguage)
+                     // Clonar y reemplazar es una forma segura de remover todos los listeners
+                     const oldHeader = header;
+                     const newHeader = oldHeader.cloneNode(true);
+                     oldHeader.parentNode.replaceChild(newHeader, oldHeader);
+                     // Actualizar la referencia en stepElements si es necesario, o asegurarse de usar newHeader
+                     // Simplificamos usando newHeader para el listener y re-obteniendo arrowIcon
+                     const currentHeader = newHeader;
+                     const currentArrowIcon = currentHeader.querySelector('.step-icon i');
+
 
                      // Aplicar estado expandido desde localStorage
                      if (expandedState[stepNumber]) {
                          body.classList.add('expanded');
-                         if (arrowIcon) arrowIcon.classList.add('expanded-icon');
+                         if (currentArrowIcon) currentArrowIcon.classList.add('expanded-icon');
                      } else {
                          body.classList.remove('expanded');
-                          if (arrowIcon) arrowIcon.classList.remove('expanded-icon');
+                          if (currentArrowIcon) currentArrowIcon.classList.remove('expanded-icon');
                      }
 
                      // Añadir listener para expandir/colapsar (solo si no está deshabilitado)
-                     header.addEventListener('click', () => {
-                         // Prevenir si el paso está deshabilitado
-                         if (step.classList.contains('disabled')) {
-                             return;
-                         }
-                         const isExpanded = body.classList.toggle('expanded');
-                         if (arrowIcon) arrowIcon.classList.toggle('expanded-icon', isExpanded);
-                         expandedState[stepNumber] = isExpanded;
-                         saveState(storageKeys.expanded, expandedState);
+                     currentHeader.addEventListener('click', () => {
+                         // Prevenir si el paso está deshabilitado (se comprueba en el manejador)
+                         // Usamos el manejador separado para poder checkear la clase 'disabled'
                      });
+
+                      // Añadir el manejador real de click que incluye la lógica disabled
+                     currentHeader.addEventListener('click', handleStepHeaderClick);
+
                  });
 
-                 // 2. Aplicar estado completado a tareas (esto ya se hace en changeLanguage al crear los checkboxes)
-                 // Pero nos aseguramos que las clases .completed estén bien en los LI
-                 Object.keys(tasksCompletedState).forEach(stepNum => {
-                     const tasks = tasksCompletedState[stepNum];
-                     const listEl = stepElements[stepNum]?.list;
-                     if (listEl && tasks) {
-                         tasks.forEach((isDone, index) => {
-                             const li = listEl.querySelector(`li:nth-child(${index + 1})`);
-                             if(li) {
-                                 li.classList.toggle('completed', isDone);
-                                 const checkbox = li.querySelector('input[type="checkbox"]');
-                                 if (checkbox) checkbox.checked = isDone; // Asegurar consistencia del checkbox
-                             }
-                         });
-                     }
+                 // 2. Aplicar estado completado a tareas y añadir listeners
+                 // Esto ya se hace en changeLanguage al crear los checkboxes,
+                 // pero re-aseguramos que los listeners estén presentes si el DOM no fue reconstruido
+                 document.querySelectorAll('.feature-list input[type="checkbox"]').forEach(cb => {
+                      // Remover listener existente antes de añadir
+                     cb.removeEventListener('change', handleTaskCheckboxChange);
+                      // Añadir listener
+                     cb.addEventListener('change', handleTaskCheckboxChange);
+                     // Asegurar que la clase completed en el <li> sea correcta
+                     const listItem = cb.closest('li');
+                     if(listItem) listItem.classList.toggle('completed', cb.checked);
                  });
 
 
-                 // 3. Añadir listeners a checkboxes (esto también se hace en changeLanguage)
-                 // Por si acaso, podemos re-asegurarlo aquí, aunque no debería ser necesario
-                 // document.querySelectorAll('.feature-list input[type="checkbox"]').forEach(cb => {
-                 //     cb.removeEventListener('change', handleTaskCheckboxChange); // Evitar duplicados
-                 //     cb.addEventListener('change', handleTaskCheckboxChange);
-                 // });
-
-                 // 4. Aplicar estado habilitado/deshabilitado INICIAL
+                 // 3. Aplicar estado habilitado/deshabilitado INICIAL y actualizar números
                  updateStepStates();
              }
+
+            // NUEVO: Manejador separado para el click del header del paso
+            function handleStepHeaderClick() {
+                 const header = this; // 'this' es el elemento header que fue clickeado
+                 const stepSection = header.closest('.onboarding-step');
+                 const body = stepSection.querySelector('.step-body');
+                 const stepNumber = header.dataset.step;
+                 const arrowIcon = header.querySelector('.step-icon i');
+
+                 // Prevenir si el paso está deshabilitado
+                 if (stepSection.classList.contains('disabled')) {
+                     return; // Salir de la función si está deshabilitado
+                 }
+
+                 // Si no está deshabilitado, proceder con la lógica de expandir/colapsar
+                 const isExpanded = body.classList.toggle('expanded');
+                 if (arrowIcon) arrowIcon.classList.toggle('expanded-icon', isExpanded);
+                 expandedState[stepNumber] = isExpanded;
+                 saveState(storageKeys.expanded, expandedState);
+            }
 
 
             // ============================================
@@ -600,15 +430,17 @@
             // ============================================
             const savedLanguage = localStorage.getItem(storageKeys.language);
             const initialLang = (savedLanguage === 'es' || savedLanguage === 'en') ? savedLanguage : 'en'; // Default a 'en'
-            window.changeLanguage(initialLang); // Esto carga textos, crea listas con checkboxes y aplica estados iniciales
+            window.changeLanguage(initialLang); // Esto carga textos, crea listas con checkboxes, aplica estados
 
-            // applyInitialStates(); // Llamado dentro de changeLanguage ahora
+            // Nota: applyInitialStates() es llamado dentro de changeLanguage ahora
+            // para asegurar que los listeners y estados se apliquen al DOM recién creado.
 
         });
     </script>
 </head>
 <body>
     <!-- Incluir Navbar (Asegúrate que el partial exista y funcione) -->
+    <!-- Esto puede necesitar un wrapper div si tu navbar es fixed y afecta el padding del body -->
     <%- include('partials/navbar') %>
 
     <!-- Selector de Idioma -->
@@ -622,9 +454,16 @@
     <div class="onboarding-background">
       <div class="onboarding-container">
 
-        <!-- Encabezado (Se llena con JS) -->
-        <header>
-          <h1 id="main-heading"><!-- JS lo llenará --></h1>
+        <!-- NUEVO: Encabezado con Logo y Texto -->
+        <header class="onboarding-header-content">
+            <div class="logo-container">
+                <!-- Asegúrate de que logoWeb.png está en /static/images -->
+                <img src="/static/images/logoWeb.png" alt="Hunter Logo" class="hunter-logo">
+            </div>
+            <div class="header-text-container">
+                <!-- h1 se llena con JS -->
+                <h1 id="main-heading"><!-- JS lo llenará --></h1>
+            </div>
         </header>
 
         <!-- Pasos del Onboarding (Acordeón) -->
@@ -644,7 +483,8 @@
                     <p id="step1-intro"><!-- JS llenará --></p>
                     <!-- CAMBIADO a UL con clase feature-list -->
                     <ul id="step1-list" class="feature-list"><!-- JS llenará con LI > INPUT + LABEL --></ul>
-                    <p><a id="tutorial-link-1" href="#REEMPLAZAR_CON_URL_VIDEO_1" class="tutorial-link"><!-- JS llenará --></a></p>
+                    <!-- Enlace tutorial: href debe apuntar a tu video real -->
+                    <p><a id="tutorial-link-1" href="#" class="tutorial-link" target="_blank"><i class="fas fa-video"></i> <span><!-- JS llenará --></span></a></p>
                 </div>
             </div>
           </section>
@@ -662,7 +502,8 @@
                     <p id="step2-intro"><!-- JS llenará --></p>
                     <!-- Ya usaba UL con feature-list -->
                     <ul id="step2-list" class="feature-list"><!-- JS llenará con LI > INPUT + LABEL --></ul>
-                    <p><a id="tutorial-link-2" href="#REEMPLAZAR_CON_URL_VIDEO_2" class="tutorial-link"><!-- JS llenará --></a></p>
+                    <!-- Enlace tutorial: href debe apuntar a tu video real -->
+                     <p><a id="tutorial-link-2" href="#" class="tutorial-link" target="_blank"><i class="fas fa-video"></i> <span><!-- JS llenará --></span></a></p>
                 </div>
             </div>
           </section>
@@ -680,16 +521,22 @@
                      <p id="step3-intro"><!-- JS llenará --></p>
                      <!-- Ya usaba UL con feature-list -->
                      <ul id="step3-list" class="feature-list"><!-- JS llenará con LI > INPUT + LABEL --></ul>
-                     <p><a id="tutorial-link-3" href="#REEMPLAZAR_CON_URL_VIDEO_3" class="tutorial-link"><!-- JS llenará --></a></p>
+                      <!-- Enlace tutorial: href debe apuntar a tu video real -->
+                      <p><a id="tutorial-link-3" href="#" class="tutorial-link" target="_blank"><i class="fas fa-video"></i> <span><!-- JS llenará --></span></a></p>
                  </div>
              </div>
           </section>
 
         </main>
 
-        <!-- Pie de Página -->
+        <!-- Pie de Página con Contacto -->
         <footer class="onboarding-footer">
             <p id="footer-cta" class="cta-footer"><!-- JS llenará --></p>
+            <!-- NUEVO: Enlace de contacto -->
+            <div class="contact-link-container">
+                 <!-- href debe apuntar a tu página de contacto real -->
+                <a id="contact-link" href="/contact" class="contact-link"><!-- JS llenará --></a>
+            </div>
         </footer>
 
       </div> <!-- Fin .onboarding-container -->

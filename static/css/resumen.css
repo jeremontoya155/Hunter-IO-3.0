@@ -105,7 +105,7 @@ html, body {
 
 /* --- Sección de Filtros --- */
 .filter-section {
-  grid-column: 1 / -1; /* Ocupa todo el ancho */
+  /* grid-column will be set in responsive section if needed */
 }
 
 .filter-controls {
@@ -300,7 +300,7 @@ html, body {
 .metric-card.alert-medium .metric-title { color: #fed7aa; }
 
 .metric-card.alert-good {
-  border-left: 4px solid #2dd4bf; /* Borde izquierdo teal (principal) */
+  border-left: 4: #2dd4bf; /* Borde izquierdo teal (principal) */
   /* Color de fondo y texto por defecto */
 }
 
@@ -359,27 +359,43 @@ html, body {
   font-size: 0.9rem;
 }
 
-/* --- Sección Mensajes Recientes --- */
+/* --- Sección Últimos Mensajes Enviados (MODIFIED FOR LARGER SIZE) --- */
 .recent-messages-section {
-  grid-column: span 2; /* Ejemplo: Ocupar 2 columnas */
-  max-height: 500px; /* Altura máxima con scroll */
-  overflow: hidden; /* Ocultar overflow general */
+    /* Original: grid-column: span 2; */ /* Removed from here, moved to responsive */
+    /* New: Increased max-height */
+    max-height: 800px; /* Significantly increased height */
+    overflow: hidden;
+    display: flex; /* Use flex to manage inner list height */
+    flex-direction: column; /* Stack title and list */
+    /* Ensure card styles are inherited */
+    background-color: #1f2937; /* bg-gray-800 */
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
+
 .messages-list {
-  overflow-y: auto; /* Scroll solo vertical */
-  max-height: calc(500px - 80px); /* Ajustar altura restando padding y título */
+  overflow-y: auto; /* Scroll only vertical */
+  /* New: Calculate max-height based on new container height */
+  /* Need to account for card padding top/bottom (20px + 20px) and title margin-bottom (15px) */
+  /* Approx space used by title and padding = 20 + Title Height + 15 + 20 */
+  /* Let's estimate Title Height ~25px. Total ~80px. */
+  max-height: calc(800px - 80px); /* Adjust height based on new max-height */
+  flex-grow: 1; /* Allow the list to take up available vertical space */
   padding-right: 10px; /* Espacio para scrollbar */
 }
 .mensaje-item {
-  background-color: rgba(55, 65, 81, 0.4); /* Fondo sutil */
+  /* background-color: rgba(55, 65, 81, 0.4); Remove base background if adding new subtle one */
+  background-color: rgba(55, 65, 81, 0.1); /* Add a subtle background to each item */
   border-radius: 6px;
-  padding: 12px 15px;
-  margin-bottom: 10px;
+  padding: 15px 20px; /* Increased padding for more spacious look */
+  margin-bottom: 10px; /* Keep gap between items */
   border: 1px solid rgba(255, 255, 255, 0.05);
   transition: background-color 0.2s ease;
 }
 .mensaje-item:hover {
-   background-color: rgba(55, 65, 81, 0.7);
+   background-color: rgba(55, 65, 81, 0.7); /* Keep hover effect */
 }
 
 .mensaje-header {
@@ -390,30 +406,34 @@ html, body {
   flex-wrap: wrap; /* Por si no cabe en una línea */
 }
 
-/* -- AJUSTE MENSAJE DESTINATARIO/FECHA -- */
 .mensaje-destinatario {
-  /* Cambiar a color neutro */
   font-weight: 600;
   color: #e5e7eb; /* Gris claro principal */
-  font-size: 0.9rem;
+  font-size: 4em;
   display: inline-flex;
   align-items: center;
   margin-right: 10px; /* Espacio entre usuario y fecha */
 }
 
-.mensaje-fecha {
-  /* Cambiar a color destacado */
+.mensaje-fecha-hora {
   color: #5eead4; /* Teal claro */
-  font-size: 0.8rem; /* 13px - Un poco más grande si quieres */
+  font-size: 0.8rem; /* 13px */
   font-weight: 500; /* Ligeramente más peso */
+  display: flex; /* Ensure fecha and hora parts stay together if they wrap */
+  gap: 5px; /* Space between date and time */
+  flex-shrink: 0; /* Prevent from shrinking */
 }
-/* -- FIN AJUSTE -- */
+.mensaje-fecha-parte, .mensaje-hora-parte {
+    white-space: nowrap; /* Prevent splitting date/time */
+}
+
 
 .mensaje-contenido {
   color: #d1d5db; /* Gris claro */
-  font-size: 0.85rem; /* 13-14px */
+  font-size: 0.9rem; /* Increased font size slightly */
   line-height: 1.5;
   word-break: break-word; /* Para evitar desbordamiento */
+  padding-left: 0; /* Removed indentation if not needed without user icon */
 }
 
 .no-messages {
@@ -450,14 +470,33 @@ html, body {
   .chart-section {
       grid-column: 1 / -1; /* Gráfico a ancho completo */
   }
-  .recent-messages-section {
-       grid-column: 1 / -1; /* Mensajes a ancho completo */
-  }
+  /* RECENT MESSAGES SECTION NOW SPANS FULL WIDTH ON LARGE SCREENS */
+   /* .recent-messages-section {
+        grid-column: 1 / -1; /* Mensajes a ancho completo */
+   /* } */ /* Removed from here, will be handled by the 1fr template on small screens */
+
    .key-metrics-section .metrics-container {
        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
    }
     .metric-value { font-size: 2.5rem; } /* 40px - Ajustar si es necesario */
 }
+
+@media (min-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr 1fr; /* Two columns on large screens */
+    }
+
+    /* Make specific sections span the full width */
+    .key-metrics-section,
+    .chart-section,
+    .recent-messages-section { /* ADDED recent-messages-section here */
+        grid-column: 1 / -1; /* Span all columns */
+    }
+
+    /* The other sections (.filter-section, .last-message-section, .message-types-section)
+       will flow into the 1fr 1fr grid below the full-width sections */
+}
+
 
 @media (max-width: 768px) {
   .main-content {
@@ -471,7 +510,7 @@ html, body {
       grid-template-columns: 1fr; /* Una sola columna */
       gap: 15px;
   }
-  /* Asegurar que todas las secciones ocupen 1 columna */
+  /* Ensure all sections occupy 1 column on small screens */
   .filter-section, .key-metrics-section, .chart-section, .message-types-section, .recent-messages-section, .last-message-section {
       grid-column: 1 / -1;
   }
@@ -499,11 +538,27 @@ html, body {
   .mensaje-header {
       align-items: flex-start; /* Mejor alineación en móvil si se apilan */
   }
-  .mensaje-fecha {
+  .mensaje-fecha-hora {
       margin-top: 3px; /* Pequeño espacio si la fecha queda abajo */
-      font-size: 0.75rem; /* Más pequeño si es necesario */
+      font-size: 0.7rem; /* More space for longer dates/times on small screen */
+      flex-direction: column; /* Stack date and time on very small screens */
+      gap: 0; /* Remove gap when stacked */
   }
     .chart-container { height: 300px; }
+
+    /* Adjust Recent Messages height on smaller screens if needed */
+    .recent-messages-section {
+         max-height: 500px; /* Smaller max height on mobile */
+    }
+    .messages-list {
+        max-height: calc(500px - 80px); /* Adjust inner list height */
+    }
+     .mensaje-item {
+        padding: 10px 15px; /* Slightly less padding on mobile */
+     }
+     .mensaje-contenido {
+        font-size: 0.85rem; /* Slightly smaller font on mobile */
+     }
 }
 
 /* --- Estilos Scrollbar (si usas scrollbar.css, si no, puedes ponerlos aquí) --- */
@@ -583,39 +638,36 @@ body {
     .dashboard-grid {
         grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
     }
+    /* SECTIONS SPANNING FULL WIDTH ON LG SCREENS */
+    .key-metrics-section,
+    .chart-section,
+    .recent-messages-section { /* ADDED recent-messages-section HERE */
+        grid-column: 1 / -1; /* Ocupa todas las columnas */
+    }
+    /* The other sections (.filter-section, .last-message-section, .message-types-section)
+       will flow into the 1fr 1fr grid below the full-width sections */
 }
-
-/* --- Control de Ancho de Secciones Específicas --- */
-/* Secciones que SIEMPRE ocupan todo el ancho disponible en su fila */
-.key-metrics-section,
-.chart-section {
-    grid-column: 1 / -1; /* Ocupa todas las columnas (1 o 2) */
-}
-/* Las demás secciones fluirán naturalmente en las columnas disponibles. */
-/* En lg+, filtros y recent-messages irán en la primera fila (col 1 y 2). */
-/* Luego métricas y gráfico ocuparán las filas siguientes (cada una todo el ancho). */
-/* Luego last-message y message-types irán en la siguiente fila (col 1 y 2). */
 
 
 /* --- Estilos para Filtros --- */
-.filter-section { /* Hereda .card */
+.filter-section { /* Inherits .card */
      /* Fluye en el grid */
 }
 .filter-controls {
     display: flex;
-    flex-wrap: wrap; /* Se ajustan en pantallas pequeñas */
-    gap: 1rem;      /* Espacio entre controles */
-    align-items: flex-end; /* Alinea verticalmente por abajo */
+    flex-wrap: wrap; /* Adjust on small screens */
+    gap: 1rem;      /* Space between controls */
+    align-items: flex-end; /* Align vertically at the bottom */
 }
 .filter-control-group {
      display: flex;
      flex-direction: column;
      gap: 0.25rem;
-     flex-grow: 1; /* Permite que crezcan un poco */
-     min-width: 130px; /* Mínimo para controles de fecha/cuenta */
+     flex-grow: 1; /* Allow them to grow a bit */
+     min-width: 130px; /* Minimum width for date/account controls */
 }
 .filter-control-group label {
-    font-size: 0.75rem; /* Más pequeño */
+    font-size: 0.75rem; /* Smaller */
     color: #9ca3af; /* text-gray-400 */
     margin-bottom: 0.1rem;
 }
@@ -627,11 +679,11 @@ body {
     border-radius: 0.375rem; /* rounded-md */
     color: #e5e7eb; /* text-gray-200 */
     font-size: 0.875rem;
-    height: 42px; /* Altura fija para alinear con botón */
-    width: 100%; /* Ocupa el espacio disponible en el grupo */
+    height: 42px; /* Fixed height to align with button */
+    width: 100%; /* Occupy available space in the group */
     box-sizing: border-box;
 }
-.filter-button { /* Estilo del botón filtrar */
+.filter-button { /* Filter button style */
     padding: 0.5rem 1rem;
     background-color: #10b981; /* bg-emerald-500 */
     color: white;
@@ -641,8 +693,8 @@ body {
     cursor: pointer;
     transition: background-color 0.2s;
     font-weight: 500;
-    white-space: nowrap; /* Evita que el texto se parta */
-    align-self: flex-end; /* Alinea con los inputs */
+    white-space: nowrap; /* Prevent text wrapping */
+    align-self: flex-end; /* Align with inputs */
 }
 .filter-button:hover {
     background-color: #059669; /* bg-emerald-600 */
@@ -652,64 +704,64 @@ body {
 }
 
 
-/* --- Estilos para Métricas Clave (Resumen General) --- */
-.key-metrics-section { /* No es una .card por defecto, solo un contenedor */
-     /* grid-column: 1 / -1; ya aplicado */
+/* --- Estilos para Métricas Clave (General Summary) --- */
+.key-metrics-section { /* Not a .card by default, just a container */
+     grid-column: 1 / -1; /* Already applied */
 }
 .metrics-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Grid responsive */
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Responsive grid */
     gap: 1rem;
 }
-.metric-card { /* Estilos heredados de resumen.css o definidos aquí */
+.metric-card { /* Styles inherited from resumen.css or defined here */
     background-color: #1f2937;
     border-radius: 0.5rem;
     padding: 1rem 1.25rem;
-    position: relative; /* Para posicionar íconos */
-    overflow: hidden; /* Para efectos visuales si se añaden */
+    position: relative; /* For icon positioning */
+    overflow: hidden; /* For visual effects if added */
 }
 .metric-title { font-size: 0.875rem; font-weight: 500; color: #9ca3af; margin-bottom: 0.5rem; }
 .metric-value { font-size: 1.875rem; font-weight: 700; color: #f3f4f6; line-height: 1.2; }
 .metric-icon { position: absolute; right: 1rem; top: 1rem; font-size: 1.5rem; color: rgba(255, 255, 255, 0.1); }
 .metric-note { font-size: 0.75rem; color: #6b7280; margin-top: 0.5rem; display: block; }
-/* Estilos específicos para la tarjeta pequeña de último mensaje */
+/* Specific styles for the small last message card */
 .metric-card-small { padding: 0.75rem 1rem; }
 .metric-title-small { font-size: 0.8rem; font-weight: 500; color: #9ca3af; margin-bottom: 0.25rem; }
 .metric-value-small { font-size: 0.875rem; font-weight: 600; color: #e5e7eb; }
 .metric-detail-small { font-size: 0.75rem; color: #9ca3af; margin-top: 0.1rem; }
-/* Clases de Alerta para Tasa de Likes */
-.alert-low { background-color: #4f3434; border-left: 4px solid #ef4444; } /* Rojo oscuro */
-.alert-medium { background-color: #5f483c; border-left: 4px solid #f97316; } /* Naranja oscuro */
-.alert-good { background-color: #5f5f3c; border-left: 4px solid #eab308; } /* Amarillo oscuro */
-.alert-excellent { background-color: #344f3e; border-left: 4px solid #22c55e; } /* Verde oscuro */
+/* Alert Classes for Like Rate */
+.alert-low { background-color: #4f3434; border-left: 4px solid #ef4444; } /* Dark Red */
+.alert-medium { background-color: #5f483c; border-left: 4px solid #f97316; } /* Dark Orange */
+.alert-good { background-color: #5f5f3c; border-left: 4px solid #eab308; } /* Dark Yellow */
+.alert-excellent { background-color: #344f3e; border-left: 4px solid #22c55e; } /* Dark Green */
 
 
 /* --- Estilos para el Gráfico --- */
-.chart-section { /* Hereda .card */
-     /* grid-column: 1 / -1; ya aplicado */
+.chart-section { /* Inherits .card */
+     grid-column: 1 / -1; /* Already applied */
 }
 .chart-container {
-     height: 350px; /* Altura fija o aspect-ratio */
+     height: 350px; /* Fixed height or aspect-ratio */
      position: relative;
 }
 
 
-/* --- Estilos para 'Mensajes por Tipo' --- */
-.message-types-section { /* Hereda .card */
-     /* Fluye en el grid */
+/* --- Estilos para 'Messages by Type' --- */
+.message-types-section { /* Inherits .card */
+     /* Flows in the grid */
 }
 .message-types-section .types-container { padding-top: 0.5rem; }
 .message-types-section .type-item {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 0.75rem 0; /* Ajustado padding vertical */
-    border-bottom: 1px solid #374151; /* Separador */
-    font-size: 1rem; /* Tamaño base aumentado */
+    padding: 0.75rem 0; /* Adjusted vertical padding */
+    border-bottom: 1px solid #374151; /* Separator */
+    font-size: 1rem; /* Base size increased */
 }
 .message-types-section .type-item:last-child { border-bottom: none; }
 .message-types-section .type-label {
-    font-weight: 500; /* Medio */
+    font-weight: 500; /* Medium */
     color: #cbd5e1;
-    margin-right: 1rem; /* Espacio entre etiqueta y valor */
+    margin-right: 1rem; /* Space between label and value */
 }
 .message-types-section .type-value {
     font-weight: 600; /* Semi-bold */
@@ -717,53 +769,77 @@ body {
 }
 
 
-/* --- Estilos para 'Últimos Mensajes Enviados' --- */
-.recent-messages-section { /* Hereda .card */
-    /* Fluye en el grid */
+/* --- Estilos para 'Recent Messages Sent' (MODIFIED FOR LARGER SIZE) --- */
+.recent-messages-section { /* Inherits .card */
+    /* grid-column: span 2; */ /* REMOVED from here, added to responsive block */
+    max-height: 800px; /* <-- INCREASED MAX HEIGHT significantly */
+    overflow: hidden;
+    display: flex; /* Added to control inner list height */
+    flex-direction: column; /* Stack title and list */
 }
+
 .messages-list {
-    max-height: 400px; /* Altura máxima antes de scroll */
     overflow-y: auto;
-    padding-right: 8px; /* Espacio para scrollbar (si scrollbar.css no lo maneja) */
-    margin-right: -8px; /* Compensa el padding para alinear contenido */
+    flex-grow: 1; /* Allow list to fill available space */
+    /* Adjusted max-height based on new container height (800px)
+       and estimating space used by title (h2), its margin, and card padding */
+    max-height: calc(800px - 100px); /* Approx calc: 800px - (20px top padding + ~30px h2 + 15px h2 margin-bottom + 20px bottom padding) */
+    padding-right: 8px; /* Space for scrollbar */
+    margin-right: -8px; /* Compensate padding for alignment */
+     /* Optional: Add margin-bottom to the list if needed */
+    /* margin-bottom: -8px; */
 }
 .mensaje-item {
-    padding: 0.85rem 0;
-    border-bottom: 1px solid #374151; /* Separador */
+    /* background-color: rgba(55, 65, 81, 0.4); Remove base background if adding new subtle one */
+    background-color: rgba(55, 65, 81, 0.1); /* <-- Added subtle background */
+    border-radius: 6px;
+    padding: 15px 20px; /* <-- Increased padding for more spacious look */
+    margin-bottom: 10px; /* Keep gap between items */
+    border: 1px solid rgba(255, 255, 255, 0.05); /* Keep border */
+    transition: background-color 0.2s ease;
 }
-.mensaje-item:last-child { border-bottom: none; }
+.mensaje-item:hover {
+   background-color: rgba(55, 65, 81, 0.7); /* Keep hover effect */
+}
+
 .mensaje-header {
     display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 0.4rem; /* Espacio antes del texto del mensaje */
+    margin-bottom: 0.4rem; /* Space before message text */
+    flex-wrap: wrap; /* Allow wrapping */
 }
 .mensaje-destinatario {
-    font-weight: 500; color: #e5e7eb; /* Más claro */
+    font-weight: 600; color: #e5e7eb; /* More clear */
     font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    margin-right: 1rem; /* Space between user and date */
 }
-.mensaje-destinatario i { color: #9ca3af; margin-right: 0.25rem; } /* Icono grisáceo */
+.mensaje-destinatario i { color: #9ca3af; margin-right: 0.25rem; } /* Grey icon */
 .mensaje-fecha-hora {
-    display: flex; gap: 0.5rem; /* Espacio entre fecha y hora */
-    font-size: 0.75rem; /* Pequeño */
-    color: #6b7280; /* Gris más oscuro */
+    display: flex; gap: 0.5rem; /* Space between date and time */
+    font-size: 0.75rem; /* Small */
+    color: #6b7280; /* Darker grey */
     text-align: right;
+    flex-shrink: 0; /* Prevent shrinking */
 }
 .mensaje-fecha-parte, .mensaje-hora-parte { white-space: nowrap; }
+
 .mensaje-contenido {
-    font-size: 0.875rem;
-    color: #adb5bd; /* Gris medio */
-    padding-left: 1.5rem; /* Indentación bajo el ícono */
+    font-size: 0.9rem; /* <-- Increased font size slightly */
+    color: #adb5bd; /* Medium grey */
+    padding-left: 0; /* <-- Removed indentation if not needed */
     line-height: 1.4;
-    overflow-wrap: break-word;
+    overflow-wrap: break-word; /* Handle long words */
 }
 .no-messages { color: #6b7280; padding: 1rem 0; text-align: center; }
 
 
-/* --- Estilos para 'Contenido del Último Mensaje' --- */
-.last-message-section { /* Hereda .card */
-     /* Fluye en el grid */
-     display: flex; /* Control interno */
+/* --- Estilos para 'Last Message Content' --- */
+.last-message-section { /* Inherits .card */
+     /* Flows in the grid */
+     display: flex; /* Internal control */
      flex-direction: column;
-     justify-content: space-between; /* Empuja 'Para:' abajo */
+     justify-content: space-between; /* Push 'To:' down */
 }
 .last-message-content {
     background-color: #374151; /* bg-gray-700 */
@@ -772,10 +848,10 @@ body {
     color: #e5e7eb;
     font-size: 0.9rem;
     margin-bottom: 0.75rem;
-    flex-grow: 1; /* Ocupa espacio vertical disponible */
+    flex-grow: 1; /* Occupy available vertical space */
     line-height: 1.4;
     overflow-wrap: break-word;
-    min-height: 50px; /* Altura mínima para que no colapse si está vacío */
+    min-height: 50px; /* Minimum height so it doesn't collapse */
 }
 .last-message-recipient {
     font-size: 0.8rem;
@@ -783,11 +859,19 @@ body {
     align-self: flex-start;
 }
 
-/* --- Clases de Scrollbar (de scrollbar.css si existe) --- */
-/* Asegúrate que estas clases coincidan con tu archivo scrollbar.css */
-/* Ejemplo de estilos básicos si no tienes el archivo */
+/* --- Scrollbar Styles (from scrollbar.css if it exists) --- */
+/* Ensure these classes match your scrollbar.css file if you use one */
+/* Basic styles example if you don't have the file */
 .messages-list::-webkit-scrollbar { width: 8px; }
 .messages-list::-webkit-scrollbar-track { background: #1f2937; border-radius: 4px; }
 .messages-list::-webkit-scrollbar-thumb { background-color: #4b5563; border-radius: 4px; border: 2px solid #1f2937; }
 .messages-list::-webkit-scrollbar-thumb:hover { background-color: #6b7280; }
-
+.mensaje-destinatario {
+  font-weight: 600;
+  color: #e5e7eb;
+  font-size: 1.6rem;
+  display: inline-flex
+;
+  align-items: center;
+  margin-right: 1rem;
+}

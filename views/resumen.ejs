@@ -9,7 +9,7 @@
     <!-- Tailwind (opcional si CSS custom domina) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Estilos personalizados -->
-    <link rel="stylesheet" href="/static/css/resumen.css" />
+   
     <link rel="stylesheet" href="/static/css/scrollbar.css" />
     <link rel="stylesheet" href="/static/css/navbar.css" />
     <!-- Font Awesome -->
@@ -57,7 +57,20 @@
                   margin-top: 0.5rem; /* Add some top margin */
              }
         }
+        span.mensaje-fecha-parte {
+    font-size: 2.5em;
+}
+.mensaje-destinatario {
+    font-weight: 600;
+    color: #e5e7eb;
+    font-size: 2rem;
+    display: inline-flex
+;
+    align-items: center;
+    margin-right: 1rem;
+}
     </style>
+     <link rel="stylesheet" href="/static/css/resumen.css" />
 </head>
 <body class="font-poppins"> <!-- Clases base movidas a body -->
     <%- include('partials/navbar') %>

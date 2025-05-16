@@ -900,7 +900,50 @@ app.get('/nicho', isAuthenticated, nichosController.getNichoForm);
 app.post('/nicho', isAuthenticated, upload.single('archivo_pdf'), nichosController.postNicho);
 app.get('/nicho/asignar', isAuthenticated, nichosController.getNichosAsignar);
 app.post('/nicho/asignar', isAuthenticated, nichosController.postAsignarNicho);
+// PUT /api/flecha/mensajes
+  app.put('/api/flecha/mensajes', isAuthenticated, async (req, res) => {
+    const { mensajes } = req.body;
+    const userId = req.session.user.id;
 
+    try {
+      // Validar que mensajes sea un array
+      if (!Array.isArray(mensajes)) {
+        return res.status(400).json({ error: 'Formato inválido, se espera array de mensajes' });
+      }
+
+      const queryText = 'UPDATE users SET mensajes_flecha = $1 WHERE id = $2 RETURNING mensajes_flecha';
+      const { rows } = await pool.query(queryText, [JSON.stringify(mensajes), userId]);
+      
+      // Actualizar sesión si es necesario
+      req.session.user.mensajes_flecha = rows[0].mensajes_flecha;
+
+      res.json({ 
+        success: true,
+        mensajes: rows[0].mensajes_flecha
+      });
+    } catch (error) {
+      console.error('Error al guardar mensajes:', error);
+      res.status(500).json({ error: 'Error al guardar mensajes' });
+    }
+  });
+
+
+// GET /api/flecha/mensajes
+app.get('/api/flecha/mensajes', isAuthenticated, async (req, res) => {
+  const userId = req.session.user.id;
+
+  try {
+    const queryText = 'SELECT mensajes_flecha FROM users WHERE id = $1';
+    const { rows } = await pool.query(queryText, [userId]);
+    
+    res.json({
+      mensajes: rows[0].mensajes_flecha || []
+    });
+  } catch (error) {
+    console.error('Error al obtener mensajes:', error);
+    res.status(500).json({ error: 'Error al obtener mensajes' });
+  }
+});
 
 
 

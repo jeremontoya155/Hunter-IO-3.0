@@ -1,0 +1,457 @@
+/* --- Importar Fuente --- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* --- Estilos Generales y Contenedores --- */
+/* Using rem based on root font-size (usually 16px) */
+body {
+    font-family: 'Poppins', sans-serif;
+    /* Fondo del body */
+    background-color: #111827; /* Fondo oscuro similar al dashboard */
+    color: #e0e0e0; /* Gris claro */
+    margin: 0;
+    line-height: 1.6; /* Mejorar legibilidad */
+}
+
+.onboarding-background {
+    /* Ajusta padding superior para dar espacio si la navbar es fixed */
+    /* Adding padding to the body instead of the background div might be better
+       if the navbar is truly fixed and sits on top */
+    /* For now, adjusting padding-top here */
+    padding: 6.25rem 1rem 3.75rem; /* Adjusted vertical padding (100px top, 60px bottom) */
+    min-height: 100vh;
+    box-sizing: border-box;
+    /* Fondo del área principal, puede ser un gradiente o imagen */
+    background: linear-gradient(135deg, #0f998e 0%, #0a6b5b 100%); /* Gradiente principal */
+    /* Fallback color if gradient fails */
+     background-color: #0a6b5b;
+}
+
+.onboarding-container {
+    /* Aumentar el ancho máximo usando rem o porcentaje */
+    max-width: 75rem; /* Equivalente a 1200px si root font-size es 16px */
+    width: 100%; /* Asegurarse de que ocupe el ancho disponible hasta max-width */
+    margin: 0 auto;
+    /* Fondo y estilos de la "tarjeta" principal */
+    background-color: rgba(31, 41, 55, 0.85); /* Fondo semi-transparente oscuro (gray-800 con opacidad) */
+    padding: 2.5rem 3rem; /* Padding interior usando rem (40px 48px) */
+    border-radius: 0.9375rem; /* 15px */
+    box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.4); /* Sombra más prominente */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+main.onboarding-content {
+     margin-top: 2.5rem; /* Espacio entre el header y los pasos (40px) */
+}
+
+
+/* --- Encabezado con Logo y Texto --- */
+.onboarding-header-content {
+    display: flex; /* Usar Flexbox para alinear logo y texto */
+    align-items: center; /* Alinear verticalmente al centro */
+    gap: 2.5rem; /* Espacio entre el logo y el texto (40px) */
+    margin-bottom: 2.5rem; /* Espacio debajo del encabezado (40px) */
+     flex-wrap: wrap; /* Permitir que se apilen en pantallas pequeñas */
+     /* justify-content and text-align handled in media query */
+}
+
+.logo-container {
+    flex-shrink: 0; /* Evitar que el contenedor del logo se encoja */
+    /* NUEVO: Aumentar el ancho del logo en desktop */
+    width: 200px; /* Ancho fijo para el logo en desktop */
+    /* Quita width: 19em que causaba problemas */
+}
+
+.hunter-logo {
+    display: block; /* Eliminar espacio extra debajo de la imagen */
+    width: 100%; /* La imagen ocupa todo el ancho de su contenedor (200px) */
+    height: auto; /* Mantener relación de aspecto */
+     /* Ajusta el color del logo si es necesario para el fondo oscuro */
+     filter: brightness(1.1); /* Ligeramente más brillante */
+}
+
+.header-text-container {
+    flex-grow: 1; /* Permitir que el contenedor de texto ocupe el espacio restante */
+     /* Ajusta la alineación en media query */
+}
+
+/* --- Título Principal (dentro de header-text-container) --- */
+#main-heading {
+    /* NUEVO: Aumentar tamaño de fuente en desktop */
+    font-size: 4rem; /* Tamaño grande para desktop (64px) */
+    line-height: 1.1;
+    margin-bottom: 1.5rem; /* Espacio debajo del título principal (24px) */
+    color: #1f2937; /* Color oscuro que contraste con el gradiente */
+     /* text-align handled in media query */
+}
+#main-heading .intro-text {
+    /* NUEVO: Aumentar tamaño de fuente en desktop */
+    font-size: 3rem; /* Tamaño relativo al root font-size (28.8px) */
+    font-weight: 600; text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #dcdddd; /* Teal brillante */
+    display: block; margin-bottom: 0.3rem; /* Espacio reducido (4.8px) */
+}
+#main-heading .highlight {
+    font-weight: 700;
+    color: #f3f4f6; /* Blanco/gris muy claro */
+     text-shadow: 0 0.125rem 0.3125rem rgba(46, 204, 113, 0.2); /* Sombra sutil */
+    display: block; /* Ensure it stays on its own line */
+     /* No need for font-size: inherit here, the size is set by #main-heading */
+}
+.slogan {
+    /* Usando rem */
+    font-size: 1rem; /* Keep slogan size */
+    font-weight: 400;
+    margin-top: 0.6rem; /* Espacio encima (9.6px) */
+    opacity: 0.9;
+    color: #bdc3c7;
+    display: block; /* Ensure it stays on its own line */
+}
+
+/* --- Estilos Acordeón --- */
+.onboarding-step {
+    background-color: rgba(255, 255, 255, 0.05);
+    margin-bottom: 1rem; /* 15px */
+    border-radius: 0.625rem; /* 10px */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    transition: opacity 0.3s ease;
+}
+.step-header {
+    display: flex;
+    align-items: center;
+    padding: 0.9375rem 1.25rem; /* 15px 20px */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    position: relative;
+}
+.onboarding-step:not(.disabled) .step-header:hover { background-color: rgba(255, 255, 255, 0.1); }
+
+.step-header .step-number {
+    background-color: #3498db; /* Azul */
+    color: white;
+    border-radius: 50%;
+    width: 1.875rem; /* 30px */
+    height: 1.875rem; /* 30px */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin-right: 0.9375rem; /* 15px */
+    flex-shrink: 0;
+    transition: background-color 0.3s ease;
+}
+.step-header .step-title {
+    flex-grow: 1;
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #ffffff;
+    transition: opacity 0.3s ease;
+}
+.step-header .step-icon i { /* Select the <i> tag */
+    margin-left: auto;
+    transition: transform 0.3s ease;
+    font-size: 1.1rem;
+    padding-left: 0.9375rem; /* 15px */
+    color: #bdc3c7; /* Gris medio */
+    display: block; /* Ensure transition works correctly */
+}
+.step-header .step-icon i.expanded-icon {
+    transform: rotate(90deg);
+}
+
+
+.step-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+    /* Adjusted padding-left using rem */
+    padding: 0 1.25rem 0 4rem; /* 20px right, ~64px left */
+}
+.step-body.expanded {
+    /* Aumentado por si hay muchas sub-tareas */
+    max-height: 50rem; /* ~800px - give plenty of height */
+     /* Adjusted padding-left using rem */
+    padding: 0.9375rem 1.25rem 1.25rem 4rem; /* 15px top, 20px right, 20px bottom, ~64px left */
+    transition: max-height 0.4s ease-in, padding 0.4s ease-in;
+}
+.step-body-content {
+     border-top: 1px solid rgba(255, 255, 255, 0.1);
+     padding-top: 0.9375rem; /* 15px */
+}
+.step-body-content p {
+    margin-bottom: 0.9375rem; /* 15px */
+    color: #bdc3c7;
+    line-height: 1.6;
+}
+ .step-body-content strong { color: #ecf0f1; font-weight: 600; }
+
+/* --- Estilos para la Lista de Tareas (feature-list) --- */
+.feature-list {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 0.9375rem; /* 15px */
+}
+.feature-list li {
+    background-color: rgba(255, 255, 255, 0.07);
+    border-left: 3px solid #3498db; /* Azul por defecto */
+    padding: 0.75rem 1rem; /* 12px 16px */
+    margin-bottom: 0.625rem; /* 10px */
+    border-radius: 0.25rem; /* 4px */
+    display: flex;
+    align-items: flex-start; /* Alinear verticalmente arriba */
+    gap: 0.75rem; /* Espacio entre checkbox y texto (12px) */
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+.feature-list li input[type="checkbox"] {
+    flex-shrink: 0;
+    margin: 0.25rem 0 0; /* 4px top margin */
+    transform: scale(1.2);
+    cursor: pointer;
+    accent-color: #2ecc71; /* Verde check */
+    transition: opacity 0.3s ease;
+}
+.feature-list li label {
+    flex-grow: 1;
+    color: #bdc3c7;
+    line-height: 1.5;
+    cursor: pointer;
+    transition: color 0.3s ease, text-decoration 0.3s ease, opacity 0.3s ease;
+    font-size: 1rem; /* Explicit font size */
+}
+
+/* --- Estilos para Tarea Completada --- */
+.feature-list li.completed label {
+    text-decoration: line-through;
+    opacity: 0.7;
+    color: #95a5a6; /* Gris apagado */
+}
+.feature-list li.completed {
+   border-left-color: #2ecc71; /* Verde */
+   background-color: rgba(46, 204, 113, 0.15); /* Fondo verdoso sutil */
+}
+
+/* --- Estilos Paso Deshabilitado --- */
+.onboarding-step.disabled {
+    opacity: 0.5;
+    pointer-events: none; /* Deshabilitar interacciones */
+    user-select: none; /* Evitar selección */
+}
+.onboarding-step.disabled .step-header {
+    cursor: not-allowed;
+}
+.onboarding-step.disabled .step-header .step-number {
+     background-color: #7f8c8d; /* Gris */
+     color: #bdc3c7;
+ }
+ .onboarding-step.disabled .step-header .step-title {
+     color: #95a5a6;
+ }
+ .onboarding-step.disabled .feature-list li,
+ .onboarding-step.disabled .tutorial-link {
+     pointer-events: none;
+     cursor: not-allowed;
+ }
+ .onboarding-step.disabled .feature-list li input[type="checkbox"] {
+     opacity: 0.6;
+ }
+
+
+/* --- Estilos Tutorial Link --- */
+.tutorial-link {
+    display: inline-block;
+    margin-top: 0.9375rem; /* 15px */
+    font-size: 0.9rem;
+    color: #3498db; /* Azul */
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+    pointer-events: auto; /* Clickable if not disabled */
+}
+.tutorial-link i {
+    margin-right: 0.3125rem; /* 5px */
+    color: #5dade2; /* Azul claro */
+}
+.onboarding-step:not(.disabled) .tutorial-link:hover {
+    text-decoration: underline;
+    color: #5dade2;
+}
+
+
+/* --- Estilos Selector de Idioma --- */
+.language-switcher {
+    position: fixed;
+    top: 1.25rem; /* 20px */
+    right: 1.25rem; /* 20px */
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 0.3125rem; /* 5px */
+    background-color: rgba(44, 62, 80, 0.85);
+    padding: 0.375rem 0.75rem; /* 6px 12px */
+    border-radius: 1.25rem; /* 20px */
+    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+.language-switcher .lang-btn {
+    background: none;
+    border: none;
+    color: #ecf0f1;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.875rem; /* 14px */
+    font-weight: 600;
+    padding: 0.25rem 0.5rem; /* 4px 8px */
+    border-radius: 0.9375rem; /* 15px */
+    transition: all 0.3s ease;
+    opacity: 0.6;
+    display: flex;
+    align-items: center;
+}
+.language-switcher .lang-btn.active { opacity: 1; }
+.language-switcher .lang-btn:not(.active):hover { opacity: 0.85; background-color: rgba(255, 255, 255, 0.1); }
+.language-switcher .separator {
+    width: 1px;
+    height: 1rem; /* 16px */
+    background-color: rgba(255, 255, 255, 0.3);
+}
+.language-switcher .lang-btn span { line-height: 1; }
+
+
+/* --- Estilos Footer --- */
+.onboarding-footer {
+    margin-top: 3.125rem; /* 50px */
+    text-align: center;
+    padding-top: 1.875rem; /* 30px */
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.onboarding-footer .cta-footer {
+    font-weight: 600;
+    color: #ffffff;
+    margin-top: 0;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 0.9375rem; /* 15px */
+}
+
+/* Estilos para el enlace de contacto */
+.contact-link-container {
+     margin-top: 0.9375rem; /* 15px */
+}
+.contact-link {
+    color: #5dade2; /* Azul brillante */
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+.contact-link:hover {
+    color: #85c1e9; /* Azul claro */
+    text-decoration: underline;
+}
+
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    .onboarding-background {
+        padding: 5rem 1rem 2.5rem; /* Ajustar padding en móviles (80px top) */
+    }
+    .onboarding-container {
+        padding: 1.5rem 1.25rem; /* Reducir padding interior (24px 20px) */
+        max-width: 70%;
+        margin-left: 4em; /* Usar ancho completo */
+    }
+
+    /* Apilar logo y texto en el header */
+    .onboarding-header-content {
+        flex-direction: column;
+        /* NUEVO: Reducir gap en mobile */
+        gap: 1rem; /* Espacio cuando se apilan (16px) */
+        margin-bottom: 1.5rem; /* 24px */
+        justify-content: center; /* Centrar elementos al apilar */
+        align-items: center; /* Centrar elementos al apilar */
+        text-align: center; /* Centrar texto al apilar */
+    }
+
+    .logo-container {
+        /* NUEVO: Reducir ancho del logo en mobile */
+        width: 80px; /* Ancho fijo para el logo en móviles */
+    }
+
+    .header-text-container {
+         text-align: center; /* Centrar texto */
+         max-width: 100%; /* Permitir que ocupe el ancho completo */
+    }
+
+    #main-heading {
+        /* NUEVO: Reducir tamaño del título principal en mobile */
+        font-size: 2.2rem; /* Tamaño reducido */
+        line-height: 1.1;
+        margin-bottom: 0.8rem; /* Espacio reducido */
+        color: #1f2937; /* Color oscuro */
+    }
+    #main-heading .intro-text {
+        /* NUEVO: Reducir tamaño de "WELCOME TO" en mobile */
+        font-size: 1.1rem; /* Ajustar tamaño */
+        margin-bottom: 0.2rem; /* Espacio reducido */
+    }
+     #main-heading .highlight {
+         /* Inherit size from #main-heading (2.2rem) */
+         font-size: inherit; /* Explicitly inherit, though often default */
+     }
+    .slogan {
+        /* NUEVO: Reducir tamaño del slogan en mobile */
+        font-size: 0.8rem; /* Ajustar tamaño */
+        margin-top: 0.4rem; /* Espacio reducido */
+    }
+
+    .step-header { padding: 0.75rem 0.9375rem; } /* 12px 15px */
+    .step-header .step-number {
+        width: 1.5625rem; height: 1.5625rem; /* 25px */
+        font-size: 0.9rem;
+        margin-right: 0.625rem; /* 10px */
+    }
+    .step-header .step-title { font-size: 1.1rem; }
+
+    .step-body { padding: 0 0.9375rem 0 3.125rem; } /* 15px right, 50px left */
+     .step-body.expanded { padding: 0.625rem 0.9375rem 0.9375rem 3.125rem; } /* 10px top, 15px right, 15px bottom, 50px left */
+
+    .feature-list li {
+         padding: 0.5rem 0.75rem; /* 8px 12px */
+         gap: 0.5rem; /* 8px */
+    }
+     .feature-list li input[type="checkbox"] {
+         transform: scale(1);
+          margin-top: 0.1875rem; /* 3px */
+     }
+     .feature-list li label { font-size: 0.9rem; }
+
+    .tutorial-link { margin-top: 0.625rem; font-size: 0.85rem; } /* 10px */
+
+    .onboarding-footer { margin-top: 1.875rem; padding-top: 1.25rem; } /* 30px top, 20px padding */
+    .onboarding-footer .cta-footer { font-size: 1rem; margin-bottom: 0.625rem; } /* 10px */
+     .contact-link-container { margin-top: 0.625rem; } /* 10px */
+     .contact-link { font-size: 0.85rem; }
+}
+
+
+/* --- Clases de Scrollbar (asegúrate que coincidan con scrollbar.css o inclúyelos aquí) --- */
+/* Ejemplo básico */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #1f2937; /* Fondo track */
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #4b5563; /* Color thumb */
+    border-radius: 4px;
+    border: 2px solid #1f2937; /* Espacio alrededor del thumb */
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: #6b7280; /* Thumb hover */
+}
