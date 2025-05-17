@@ -6,7 +6,8 @@ const nichosController = require('./controllers/nichosController');
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' }); // Configure the destination folder for uploads
 
-
+const instagramController = require('./controllers/instagramController');
+const { IgApiClient } = require('instagram-private-api');
 
 
 const session = require('express-session');
@@ -945,7 +946,9 @@ app.get('/api/flecha/mensajes', isAuthenticated, async (req, res) => {
   }
 });
 
-
+// Agrega estas nuevas rutas
+app.get('/api/blancos/cuentas', isAuthenticated, nichosController.getCuentasBlancos);
+app.post('/api/blancos/cuentas', isAuthenticated, nichosController.postCuentasBlancos);
 
 
 app.post('/flujo/save', isAuthenticated, async (req, res) => {
@@ -1024,6 +1027,12 @@ app.get('/leads/data', isAuthenticated, async (req, res) => {
       res.status(500).json({ error: 'Error al obtener los leads' });
   }
 });
+// Agrega al inicio con los otros requires
+
+// Agrega después de las otras rutas
+// Rutas para Instagram
+app.get('/instagram', isAuthenticated, instagramController.showForm);
+app.post('/instagram/send', isAuthenticated, instagramController.sendMessages);
 
 // Endpoint para agregar un historial a un lead
 app.post('/leads/historial', isAuthenticated, async (req, res) => {
@@ -1060,6 +1069,183 @@ app.get('/logout', (req, res) => {
   req.session.destroy(() => {
     res.redirect('/login');
   });
+});
+
+
+// Agrega esto con las otras rutas en server.js
+
+// Rutas para Campañas
+app.get('/campaigns', isAuthenticated, async (req, res) => {
+  try {
+    // Obtener todas las campañas
+    const campaignsQuery = await pool.query('SELECT * FROM campaigns ORDER BY start_date DESC');
+    const campaigns = campaignsQuery.rows;
+
+    // Obtener estadísticas para las cards
+    const statsQuery = await pool.query(`
+      SELECT 
+        COUNT(*) as total_campaigns,
+        SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active_campaigns,
+        SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_campaigns,
+        SUM(CASE WHEN status = 'paused' THEN 1 ELSE 0 END) as paused_campaigns
+      FROM campaigns
+    `);
+    const stats = statsQuery.rows[0];
+
+    res.render('campaigns', {
+      user: req.session.user,
+      campaigns: campaigns,
+      stats: stats,
+      success: req.query.success,
+      error: req.query.error
+    });
+  } catch (error) {
+    console.error('Error al obtener campañas:', error);
+    res.status(500).render('error', {
+      message: 'Error al cargar las campañas',
+      error: error,
+      user: req.session.user
+    });
+  }
+});
+
+// Crear nueva campaña
+app.post('/campaigns', isAuthenticated, async (req, res) => {
+  const {
+    name,
+    description,
+    start_date,
+    end_date,
+    target_accounts,
+    daily_messages_limit,
+    status
+  } = req.body;
+
+  try {
+    const queryText = `
+      INSERT INTO campaigns (
+        name, description, start_date, end_date, 
+        target_accounts, daily_messages_limit, status, created_by
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      RETURNING *;
+    `;
+    const { rows } = await pool.query(queryText, [
+      name, description, start_date, end_date, 
+      JSON.stringify(target_accounts.split(',')), 
+      daily_messages_limit, status, req.session.user.id
+    ]);
+
+    res.redirect('/campaigns?success=Campaña creada correctamente');
+  } catch (error) {
+    console.error('Error al crear campaña:', error);
+    res.redirect('/campaigns?error=Error al crear campaña');
+  }
+});
+
+// Actualizar campaña
+app.put('/campaigns/:id', isAuthenticated, async (req, res) => {
+  const campaignId = req.params.id;
+  const {
+    name,
+    description,
+    start_date,
+    end_date,
+    target_accounts,
+    daily_messages_limit,
+    status
+  } = req.body;
+
+  try {
+    const queryText = `
+      UPDATE campaigns SET
+        name = $1,
+        description = $2,
+        start_date = $3,
+        end_date = $4,
+        target_accounts = $5,
+        daily_messages_limit = $6,
+        status = $7,
+        updated_at = NOW()
+      WHERE id = $8
+      RETURNING *;
+    `;
+    const { rows } = await pool.query(queryText, [
+      name, description, start_date, end_date, 
+      JSON.stringify(target_accounts.split(',')), 
+      daily_messages_limit, status, campaignId
+    ]);
+
+    res.json({ success: true, campaign: rows[0] });
+  } catch (error) {
+    console.error('Error al actualizar campaña:', error);
+    res.status(500).json({ error: 'Error al actualizar campaña' });
+  }
+});
+
+// Obtener estadísticas de campaña
+app.get('/campaigns/:id/stats', isAuthenticated, async (req, res) => {
+  const campaignId = req.params.id;
+
+  try {
+    // 1. Obtener datos de la campaña
+    const campaignQuery = await pool.query('SELECT * FROM campaigns WHERE id = $1', [campaignId]);
+    if (campaignQuery.rows.length === 0) {
+      return res.status(404).json({ error: 'Campaña no encontrada' });
+    }
+    const campaign = campaignQuery.rows[0];
+
+    // 2. Obtener estadísticas de mensajes desde MongoDB
+    const client = new MongoClient(mongoUri, { useUnifiedTopology: true });
+    await client.connect();
+    const db = client.db(mongoDbName);
+    const collection = db.collection('historial_acciones');
+
+    const filter = {
+      campaign_id: campaignId,
+      fecha: {
+        $gte: `${campaign.start_date.toISOString().split('T')[0]} 00:00:00`,
+        $lte: `${campaign.end_date.toISOString().split('T')[0]} 23:59:59`
+      }
+    };
+
+    // Mensajes totales
+    const totalMessages = await collection.countDocuments({
+      ...filter,
+      accion: { $regex: /mensaje/i }
+    });
+
+    // Respuestas totales
+    const totalReplies = await collection.countDocuments({
+      ...filter,
+      accion: { $regex: /respuesta/i }
+    });
+
+    // Mensajes por día
+    const messagesByDay = await collection.aggregate([
+      { $match: { ...filter, accion: { $regex: /mensaje/i } } },
+      { $project: { fechaDia: { $substr: ["$fecha", 0, 10] } } },
+      { $group: { _id: "$fechaDia", count: { $sum: 1 } } },
+      { $sort: { _id: 1 } }
+    ]).toArray();
+
+    await client.close();
+
+    res.json({
+      campaign: campaign,
+      stats: {
+        total_messages: totalMessages,
+        total_replies: totalReplies,
+        reply_rate: totalMessages > 0 ? (totalReplies / totalMessages * 100).toFixed(1) : 0,
+        messages_by_day: messagesByDay.map(item => ({
+          date: item._id,
+          count: item.count
+        }))
+      }
+    });
+  } catch (error) {
+    console.error('Error al obtener estadísticas:', error);
+    res.status(500).json({ error: 'Error al obtener estadísticas' });
+  }
 });
 
 app.listen(port, () => {

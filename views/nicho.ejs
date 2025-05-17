@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hunter Suite - Inicio ✨</title> <!-- Título más general -->
+    <title>Hunter Suite - Inicio ✨</title>
     <!-- Enlaces a hojas de estilo -->
-    <link rel="stylesheet" href="/static/css/nichos.css"> <!-- Mantenemos tu CSS base -->
+    <link rel="stylesheet" href="/static/css/nichos.css">
     <link rel="stylesheet" href="/static/css/navbar.css">
     <link rel="stylesheet" href="/static/css/scrollbar.css" />
     <!-- FontAwesome para íconos -->
@@ -15,8 +15,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Estilos Adicionales para la pantalla de selección y ocultar/mostrar -->
-   
     <script src="/static/js/navbar.js" defer></script>
     <script src="/static/js/file-input-label.js" defer></script>
 </head>
@@ -52,8 +50,6 @@
                         <small>Recuerda insertarlos con salto de lineas porfavor</small>
                     </div>
                 
-                    <!-- Más campos si necesitas para "Hunter" -->
-                
                     <div class="form-actions">
                         <button type="button" class="back-button" data-action="show-choice">
                             <i class="fas fa-arrow-left"></i> Volver
@@ -69,14 +65,13 @@
 
     <!-- Sección para el Formulario "Crear tu Blanco" (Inicialmente Oculta) -->
     <section id="blanco-form-section" class="form-section">
-        <!-- Contenedor principal con nuevo estilo -->
         <div class="form-container">
             <div class="form-card">
-                <h2><i class="fas fa-bullseye icon-title"></i> Registrar Nuevo Nicho (Blanco)</h2> <!-- Título ajustado -->
+                <h2><i class="fas fa-bullseye icon-title"></i> Registrar Nuevo Nicho (Blanco)</h2>
                 <p class="subtitle">Define los detalles de tu público objetivo.</p>
 
-                <!-- Formulario original con estructura mejorada y ID -->
-                <form action="/nicho" method="POST" enctype="multipart/form-data" class="nicho-form" id="nicho-form">
+                <!-- Formulario modificado para usar JSON -->
+                <form id="nicho-form" class="nicho-form">
                     <div class="form-group">
                         <label for="ubicacion"><i class="fas fa-map-marker-alt"></i> Ubicación:</label>
                         <input type="text" id="ubicacion" name="ubicacion" placeholder="Ej: Ciudad de México, Remoto" required>
@@ -99,14 +94,11 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="mensaje"><i class="fas fa-envelope-open-text"></i> Cuentas Objetivo:</label>
-                        <textarea id="mensaje" name="mensaje" placeholder="Ingresa medainte salto de lineas las cuentas similares a tus nichos" required rows="4"></textarea>
+                        <label for="cuentas"><i class="fas fa-envelope-open-text"></i> Cuentas Objetivo:</label>
+                        <textarea id="cuentas" name="cuentas" placeholder="Ingresa mediante salto de lineas las cuentas similares a tus nichos" required rows="4"></textarea>
+                        <small>Separa cada cuenta con un salto de línea</small>
                     </div>
 
-                    <!-- Subida de archivo PDF con estilo mejorado -->
-                   
-
-                    <!-- Botones de acción -->
                     <div class="form-actions">
                         <button type="button" class="back-button" data-action="show-choice">
                             <i class="fas fa-arrow-left"></i> Volver
@@ -115,111 +107,58 @@
                             <i class="fas fa-save"></i> Guardar Nicho
                         </button>
                     </div>
-
                 </form>
-            </div> <!-- Fin de .form-card -->
-        </div> <!-- Fin de .form-container -->
+            </div>
+        </div>
     </section>
 
-    <!-- =============================================================== -->
-    <!-- SCRIPT PARA MOSTRAR/OCULTAR SECCIONES Y ALERTA SIMPLE -->
-    <!-- =============================================================== -->
+    <!-- Script para mostrar/ocultar secciones -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const choiceContainer = document.getElementById('choice-container');
             const choiceCards = document.querySelectorAll('.choice-card');
             const formSections = document.querySelectorAll('.form-section');
             const backButtons = document.querySelectorAll('.back-button[data-action="show-choice"]');
-            const nichoForm = document.getElementById('nicho-form'); // Formulario específico del nicho
 
             // --- Función para mostrar una sección y ocultar las demás ---
             function showSection(targetId) {
-                // Ocultar contenedor de elección
-                if (choiceContainer) {
-                    choiceContainer.style.display = 'none';
-                }
-                // Ocultar todas las secciones de formulario
-                formSections.forEach(section => {
-                    section.classList.remove('active');
-                });
-                // Mostrar la sección objetivo
+                if (choiceContainer) choiceContainer.style.display = 'none';
+                formSections.forEach(section => section.classList.remove('active'));
                 const targetSection = document.getElementById(targetId);
                 if (targetSection) {
                     targetSection.classList.add('active');
                 } else {
-                     console.warn(`Sección con ID '${targetId}' no encontrada.`);
-                     showChoiceScreen(); // Volver a mostrar opciones si no se encuentra
+                    console.warn(`Sección con ID '${targetId}' no encontrada.`);
+                    showChoiceScreen();
                 }
             }
 
             // --- Función para mostrar la pantalla de elección ---
             function showChoiceScreen() {
-                 // Ocultar todas las secciones de formulario
-                 formSections.forEach(section => {
-                    section.classList.remove('active');
-                });
-                 // Mostrar contenedor de elección
-                if (choiceContainer) {
-                    choiceContainer.style.display = 'flex'; // O 'block' según tu layout original
-                }
+                formSections.forEach(section => section.classList.remove('active'));
+                if (choiceContainer) choiceContainer.style.display = 'flex';
             }
-
 
             // --- Event Listeners para las Tarjetas de Elección ---
             choiceCards.forEach(card => {
                 card.addEventListener('click', () => {
                     const targetId = card.dataset.target;
-                    if (targetId) {
-                        showSection(targetId);
-                    }
+                    if (targetId) showSection(targetId);
                 });
             });
 
-             // --- Event Listeners para los Botones "Volver" ---
+            // --- Event Listeners para los Botones "Volver" ---
             backButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    showChoiceScreen();
-                });
+                button.addEventListener('click', showChoiceScreen);
             });
 
-
-            // --- Lógica de Alerta para el Formulario de Nicho (EXISTENTE) ---
-
-            // Parte 1: Revisar si venimos de un envío del *formulario de nicho*
-            const formSubmittedFlag = sessionStorage.getItem('nichoJustSubmitted');
-
-            if (formSubmittedFlag === 'true') {
-                // Muestra la alerta solo si la bandera existe
-                alert('¡Nicho registrado correctamente!'); // Mensaje de confirmación
-                // Limpia la bandera
-                sessionStorage.removeItem('nichoJustSubmitted');
-                // Opcional: podrías querer volver a la pantalla de selección aquí
-                // showChoiceScreen();
-                 // O podrías querer mostrar directamente el form de nicho de nuevo (menos común)
-                 // showSection('blanco-form-section');
-            }
-
-            // Parte 2: Poner la bandera cuando se envíe el *formulario de nicho*
-            if (nichoForm) {
-                nichoForm.addEventListener('submit', () => {
-                    // Guarda la bandera ANTES de que la página recargue/redirija
-                    sessionStorage.setItem('nichoJustSubmitted', 'true');
-                });
-            } else {
-                console.warn("Advertencia: El formulario con ID 'nicho-form' no fue encontrado.");
-            }
-
-            // --- Asegurar estado inicial correcto (Mostrar opciones al cargar) ---
-            // Si ninguna sección está marcada para mostrar por defecto (ej. por error previo o recarga),
-            // asegurarse de que la pantalla de elección se muestre.
+            // --- Asegurar estado inicial correcto ---
             const isActiveSection = document.querySelector('.form-section.active');
-            if (!isActiveSection && choiceContainer) {
-                 showChoiceScreen();
-            }
-
-
+            if (!isActiveSection && choiceContainer) showChoiceScreen();
         });
     </script>
+
+    <!-- Script para manejar el formulario de Flechas (Hunter) -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const hunterForm = document.getElementById('hunter-form');
@@ -247,7 +186,6 @@
                         
                         if (response.ok) {
                             alert('Mensajes guardados correctamente!');
-                            // Opcional: limpiar el textarea después del envío
                             textarea.value = '';
                         } else {
                             alert(`Error: ${result.error || 'Error al guardar los mensajes'}`);
@@ -260,9 +198,90 @@
             }
         });
     </script>
-    <!-- =============================================================== -->
-    <!-- FIN DEL SCRIPT -->
-    <!-- =============================================================== -->
 
+    <!-- Script para manejar el formulario de Blancos (Nichos) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const nichoForm = document.getElementById('nicho-form');
+            
+            if (nichoForm) {
+                nichoForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    // Obtener datos del formulario
+                    const ubicacion = document.getElementById('ubicacion').value;
+                    const tipo_personas = document.getElementById('tipo_personas').value;
+                    const edad_min = document.getElementById('edad_min').value;
+                    const edad_max = document.getElementById('edad_max').value;
+                    const cuentasTextarea = document.getElementById('cuentas');
+                    
+                    // Procesar cuentas
+                    const cuentas = cuentasTextarea.value
+                        .split('\n')
+                        .map(cuenta => cuenta.trim())
+                        .filter(cuenta => cuenta.length > 0);
+                    
+                    // Validación básica
+                    if (!ubicacion || !tipo_personas || cuentas.length === 0) {
+                        return alert('Error: Ubicación, intereses y cuentas son obligatorios');
+                    }
+
+                    try {
+                        // Primero guardamos las cuentas como un nuevo grupo
+                        const cuentasResponse = await fetch('/api/blancos/cuentas', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ cuentas })
+                        });
+                        
+                        const cuentasResult = await cuentasResponse.json();
+                        
+                        if (!cuentasResponse.ok) {
+                            throw new Error(cuentasResult.error || 'Error al guardar cuentas');
+                        }
+
+                        // Luego guardamos los metadatos del nicho
+                        const nichoResponse = await fetch('/nicho', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                ubicacion,
+                                tipo_personas,
+                                edad_min: edad_min || null,
+                                edad_max: edad_max || null,
+                                mensaje: `Grupo de cuentas guardado el ${new Date().toLocaleString()}`
+                            })
+                        });
+
+                        if (nichoResponse.ok) {
+                            alert('Nicho y cuentas guardados correctamente!');
+                            // Limpiar formulario
+                            nichoForm.reset();
+                            cuentasTextarea.value = '';
+                            // Guardar bandera para posible recarga
+                            sessionStorage.setItem('nichoJustSubmitted', 'true');
+                        } else {
+                            const errorResult = await nichoResponse.json();
+                            throw new Error(errorResult.error || 'Error al guardar el nicho');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert(`Error: ${error.message || 'Error al guardar los datos'}`);
+                    }
+                });
+            }
+
+            // Manejar la bandera de envío exitoso
+            const formSubmittedFlag = sessionStorage.getItem('nichoJustSubmitted');
+            if (formSubmittedFlag === 'true') {
+                alert('¡Nicho registrado correctamente!');
+                sessionStorage.removeItem('nichoJustSubmitted');
+            }
+        });
+    </script>
 </body>
-</html> 
+</html>

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Campañas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.css">
+    <link rel="stylesheet" href="/static/css/navbar.css">
+    <link rel="stylesheet" href="/static/css/scrollbar.css">
+    <style>
+        /* Estilos específicos para campañas */
+        .campaigns-container {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .campaigns-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .campaigns-header h1 {
+            color: var(--color-text-primary);
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        
+        .card-style {
+            background: var(--color-background-medium);
+            border-radius: var(--border-radius-large);
+            border: 1px solid var(--color-border);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .totals-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .total-card {
+            flex: 1;
+            min-width: 200px;
+            background-color: var(--color-background-light);
+            border-radius: var(--border-radius-medium);
+            border: 1px solid var(--color-border);
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .total-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .total-card h3 {
+            margin: 0 0 5px 0;
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+        
+        .total-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--color-accent);
+        }
+        
+        .chart-container {
+            height: 400px;
+            margin-bottom: 20px;
+            position: relative;
+            background-color: var(--color-background-light);
+            padding: 1.5rem 2rem;
+            border-radius: var(--border-radius-medium);
+            border: 1px solid var(--color-border);
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .campaigns-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        
+        .campaigns-table th, 
+        .campaigns-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--color-border);
+            text-align: left;
+        }
+        
+        .campaigns-table th {
+            background-color: var(--color-background-light);
+            font-weight: 600;
+            color: var(--color-text-primary);
+            position: sticky;
+            top: 0;
+        }
+        
+        .status-active {
+            color: var(--color-success);
+            font-weight: 500;
+        }
+        
+        .status-paused {
+            color: var(--color-warning);
+            font-weight: 500;
+        }
+        
+        .status-completed {
+            color: var(--color-text-secondary);
+            font-weight: 500;
+        }
+        
+        .btn {
+            padding: 0.7rem 1.3rem;
+            border: none;
+            border-radius: var(--border-radius-medium);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background-color: var(--color-green-progress);
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2ea043;
+        }
+        
+        /* Modal para nueva campaña */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: var(--color-background-medium);
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: var(--border-radius-large);
+            width: 80%;
+            max-width: 700px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: var(--color-text-primary);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border-radius: var(--border-radius-medium);
+            border: 1px solid var(--color-border);
+            background-color: var(--color-background-dark);
+            color: var(--color-text-primary);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-primary {
+            background-color: var(--color-green-progress);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    
+    <div class="campaigns-container">
+        <div class="campaigns-header">
+            <h1><i class="fas fa-bullhorn"></i> Gestión de Campañas</h1>
+            <button class="btn btn-primary" onclick="openModal()">
+                <i class="fas fa-plus"></i> Nueva Campaña
+            </button>
+        </div>
+        
+        <!-- Cards con estadísticas -->
+        <div class="totals-container">
+            <div class="total-card">
+                <h3>Campañas Totales</h3>
+                <div class="total-value"><%= stats.total_campaigns %></div>
+            </div>
+            
+            <div class="total-card">
+                <h3>Activas</h3>
+                <div class="total-value status-active"><%= stats.active_campaigns %></div>
+            </div>
+            
+            <div class="total-card">
+                <h3>Completadas</h3>
+                <div class="total-value status-completed"><%= stats.completed_campaigns %></div>
+            </div>
+            
+            <div class="total-card">
+                <h3>Pausadas</h3>
+                <div class="total-value status-paused"><%= stats.paused_campaigns %></div>
+            </div>
+        </div>
+        
+        <!-- Tabla de Campañas -->
+        <div class="card-style">
+            <div class="table-responsive">
+                <table class="campaigns-table" id="campaignsTable">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Fecha Inicio</th>
+                            <th>Fecha Fin</th>
+                            <th>Cuentas Objetivo</th>
+                            <th>Límite Diario</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (campaigns.length > 0) { %>
+                            <% campaigns.forEach(campaign => { %>
+                                <tr data-id="<%= campaign.id %>">
+                                    <td><%= campaign.name %></td>
+                                    <td><%= campaign.description %></td>
+                                    <td><%= new Date(campaign.start_date).toLocaleDateString('es-ES') %></td>
+                                    <td><%= new Date(campaign.end_date).toLocaleDateString('es-ES') %></td>
+                                    <td>
+                                        <% JSON.parse(campaign.target_accounts).forEach(account => { %>
+                                            <span class="badge badge-primary"><%= account %></span>
+                                        <% }); %>
+                                    </td>
+                                    <td><%= campaign.daily_messages_limit %></td>
+                                    <td class="status-<%= campaign.status %>">
+                                        <%= campaign.status === 'active' ? 'Activa' : 
+                                           campaign.status === 'paused' ? 'Pausada' : 'Completada' %>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" onclick="viewCampaign('<%= campaign.id %>')">
+                                            <i class="fas fa-chart-line"></i> Estadísticas
+                                        </button>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="8" style="text-align: center;">No hay campañas creadas</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para nueva campaña -->
+    <div id="campaignModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2><i class="fas fa-plus"></i> Nueva Campaña</h2>
+            
+            <form id="campaignForm" onsubmit="saveCampaign(event)">
+                <div class="form-group">
+                    <label for="campaignName">Nombre de la Campaña</label>
+                    <input type="text" id="campaignName" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="campaignDescription">Descripción</label>
+                    <textarea id="campaignDescription" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="startDate">Fecha de Inicio</label>
+                    <input type="date" id="startDate" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="endDate">Fecha de Fin</label>
+                    <input type="date" id="endDate" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="targetAccounts">Cuentas Objetivo (separadas por comas)</label>
+                    <input type="text" id="targetAccounts" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dailyLimit">Límite Diario de Mensajes</label>
+                    <input type="number" id="dailyLimit" class="form-control" min="1" value="50" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="campaignStatus">Estado</label>
+                    <select id="campaignStatus" class="form-control" required>
+                        <option value="active">Activa</option>
+                        <option value="paused">Pausada</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Guardar Campaña
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal para estadísticas -->
+    <div id="statsModal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <span class="close" onclick="closeStatsModal()">&times;</span>
+            <h2><i class="fas fa-chart-line"></i> Estadísticas de Campaña</h2>
+            
+            <div id="statsContent">
+                <!-- Aquí se cargarán las estadísticas dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script>
+        // Funciones para manejar modales
+        function openModal() {
+            document.getElementById('campaignModal').style.display = 'block';
+            // Establecer fechas por defecto
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('startDate').value = today;
+            
+            const nextWeek = new Date();
+            nextWeek.setDate(nextWeek.getDate() + 7);
+            document.getElementById('endDate').value = nextWeek.toISOString().split('T')[0];
+        }
+        
+        function closeModal() {
+            document.getElementById('campaignModal').style.display = 'none';
+        }
+        
+        function closeStatsModal() {
+            document.getElementById('statsModal').style.display = 'none';
+        }
+        
+        // Guardar nueva campaña
+        function saveCampaign(event) {
+            event.preventDefault();
+            
+            const campaignData = {
+                name: document.getElementById('campaignName').value,
+                description: document.getElementById('campaignDescription').value,
+                start_date: document.getElementById('startDate').value,
+                end_date: document.getElementById('endDate').value,
+                target_accounts: document.getElementById('targetAccounts').value,
+                daily_messages_limit: document.getElementById('dailyLimit').value,
+                status: document.getElementById('campaignStatus').value
+            };
+            
+            fetch('/campaigns', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(campaignData)
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        
+        // Ver estadísticas de campaña
+        function viewCampaign(campaignId) {
+            fetch(`/campaigns/${campaignId}/stats`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+                    
+                    // Mostrar datos en el modal
+                    const statsContent = document.getElementById('statsContent');
+                    statsContent.innerHTML = `
+                        <div class="card-style">
+                            <h3>${data.campaign.name}</h3>
+                            <p>${data.campaign.description}</p>
+                            <p><strong>Período:</strong> ${new Date(data.campaign.start_date).toLocaleDateString('es-ES')} - ${new Date(data.campaign.end_date).toLocaleDateString('es-ES')}</p>
+                            <p><strong>Estado:</strong> <span class="status-${data.campaign.status}">
+                                ${data.campaign.status === 'active' ? 'Activa' : 
+                                 data.campaign.status === 'paused' ? 'Pausada' : 'Completada'}
+                            </span></p>
+                            
+                            <div class="totals-container" style="margin-top: 20px;">
+                                <div class="total-card">
+                                    <h3>Mensajes Enviados</h3>
+                                    <div class="total-value">${data.stats.total_messages}</div>
+                                </div>
+                                
+                                <div class="total-card">
+                                    <h3>Respuestas Recibidas</h3>
+                                    <div class="total-value">${data.stats.total_replies}</div>
+                                </div>
+                                
+                                <div class="total-card">
+                                    <h3>Tasa de Respuesta</h3>
+                                    <div class="total-value ${data.stats.reply_rate > 10 ? 'status-active' : ''}">
+                                        ${data.stats.reply_rate}%
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="chart-container">
+                                <canvas id="campaignChart"></canvas>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Mostrar el modal
+                    document.getElementById('statsModal').style.display = 'block';
+                    
+                    // Configurar el gráfico
+                    const ctx = document.getElementById('campaignChart').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: data.stats.messages_by_day.map(item => new Date(item.date).toLocaleDateString('es-ES', {day: 'numeric', month: 'short'})),
+                            datasets: [{
+                                label: 'Mensajes Enviados',
+                                data: data.stats.messages_by_day.map(item => item.count),
+                                backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        precision: 0
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+        
+        // Cerrar modales al hacer clic fuera de ellos
+        window.onclick = function(event) {
+            if (event.target.className === 'modal') {
+                document.getElementById('campaignModal').style.display = 'none';
+                document.getElementById('statsModal').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

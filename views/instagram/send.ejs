@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enviar Mensajes | Hunter IO</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/navbar.css">
+    <link rel="stylesheet" href="/static/css/onboarding.css">
+    <style>
+        /* [Mantener los estilos anteriores] */
+        
+        .saved-messages-container {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: #f8f9fa;
+        }
+        
+        .message-preview {
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-left: 3px solid var(--primary-color);
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+    
+    <div class="container-fluid py-4">
+        <div class="form-container card-style">
+            <h1 class="form-title">Enviar Mensajes por Instagram</h1>
+            
+            <div class="info-box">
+                <i class="fas fa-info-circle me-2"></i>
+                Completa los siguientes campos para enviar mensajes directos a través de Instagram.
+            </div>
+            
+            <form action="/instagram/send" method="POST">
+                <!-- Sección de Credenciales -->
+                <div class="mb-4">
+                    <h5 class="mb-3 text-dark fw-bold">Credenciales de Instagram</h5>
+                    <div class="mb-3">
+                        <label for="sessionid" class="form-label">Session ID</label>
+                        <input type="text" class="form-control" id="sessionid" name="sessionid" required 
+                               placeholder="Ej: 1234567890%3Aabcdefgh%3A12%3AAYd...">
+                        <div class="form-text">Obten tu sessionid desde las cookies de Instagram en tu navegador</div>
+                    </div>
+                </div>
+                
+                <!-- Sección de Destinatarios -->
+                <div class="mb-4">
+                    <h5 class="mb-3 text-dark fw-bold">Destinatarios</h5>
+                    <div class="mb-3">
+                        <label for="users" class="form-label">Cuentas a contactar</label>
+                        <textarea class="form-control" id="users" name="users" required 
+                                  placeholder="Ingresa un nombre de usuario por línea, con o sin @"></textarea>
+                        <div class="form-text">Puedes enviar a un máximo de 50 cuentas por envío</div>
+                    </div>
+                </div>
+                
+                <!-- Sección de Mensaje -->
+                <div class="mb-4">
+                    <h5 class="mb-3 text-dark fw-bold">Contenido del Mensaje</h5>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Fuente del mensaje</label>
+                        <div class="d-flex gap-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="use_saved_messages" id="new_message" value="false" checked>
+                                <label class="form-check-label" for="new_message">Nuevo mensaje</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="use_saved_messages" id="saved_messages" value="true">
+                                <label class="form-check-label" for="saved_messages">Usar mis mensajes guardados</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Nuevo mensaje -->
+                    <div class="mb-3" id="new_message_container">
+                        <label for="message" class="form-label">Mensaje a enviar</label>
+                        <textarea class="form-control" id="message" name="message" placeholder="Escribe aquí el mensaje que deseas enviar"><%= defaultMessage %></textarea>
+                        <div class="form-text">Este mensaje se enviará a todos los destinatarios</div>
+                    </div>
+                    
+                    <!-- Mensajes guardados -->
+                    <div class="mb-3 d-none" id="saved_messages_container">
+                        <label class="form-label">Mis mensajes guardados</label>
+                        <% if (userMessages && userMessages.length > 0) { %>
+                            <div class="saved-messages-container">
+                                <% userMessages.forEach((msg, index) => { %>
+                                    <div class="message-preview">
+                                        <small class="text-muted">Variación <%= index + 1 %></small>
+                                        <p><%= msg %></p>
+                                    </div>
+                                <% }); %>
+                            </div>
+                            <div class="form-text">Se seleccionará aleatoriamente un mensaje para cada destinatario</div>
+                        <% } else { %>
+                            <div class="alert alert-warning">
+                                No tienes mensajes guardados. Puedes configurarlos en tu perfil.
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a href="/profile" class="btn btn-outline-secondary me-2 px-4 py-2">
+                        <i class="fas fa-cog me-2"></i> Gestionar mensajes
+                    </a>
+                    <button type="submit" class="btn btn-primary px-4 py-2" id="submitBtn">
+                        <i class="fas fa-paper-plane me-2"></i> Enviar Mensajes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Font Awesome para íconos -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Toggle entre nuevo mensaje y mensajes guardados
+        document.querySelectorAll('input[name="use_saved_messages"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.getElementById('new_message_container').classList.toggle('d-none', this.value === 'true');
+                document.getElementById('saved_messages_container').classList.toggle('d-none', this.value !== 'true');
+            });
+        });
+
+        // Validación antes de enviar
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const users = document.getElementById('users').value.trim();
+            const useSaved = document.querySelector('input[name="use_saved_messages"]:checked').value === 'true';
+            const hasSavedMessages = <%= (userMessages && userMessages.length > 0) ? 'true' : 'false' %>;
+            
+            if (!users) {
+                e.preventDefault();
+                alert('Debes ingresar al menos una cuenta de Instagram');
+                return;
+            }
+            
+            if (!useSaved && !document.getElementById('message').value.trim()) {
+                e.preventDefault();
+                alert('Debes escribir un mensaje para enviar');
+                return;
+            }
+            
+            if (useSaved && !hasSavedMessages) {
+                e.preventDefault();
+                alert('No tienes mensajes guardados para usar');
+                return;
+            }
+            
+            // Mostrar loader
+            const btn = document.getElementById('submitBtn');
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Enviando...';
+            btn.disabled = true;
+        });
+    </script>
+</body>
+</html>

@@ -116,3 +116,64 @@ exports.postAsignarNicho = async (req, res) => {
     res.status(500).redirect('/nicho/asignar');
   }
 };
+
+
+// Agrega estos nuevos métodos al controlador
+
+// Obtener cuentas de blancos
+exports.getCuentasBlancos = async (req, res) => {
+  try {
+    const userId = req.session.user.id;
+    const result = await pool.query('SELECT cuentas_blancos FROM users WHERE id = $1', [userId]);
+    
+    res.json({
+      cuentas: result.rows[0]?.cuentas_blancos || []
+    });
+  } catch (error) {
+    console.error("Error al obtener cuentas de blancos:", error);
+    res.status(500).json({ error: 'Error al obtener cuentas' });
+  }
+};
+
+// Guardar/Actualizar cuentas de blancos
+exports.postCuentasBlancos = async (req, res) => {
+  const { cuentas } = req.body;
+  const userId = req.session.user.id;
+
+  try {
+    // Validar que cuentas sea un array
+    if (!Array.isArray(cuentas)) {
+      return res.status(400).json({ error: 'Formato inválido, se espera array de cuentas' });
+    }
+
+    // Obtener las cuentas existentes
+    const existing = await pool.query('SELECT cuentas_blancos FROM users WHERE id = $1', [userId]);
+    const existingCuentas = existing.rows[0]?.cuentas_blancos || [];
+
+    // Agregar el nuevo grupo (append)
+    const updatedCuentas = [...existingCuentas, {
+      grupo_id: Date.now(), // ID único para el grupo
+      fecha: new Date().toISOString(),
+      cuentas: cuentas
+    }];
+
+    // Actualizar en la base de datos
+    const result = await pool.query(
+      'UPDATE users SET cuentas_blancos = $1 WHERE id = $2 RETURNING cuentas_blancos',
+      [JSON.stringify(updatedCuentas), userId]
+    );
+
+    // Actualizar sesión si es necesario
+    if (req.session.user) {
+      req.session.user.cuentas_blancos = result.rows[0].cuentas_blancos;
+    }
+
+    res.json({
+      success: true,
+      cuentas: result.rows[0].cuentas_blancos
+    });
+  } catch (error) {
+    console.error("Error al guardar cuentas de blancos:", error);
+    res.status(500).json({ error: 'Error al guardar cuentas' });
+  }
+};
