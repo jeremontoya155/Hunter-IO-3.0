@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargar Cuentas Objetivo - Bot IG</title>
+    <link rel="stylesheet" href="/static/css/style.css"> <!-- Adjust if your CSS path is different -->
+    <!-- Add any necessary Bootstrap or other CSS links -->
+</head>
+<body>
+
+
+    <main class="container mt-4">
+        <h1>Cargar Cuentas Objetivo</h1>
+
+        <% if (success) { %>
+            <div class="alert alert-success"><%= success %></div>
+        <% } %>
+        <% if (error) { %>
+            <div class="alert alert-danger"><%= error %></div>
+        <% } %>
+
+        <p>Aquí puedes especificar una cuenta base de Instagram y una lista de cuentas objetivo a las que el bot podría interactuar en futuras operaciones.</p>
+
+        <form action="/targets" method="POST">
+            <div class="mb-3">
+                <label for="base_account" class="form-label">Cuenta Base de Instagram (Tu cuenta principal o la del cliente):</label>
+                <input type="text" class="form-control" id="base_account" name="base_account" required value="<%= currentList ? currentList.baseAccount : '' %>">
+                <div class="form-text">Introduce el nombre de usuario exacto.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="target_accounts_list" class="form-label">Lista de Cuentas Objetivo de Instagram:</label>
+                <textarea class="form-control" id="target_accounts_list" name="target_accounts_list" rows="10" required><%= currentList && currentList.targetAccounts ? currentList.targetAccounts.join('\n') : '' %></textarea>
+                <div class="form-text">Introduce un nombre de usuario por línea o sepáralos por comas.</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Guardar Lista</button>
+        </form>
+
+        <% if (currentList) { %>
+            <h2 class="mt-4">Lista Actual</h2>
+            <p>Cuentas objetivo guardadas actualmente para tu usuario:</p>
+            <ul>
+                <li><strong>Cuenta Base:</strong> <%= currentList.baseAccount %></li>
+                <li><strong>Total Cuentas Objetivo:</strong> <%= currentList.targetAccounts.length %></li>
+                <li><strong>Actualizado en:</strong> <%= currentList.updatedAt.toLocaleString() %></li>
+            </ul>
+            <!-- Optional: Display the list of target accounts -->
+            <!--
+            <p>Lista:</p>
+            <ul>
+                <% currentList.targetAccounts.forEach(account => { %>
+                    <li><%= account %></li>
+                <% }) %>
+            </ul>
+            -->
+        <% } %>
+
+    </main>
+
+ 
+    <!-- Add any necessary Bootstrap or other JS links -->
+</body>
+</html>

@@ -443,6 +443,7 @@
     <!-- Esto puede necesitar un wrapper div si tu navbar es fixed y afecta el padding del body -->
     <%- include('partials/navbar') %>
 
+    
     <!-- Selector de Idioma -->
     <div class="language-switcher">
         <button id="btn-es" class="lang-btn" onclick="changeLanguage('es')"><span>SP</span></button>
@@ -469,6 +470,13 @@
         <!-- Pasos del Onboarding (Acordeón) -->
         <main class="onboarding-content">
 
+                  <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Gestión de Cuentas Objetivo</h5>
+          <p class="card-text">Carga o actualiza la lista de cuentas de Instagram a las que dirigir tus acciones.</p>
+          <a href="/targets" class="btn btn-primary">Gestionar Cuentas Objetivo</a>
+        </div>
+      </div>
           <!-- Paso 1 -->
           <section class="onboarding-step" id="step-1-section">
             <!-- data-step es crucial para el JS -->

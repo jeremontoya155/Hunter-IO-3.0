@@ -3,13 +3,30 @@ const uuid = require('uuid');
 const fs = require('fs');
 const path = require('path');
 const { Pool } = require('pg');
+const { MongoClient } = require('mongodb');
 
 // Configuración de PostgreSQL
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URI,
 });
 
-// Función para obtener mensajes del usuario
+// Configuración de MongoDB
+const mongoUri = 'mongodb://mongo:lQZVSODFgPGsceBNsiqMULsokyBTpvUx@junction.proxy.rlwy.net:42830';
+const mongoClient = new MongoClient(mongoUri);
+let mongoDb;
+
+// Conectar a MongoDB al iniciar
+(async function connectToMongoDB() {
+  try {
+    await mongoClient.connect();
+    mongoDb = mongoClient.db('instagram_bot');
+    console.log('Conexión a MongoDB establecida');
+  } catch (error) {
+    console.error('Error al conectar a MongoDB:', error);
+  }
+})();
+
+// Función para obtener mensajes del usuario desde PostgreSQL
 async function getUserMessages(userId) {
   try {
     const queryText = 'SELECT mensajes_flecha FROM users WHERE id = $1';
@@ -28,6 +45,65 @@ function getRandomMessage(messages) {
   }
   const randomIndex = Math.floor(Math.random() * messages.length);
   return messages[randomIndex];
+}
+
+// Función para filtrar usuarios desde MongoDB
+async function filterUsers(keyword, dateFilter, startDate, endDate) {
+  try {
+    const collection = mongoDb.collection('nicho_detectado');
+    let query = { descargado: true };
+    
+    // Filtrar por keyword si se especificó
+    if (keyword && keyword.trim() !== '') {
+      query.keyword = { $regex: keyword, $options: 'i' };
+    }
+    
+    // Filtrar por fecha
+    if (dateFilter && dateFilter !== 'all') {
+      const now = new Date();
+      let dateQuery = {};
+      
+      switch (dateFilter) {
+        case 'today':
+          const todayStart = new Date(now.setHours(0, 0, 0, 0));
+          dateQuery = { fecha: { $gte: todayStart } };
+          break;
+        case 'week':
+          const weekStart = new Date(now.setDate(now.getDate() - 7));
+          dateQuery = { fecha: { $gte: weekStart } };
+          break;
+        case 'month':
+          const monthStart = new Date(now.setMonth(now.getMonth() - 1));
+          dateQuery = { fecha: { $gte: monthStart } };
+          break;
+        case 'custom':
+          if (startDate && endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999);
+            dateQuery = { fecha: { $gte: start, $lte: end } };
+          }
+          break;
+      }
+      
+      query = { ...query, ...dateQuery };
+    }
+    
+    const users = await collection.find(query)
+      .sort({ fecha: -1 })
+      .limit(200)
+      .toArray();
+      
+    return users.map(user => ({
+      username: user.username,
+      keyword: user.keyword,
+      fecha: new Date(user.fecha).toLocaleDateString()
+    }));
+    
+  } catch (error) {
+    console.error('Error al filtrar usuarios:', error);
+    throw error;
+  }
 }
 
 module.exports = {
@@ -173,6 +249,27 @@ module.exports = {
       if (fs.existsSync(sessionFile)) {
         fs.unlinkSync(sessionFile);
       }
+    }
+  },
+
+  // Nueva función para filtrar usuarios desde MongoDB
+  filterUsers: async (req, res) => {
+    try {
+      const { keyword, dateFilter, startDate, endDate } = req.body;
+      
+      const users = await filterUsers(keyword, dateFilter, startDate, endDate);
+      
+      res.json({ 
+        success: true,
+        users 
+      });
+      
+    } catch (error) {
+      console.error('Error en filterUsers:', error);
+      res.status(500).json({ 
+        success: false,
+        error: error.message 
+      });
     }
   }
 };

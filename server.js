@@ -1182,6 +1182,100 @@ app.put('/campaigns/:id', isAuthenticated, async (req, res) => {
   }
 });
 
+
+// Rutas para Carga de Cuentas Objetivo
+app.get('/targets', isAuthenticated, async (req, res) => {
+    let currentList = null;
+    try {
+        // Optional: Fetch and display the user's current list if it exists
+        const client = new MongoClient(mongoUri, { useUnifiedTopology: true });
+        await client.connect();
+        const db = client.db(mongoDbName);
+        const collection = db.collection('user_target_lists'); // New collection name
+
+        const existingList = await collection.findOne({ userId: req.session.user.id });
+        if (existingList) {
+            currentList = existingList;
+        }
+        await client.close();
+    } catch (error) {
+        console.error('Error fetching current target list:', error);
+        // Proceed without the current list data
+    }
+
+    res.render('targets', {
+        user: req.session.user,
+        currentList: currentList,
+        success: req.query.success, // For displaying success/error messages after redirect
+        error: req.query.error
+    });
+});
+
+app.post('/targets', isAuthenticated, async (req, res) => {
+    const { base_account, target_accounts_list } = req.body;
+    const userId = req.session.user.id; // Get user ID from the session
+
+    // Basic validation
+    if (!base_account || !target_accounts_list) {
+        return res.redirect('/targets?error=Cuenta base y lista de cuentas objetivo son obligatorios.');
+    }
+
+    let targetAccountsArray = [];
+    try {
+        // Process the target accounts list
+        // Split by newline or comma, trim whitespace, and filter out empty lines
+        targetAccountsArray = target_accounts_list
+            .split(/[\n,]+/) // Split by newline or comma
+            .map(account => account.trim()) // Remove leading/trailing whitespace
+            .filter(account => account !== ''); // Remove empty strings
+        
+        if (targetAccountsArray.length === 0) {
+             return res.redirect('/targets?error=La lista de cuentas objetivo está vacía.');
+        }
+
+    } catch (processError) {
+        console.error('Error processing target accounts list:', processError);
+         return res.redirect('/targets?error=Error procesando la lista de cuentas objetivo.');
+    }
+
+
+    let client;
+    try {
+        client = new MongoClient(mongoUri, { useUnifiedTopology: true });
+        await client.connect();
+        const db = client.db(mongoDbName);
+        const collection = db.collection('user_target_lists'); // Use the new collection
+
+        // Data to be saved
+        const targetListData = {
+            userId: userId, // Link to the user
+            baseAccount: base_account.trim(), // Trim base account too
+            targetAccounts: targetAccountsArray,
+            updatedAt: new Date(), // Timestamp for the last update
+            // Maybe add createdAt only on first insert? UpdateOne with $set handles this.
+        };
+
+        // Use updateOne with upsert: true to create or replace the list for this user
+        const result = await collection.updateOne(
+            { userId: userId }, // Find document by user ID
+            { $set: targetListData }, // Set or replace the data
+            { upsert: true } // Create if no document matches userId
+        );
+
+        console.log(`Targets saved for user ${userId}: ${result.upsertedCount} inserted, ${result.modifiedCount} modified`);
+
+        res.redirect('/targets?success=Lista de cuentas objetivo guardada correctamente.');
+
+    } catch (error) {
+        console.error('Error saving target list to MongoDB:', error);
+        res.redirect(`/targets?error=Error al guardar la lista: ${error.message}`);
+    } finally {
+        if (client) {
+            await client.close(); // Ensure connection is closed
+        }
+    }
+});
+
 // Obtener estadísticas de campaña
 app.get('/campaigns/:id/stats', isAuthenticated, async (req, res) => {
   const campaignId = req.params.id;

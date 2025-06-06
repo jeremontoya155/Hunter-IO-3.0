@@ -29,6 +29,7 @@
             <h3>Crea tu Flecha</h3>
             <p>Configura una nueva instancia de Hunter para empezar.</p>
         </div>
+        <!-- MODIFICADO: Este data-target ya no se usa para mostrar un form, pero se mantiene para identificar la tarjeta en JS -->
         <div class="choice-card" data-target="blanco-form-section">
             <i class="fas fa-bullseye icon-choice"></i>
             <h3>Crear tu Blanco</h3>
@@ -37,6 +38,7 @@
     </div>
 
     <!-- Sección para el Formulario "Crear Hunter" (Inicialmente Oculta) -->
+    <!-- Esta sección se sigue mostrando en la misma página -->
     <section id="hunter-form-section" class="form-section">
         <div class="form-container">
             <div class="form-card">
@@ -46,10 +48,11 @@
                 <form action="/api/flecha/mensajes" method="POST" class="hunter-form" id="hunter-form">
                     <div class="form-group">
                         <label for="mensajes"><i class="fas fa-signature"></i> Flechas:</label>
-                        <textarea id="mensajes" name="mensajes" placeholder="Ej: Mensaje1&#10;Mensaje2" required rows="5"></textarea>
+                        <textarea id="mensajes" name="mensajes" placeholder="Ej: Mensaje1
+Mensaje2" required rows="5"></textarea>
                         <small>Recuerda insertarlos con salto de lineas porfavor</small>
                     </div>
-                
+
                     <div class="form-actions">
                         <button type="button" class="back-button" data-action="show-choice">
                             <i class="fas fa-arrow-left"></i> Volver
@@ -64,7 +67,11 @@
     </section>
 
     <!-- Sección para el Formulario "Crear tu Blanco" (Inicialmente Oculta) -->
+    <!-- Aunque esta sección existe en el HTML, el script modificado ahora redirige en lugar de mostrarla -->
+    <!-- Puedes considerar si quieres eliminar esta sección y su script de envío de formulario si la página /targets ahora maneja eso completamente -->
     <section id="blanco-form-section" class="form-section">
+         <!-- El contenido de este formulario ya no se mostrará en esta página al hacer clic en la tarjeta "Crear tu Blanco" -->
+         <!-- Si necesitas este formulario, deberá estar en la página /targets -->
         <div class="form-container">
             <div class="form-card">
                 <h2><i class="fas fa-bullseye icon-title"></i> Registrar Nuevo Nicho (Blanco)</h2>
@@ -112,15 +119,16 @@
         </div>
     </section>
 
-    <!-- Script para mostrar/ocultar secciones -->
+    <!-- Script para mostrar/ocultar secciones (MODIFICADO) -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const choiceContainer = document.getElementById('choice-container');
             const choiceCards = document.querySelectorAll('.choice-card');
-            const formSections = document.querySelectorAll('.form-section');
-            const backButtons = document.querySelectorAll('.back-button[data-action="show-choice"]');
+            const formSections = document.querySelectorAll('.form-section'); // Still needed for the other form
+            const backButtons = document.querySelectorAll('.back-button[data-action="show-choice"]'); // Still needed for the other form
 
             // --- Función para mostrar una sección y ocultar las demás ---
+            // This function is now only used for cards *other* than "Crear tu Blanco"
             function showSection(targetId) {
                 if (choiceContainer) choiceContainer.style.display = 'none';
                 formSections.forEach(section => section.classList.remove('active'));
@@ -134,6 +142,7 @@
             }
 
             // --- Función para mostrar la pantalla de elección ---
+            // Still needed for "Volver" button
             function showChoiceScreen() {
                 formSections.forEach(section => section.classList.remove('active'));
                 if (choiceContainer) choiceContainer.style.display = 'flex';
@@ -142,37 +151,55 @@
             // --- Event Listeners para las Tarjetas de Elección ---
             choiceCards.forEach(card => {
                 card.addEventListener('click', () => {
-                    const targetId = card.dataset.target;
-                    if (targetId) showSection(targetId);
+                    const targetId = card.dataset.target; // Obtiene 'hunter-form-section' o 'blanco-form-section'
+
+                    // Verifica si la tarjeta es la de "Crear tu Blanco"
+                    if (targetId === 'blanco-form-section') {
+                        // Si es la de "Crear tu Blanco", redirige a /targets
+                        window.location.href = '/targets'; // <--- Redirección aquí
+                    } else if (targetId) {
+                        // Si es otra tarjeta (como "Crea tu Flecha"), muestra la sección correspondiente
+                        showSection(targetId);
+                    }
+                    // Si targetId es nulo o vacío, no hace nada (no debería pasar con el HTML actual)
                 });
             });
 
             // --- Event Listeners para los Botones "Volver" ---
+            // Estos botones solo aparecen en el formulario "Crear Flecha" ahora, y vuelven a la pantalla de elección
             backButtons.forEach(button => {
                 button.addEventListener('click', showChoiceScreen);
             });
 
             // --- Asegurar estado inicial correcto ---
             const isActiveSection = document.querySelector('.form-section.active');
-            if (!isActiveSection && choiceContainer) showChoiceScreen();
+            // Mostrar la pantalla de elección si no hay ninguna sección activa
+            if (!isActiveSection && choiceContainer) {
+                showChoiceScreen();
+            }
+            // NOTA: Si llegaste a esta página desde una redirección, la bandera de sessionStorage
+            // para nichoJustSubmitted podría aún estar activa y mostrar una alerta aquí.
+            // Esto es un efecto secundario de la redirección en lugar de mostrar el formulario.
+            // Considera si necesitas esta alerta o si debería manejarse en la página /targets.
         });
     </script>
 
     <!-- Script para manejar el formulario de Flechas (Hunter) -->
+    <!-- Este script no se modifica -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const hunterForm = document.getElementById('hunter-form');
-            
+
             if (hunterForm) {
                 hunterForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
-                    
+
                     const textarea = document.getElementById('mensajes');
                     const cuentas = textarea.value
                         .split('\n')
                         .map(cuenta => cuenta.trim())
                         .filter(cuenta => cuenta.length > 0);
-                    
+
                     try {
                         const response = await fetch('/api/flecha/mensajes', {
                             method: 'PUT',
@@ -181,9 +208,9 @@
                             },
                             body: JSON.stringify({ mensajes: cuentas })
                         });
-                        
+
                         const result = await response.json();
-                        
+
                         if (response.ok) {
                             alert('Mensajes guardados correctamente!');
                             textarea.value = '';
@@ -200,27 +227,40 @@
     </script>
 
     <!-- Script para manejar el formulario de Blancos (Nichos) -->
+    <!-- Este script NO SE EJECUTARÁ al hacer clic en la tarjeta "Crear tu Blanco" en esta página -->
+    <!-- porque la tarjeta ahora redirige. Si el formulario para crear un nicho existe en /targets, -->
+    <!-- DEBERÍAS MOVER ESTE SCRIPT COMPLETO a la página /targets. -->
+    <!-- Si lo dejas aquí, solo se ejecutaría si de alguna forma se muestra la sección blanco-form-section en esta página, -->
+    <!-- lo cual no ocurrirá con la modificación hecha. -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const nichoForm = document.getElementById('nicho-form');
-            
+
+            // Este listener solo se adjuntará si el formulario #nicho-form existe
+            // y si la página actual es la que lo contiene Y la sección está visible.
+            // Con la modificación, la sección blanco-form-section no se muestra,
+            // por lo que este script no se ejecutará en la práctica para el flujo de la tarjeta.
+            // Es altamente recomendable MOVER este script a la página /targets
+            // si ahí es donde se va a registrar el nicho.
+
             if (nichoForm) {
+                 console.log("Script nicho-form cargado. Si ves esto y esperas ser redirigido por la tarjeta, algo va mal. El script debería estar en /targets.");
                 nichoForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
-                    
+
                     // Obtener datos del formulario
                     const ubicacion = document.getElementById('ubicacion').value;
                     const tipo_personas = document.getElementById('tipo_personas').value;
                     const edad_min = document.getElementById('edad_min').value;
                     const edad_max = document.getElementById('edad_max').value;
                     const cuentasTextarea = document.getElementById('cuentas');
-                    
+
                     // Procesar cuentas
                     const cuentas = cuentasTextarea.value
                         .split('\n')
                         .map(cuenta => cuenta.trim())
                         .filter(cuenta => cuenta.length > 0);
-                    
+
                     // Validación básica
                     if (!ubicacion || !tipo_personas || cuentas.length === 0) {
                         return alert('Error: Ubicación, intereses y cuentas son obligatorios');
@@ -235,14 +275,16 @@
                             },
                             body: JSON.stringify({ cuentas })
                         });
-                        
+
                         const cuentasResult = await cuentasResponse.json();
-                        
+
                         if (!cuentasResponse.ok) {
                             throw new Error(cuentasResult.error || 'Error al guardar cuentas');
                         }
 
                         // Luego guardamos los metadatos del nicho
+                        // NOTA: La URL '/nicho' aquí puede necesitar ajuste si el endpoint
+                        // para guardar metadatos está en otro lugar, quizás en la página /targets.
                         const nichoResponse = await fetch('/nicho', {
                             method: 'POST',
                             headers: {
@@ -264,6 +306,8 @@
                             cuentasTextarea.value = '';
                             // Guardar bandera para posible recarga
                             sessionStorage.setItem('nichoJustSubmitted', 'true');
+                            // Después de guardar, quizás quieras redirigir a la lista de nichos o a otra página
+                            // window.location.href = '/lista-de-nichos'; // Ejemplo
                         } else {
                             const errorResult = await nichoResponse.json();
                             throw new Error(errorResult.error || 'Error al guardar el nicho');
@@ -276,6 +320,7 @@
             }
 
             // Manejar la bandera de envío exitoso
+            // Si este script se mueve a /targets, esta parte también debería ir allí.
             const formSubmittedFlag = sessionStorage.getItem('nichoJustSubmitted');
             if (formSubmittedFlag === 'true') {
                 alert('¡Nicho registrado correctamente!');

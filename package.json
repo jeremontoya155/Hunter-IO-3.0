@@ -17,7 +17,7 @@
     "express-session": "^1.18.1",
     "instagram-private-api": "^1.46.1",
     "litepicker": "^2.0.12",
-    "mongodb": "^6.13.1",
+    "mongodb": "^6.16.0",
     "multer": "^1.4.5-lts.1",
     "pg": "^8.13.3"
   }
