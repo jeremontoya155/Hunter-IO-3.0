@@ -18,6 +18,7 @@ html, body {
   padding-left: 75px; /* Ejemplo si la navbar mide 75px */
   max-width: 1600px; /* Máximo ancho para el contenido */
   margin: 0 auto; /* Centrar si es más estrecho */
+  margin-left:3.5rem;
 }
 
 /* --- Header --- */

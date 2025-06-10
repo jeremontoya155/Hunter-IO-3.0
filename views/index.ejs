@@ -6,111 +6,337 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/static/css/index.css">
-    <link rel="stylesheet" href="/static/css/scrollbar.css">
-    <link rel="stylesheet" href="/static/css/navbar.css">
+    <link rel="stylesheet" href="/static/css/index.css" />
+    <link rel="stylesheet" href="/static/css/scrollbar.css" />
+    <link rel="stylesheet" href="/static/css/navbar.css" />
     <script src="/static/js/index.js"></script>
     <script src="/static/js/navbar.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <%- include('partials/navbar') %>
-    <div 
-    class="login-container" 
-    data-tooltip-target="tooltip-login" 
-    data-tooltip-placement="right"
-  >
-    <div class="avatar-wrapper">
-      <div class="avatar"></div>
-    </div>
-  
-    <% if (messages && messages.length > 0) { %>
-      <% messages.forEach(function(item) { %>
-        <div class="alert alert-<%= item.category %>"><%= item.message %></div>
-      <% }); %>
-    <% } %>
-  
-    <!-- Formulario para agregar una cuenta de Instagram -->
-    <form id="addAccountForm">
-      <div class="form-group">
-        <input
-          type="text"
-          name="insta_username"
-          placeholder="Instagram Username"
-          required
-        />
-        <i class="fas fa-user"></i>
-      </div>
-  
-      <div class="form-group">
-        <input
-          type="password"
-          name="insta_password"
-          placeholder="Instagram Password"
-          required
-        />
-        <i class="fas fa-lock"></i>
-      </div>
-  
-      <button type="submit" id="submitBtn">Agregar Cuenta</button>
-    </form>
-  </div>
-  
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Gestión de Cuentas Objetivo</h5>
-          <p class="card-text">Carga o actualiza la lista de cuentas de Instagram a las que dirigir tus acciones.</p>
-          <a href="/targets/upload" class="btn btn-primary">Gestionar Cuentas Objetivo</a>
+
+    <!-- Contenedor principal del login -->
+    <div class="main-content">
+      <div
+        class="login-container card"
+        data-tooltip-target="tooltip-login"
+        data-tooltip-placement="right"
+      >
+        <div class="avatar-wrapper">
+          <div class="avatar"></div>
         </div>
+
+        <% if (messages && messages.length > 0) { %> <%
+        messages.forEach(function(item) { %>
+        <div class="alert alert-<%= item.category %>">
+          <i class="fas fa-info-circle" style="margin-right: 8px"></i>
+          <%= item.message %>
+        </div>
+        <% }); %> <% } %>
+
+        <!-- Formulario para agregar una cuenta de Instagram -->
+        <form id="addAccountForm" class="addAccountForm">
+          <div class="form-group">
+            <input
+              type="text"
+              name="insta_username"
+              placeholder="Instagram Username"
+              required
+            />
+            <i class="fab fa-instagram"></i>
+          </div>
+
+          <div class="form-group">
+            <input
+              type="password"
+              name="insta_password"
+              placeholder="Instagram Password"
+              required
+            />
+            <i class="fas fa-lock"></i>
+          </div>
+
+          <button type="submit" id="submitBtn" class="btn btn-primary">
+            <span>Agregar Cuenta</span>
+          </button>
+        </form>
       </div>
 
-  <!-- Tooltip content -->
-  <div id="tooltip-login" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-    Cargue aqui sus usarios para ver sus avances!
-    <div class="tooltip-arrow" data-popper-arrow></div>
-  </div>
+      <!-- Card para gestión de cuentas objetivo -->
+      <div class="card">
+        <div class="card-body">
+          <div class="card-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <h5 class="card-title">Gestión de Cuentas Objetivo</h5>
+          <p class="card-text">
+            Carga o actualiza la lista de cuentas de Instagram a las que dirigir
+            tus acciones de manera automática y eficiente.
+          </p>
+          <a href="/targets" class="btn btn-primary">
+            <i class="fas fa-upload" style="margin-right: 8px"></i>
+            Gestionar Cuentas Objetivo
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tooltip content -->
+    <div
+      id="tooltip-login"
+      role="tooltip"
+      class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
+    >
+      <i class="fas fa-rocket" style="margin-right: 6px"></i>
+      ¡Carga aquí tus usuarios para ver sus avances!
+      <div class="tooltip-arrow" data-popper-arrow></div>
+    </div>
+
+    <!-- Elementos decorativos adicionales -->
+    <div class="floating-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+    </div>
 
     <script>
       // Se intercepta el submit para enviar una petición PUT vía fetch
       const addAccountForm = document.getElementById('addAccountForm');
+      const submitBtn = document.getElementById('submitBtn');
+
       addAccountForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        // Agregar estado de carga
+        submitBtn.classList.add('loading');
+        submitBtn.querySelector('span').textContent = 'Procesando...';
+
         const formData = new FormData(addAccountForm);
         const data = {
           insta_username: formData.get('insta_username'),
-          insta_password: formData.get('insta_password')
+          insta_password: formData.get('insta_password'),
         };
 
         try {
           const response = await fetch('/account', {
             method: 'PUT',
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
           });
+
           if (response.ok) {
             const result = await response.json();
-            alert('Cuenta actualizada correctamente');
-            // Aquí puedes actualizar el DOM o redirigir, según necesites
+
+            // Mostrar mensaje de éxito con animación
+            showNotification('Cuenta actualizada correctamente', 'success');
+
+            // Limpiar formulario
+            addAccountForm.reset();
           } else {
-            alert('Error al actualizar la cuenta');
+            showNotification('Error al actualizar la cuenta', 'error');
           }
         } catch (error) {
           console.error('Error en la solicitud:', error);
-          alert('Error en la solicitud');
+          showNotification('Error en la solicitud', 'error');
+        } finally {
+          // Restaurar estado del botón
+          submitBtn.classList.remove('loading');
+          submitBtn.querySelector('span').textContent = 'Agregar Cuenta';
         }
       });
 
-       // Inicializar tooltips de Flowbite
-       const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tooltip-target]'));
+      // Función para mostrar notificaciones
+      function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `
+          <i class="fas ${
+            type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'
+          }"></i>
+          <span>${message}</span>
+        `;
+
+        document.body.appendChild(notification);
+
+        // Mostrar notificación
+        setTimeout(() => notification.classList.add('show'), 100);
+
+        // Ocultar después de 3 segundos
+        setTimeout(() => {
+          notification.classList.remove('show');
+          setTimeout(() => document.body.removeChild(notification), 300);
+        }, 3000);
+      }
+
+      // Inicializar tooltips de Flowbite
+      const tooltipTriggerList = [].slice.call(
+        document.querySelectorAll('[data-tooltip-target]')
+      );
       tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new Tooltip(tooltipTriggerEl, {
-          placement: 'top', // Posición del tooltip
-          trigger: 'hover', // Mostrar al pasar el mouse
+          placement: 'top',
+          trigger: 'hover',
+        });
+      });
+
+      // Animación de entrada para los elementos
+      window.addEventListener('load', () => {
+        const elements = document.querySelectorAll('.form-group, .card');
+        elements.forEach((el, index) => {
+          setTimeout(() => {
+            el.style.opacity = '1';
+            el.style.transform = 'translateX(0)';
+          }, index * 100);
         });
       });
     </script>
-   
+
+    <style>
+      /* Estilos adicionales para notificaciones */
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 16px 20px;
+        border-radius: 12px;
+        color: white;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1000;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        backdrop-filter: blur(10px);
+      }
+
+      .notification.show {
+        transform: translateX(0);
+      }
+
+      .notification-success {
+        background: rgba(34, 197, 94, 0.9);
+        border: 1px solid rgba(34, 197, 94, 0.3);
+      }
+
+      .notification-error {
+        background: rgba(239, 68, 68, 0.9);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+      }
+
+      /* Contenedor principal */
+      .main-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+        width: 100%;
+        max-width: 600px;
+        z-index: 1;
+      }
+
+      /* Icono de la card */
+      .card-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+      }
+
+      .card-icon i {
+        font-size: 24px;
+        color: white;
+      }
+
+      /* Formas flotantes decorativas */
+      .floating-shapes {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .shape {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+        animation: floatShape 20s infinite linear;
+      }
+
+      .shape-1 {
+        width: 40px;
+        height: 40px;
+        top: 20%;
+        left: 10%;
+        animation-delay: 0s;
+      }
+
+      .shape-2 {
+        width: 60px;
+        height: 60px;
+        top: 60%;
+        right: 15%;
+        animation-delay: -5s;
+      }
+
+      .shape-3 {
+        width: 30px;
+        height: 30px;
+        bottom: 30%;
+        left: 80%;
+        animation-delay: -10s;
+      }
+
+      @keyframes floatShape {
+        0% {
+          transform: translateY(0px) rotate(0deg);
+          opacity: 0.3;
+        }
+        50% {
+          transform: translateY(-50px) rotate(180deg);
+          opacity: 0.6;
+        }
+        100% {
+          transform: translateY(0px) rotate(360deg);
+          opacity: 0.3;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .main-content {
+          max-width: 90%;
+        }
+
+        .notification {
+          top: 10px;
+          right: 10px;
+          left: 10px;
+          transform: translateY(-100%);
+        }
+
+        .notification.show {
+          transform: translateY(0);
+        }
+      }
+    </style>
   </body>
 </html>

@@ -6,7 +6,7 @@
   left: 0;
   background-color: #252525;
   overflow-x: hidden;
-  overflow-y: auto; /* Permitir desplazamiento vertical */
+  overflow-y: hidden; /* Permitir desplazamiento vertical */
   transition: 0.5s;
   padding-top: 1em;
   z-index: 1;
@@ -219,7 +219,7 @@
   border-radius: 4px;
   font-size: 14px;
   z-index: 100;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   animation: fadeIn 0.3s ease;
 }
 
@@ -236,10 +236,13 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
-
 
 .sidebar.collapsed .nav-links span {
   display: none;
@@ -259,7 +262,7 @@
   border-radius: 4px;
   font-size: 14px;
   z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
   animation: fadeIn 0.2s ease-out;
 }
 

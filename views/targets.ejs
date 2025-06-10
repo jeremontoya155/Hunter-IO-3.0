@@ -1,65 +1,130 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cargar Cuentas Objetivo - Bot IG</title>
-    <link rel="stylesheet" href="/static/css/style.css"> <!-- Adjust if your CSS path is different -->
-    <!-- Add any necessary Bootstrap or other CSS links -->
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Objetivos - Hunter IO</title>
+    <link rel="stylesheet" href="/static/css/navbar.css" />
+    <link rel="stylesheet" href="/static/css/scrollbar.css" />
+    <link rel="stylesheet" href="/static/css/targets.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <%- include('partials/navbar') %>
 
+    <div class="targets-page">
+      <div class="targets-container">
+        <div class="targets-card">
+          <div class="targets-header">
+            <h4 class="targets-title">
+              <i class="fas fa-bullseye"></i>
+              Cuentas Objetivo
+            </h4>
+          </div>
 
-    <main class="container mt-4">
-        <h1>Cargar Cuentas Objetivo</h1>
-
-        <% if (success) { %>
-            <div class="alert alert-success"><%= success %></div>
-        <% } %>
-        <% if (error) { %>
-            <div class="alert alert-danger"><%= error %></div>
-        <% } %>
-
-        <p>Aquí puedes especificar una cuenta base de Instagram y una lista de cuentas objetivo a las que el bot podría interactuar en futuras operaciones.</p>
-
-        <form action="/targets" method="POST">
-            <div class="mb-3">
-                <label for="base_account" class="form-label">Cuenta Base de Instagram (Tu cuenta principal o la del cliente):</label>
-                <input type="text" class="form-control" id="base_account" name="base_account" required value="<%= currentList ? currentList.baseAccount : '' %>">
-                <div class="form-text">Introduce el nombre de usuario exacto.</div>
+          <div class="targets-body">
+            <% if (success) { %>
+            <div class="alert alert-success">
+              <i class="fas fa-check-circle me-2"></i><%= success %>
             </div>
-
-            <div class="mb-3">
-                <label for="target_accounts_list" class="form-label">Lista de Cuentas Objetivo de Instagram:</label>
-                <textarea class="form-control" id="target_accounts_list" name="target_accounts_list" rows="10" required><%= currentList && currentList.targetAccounts ? currentList.targetAccounts.join('\n') : '' %></textarea>
-                <div class="form-text">Introduce un nombre de usuario por línea o sepáralos por comas.</div>
+            <% } %> <% if (error) { %>
+            <div class="alert alert-danger">
+              <i class="fas fa-exclamation-circle me-2"></i><%= error %>
             </div>
+            <% } %>
 
-            <button type="submit" class="btn btn-primary">Guardar Lista</button>
-        </form>
+            <form action="/targets" method="POST" class="targets-form">
+              <div class="form-group">
+                <label for="base_account" class="form-label">
+                  <i class="fas fa-user-shield me-2"></i>Cuenta Base
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="base_account"
+                  name="base_account"
+                  required
+                  value="<%= currentList ? currentList.baseAccount : '' %>"
+                  placeholder="Ej: mi_usuario_base"
+                />
+                <small class="form-text">
+                  Cuenta principal desde donde interactuará el bot.
+                </small>
+              </div>
 
-        <% if (currentList) { %>
-            <h2 class="mt-4">Lista Actual</h2>
-            <p>Cuentas objetivo guardadas actualmente para tu usuario:</p>
-            <ul>
-                <li><strong>Cuenta Base:</strong> <%= currentList.baseAccount %></li>
-                <li><strong>Total Cuentas Objetivo:</strong> <%= currentList.targetAccounts.length %></li>
-                <li><strong>Actualizado en:</strong> <%= currentList.updatedAt.toLocaleString() %></li>
-            </ul>
-            <!-- Optional: Display the list of target accounts -->
-            <!--
-            <p>Lista:</p>
-            <ul>
-                <% currentList.targetAccounts.forEach(account => { %>
-                    <li><%= account %></li>
-                <% }) %>
-            </ul>
-            -->
-        <% } %>
+              <div class="form-group">
+                <label for="target_accounts_list" class="form-label">
+                  <i class="fas fa-users me-2"></i>Cuentas Objetivo
+                </label>
+                <textarea
+                  class="form-control"
+                  id="target_accounts_list"
+                  name="target_accounts_list"
+                  rows="8"
+                  required
+                  placeholder="usuario1&#10;usuario2&#10;usuario3"
+                >
+<%= currentList && currentList.targetAccounts ? currentList.targetAccounts.join('\n') : '' %></textarea
+                >
+                <small class="form-text">
+                  Una cuenta por línea o separadas por comas.
+                </small>
+              </div>
 
-    </main>
+              <button type="submit" class="btn-primary">
+                <i class="fas fa-save"></i>
+                Guardar Lista
+              </button>
+            </form>
 
- 
-    <!-- Add any necessary Bootstrap or other JS links -->
-</body>
+            <% if (currentList) { %>
+            <hr class="divider" />
+
+            <div class="summary-section">
+              <h5 class="summary-title">Resumen Actual</h5>
+
+              <ul class="summary-list">
+                <li class="summary-item">
+                  <strong>Cuenta Base:</strong>
+                  <span class="summary-item-content"
+                    ><%= currentList.baseAccount %></span
+                  >
+                </li>
+                <li class="summary-item">
+                  <strong>Total Objetivos:</strong>
+                  <span class="summary-item-content"
+                    ><%= currentList.targetAccounts.length %></span
+                  >
+                </li>
+                <li class="summary-item">
+                  <strong>Última actualización:</strong>
+                  <span class="summary-item-content"
+                    ><%= currentList.updatedAt.toLocaleString() %></span
+                  >
+                </li>
+              </ul>
+            </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Agregar funcionalidad adicional si es necesaria
+      document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('.targets-form');
+        const submitBtn = document.querySelector('.btn-primary');
+
+        form.addEventListener('submit', function () {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML =
+            '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+        });
+      });
+    </script>
+  </body>
 </html>
