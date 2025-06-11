@@ -10,11 +10,7 @@ body {
   color: #e0e0e0; /* Texto claro para contraste */
   margin: 0;
   padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
-  padding-top: 80px; /* Espacio para la navbar si es fija */
   box-sizing: border-box;
 }
 
@@ -23,7 +19,6 @@ body {
   width: 100%;
   display: flex;
   justify-content: center;
-  padding: 40px 20px; /* Espacio arriba/abajo y a los lados */
 }
 
 /* Tarjeta del formulario */

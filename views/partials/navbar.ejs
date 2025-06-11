@@ -1,15 +1,19 @@
-<div class="sidebar collapsed" id="mySidebar">
-  <span class="togglebtn" onclick="toggleNav()">
+<div class="nav-sidebar nav-collapsed" id="mySidebar">
+  <span class="nav-togglebtn" onclick="toggleNav()">
     <i class="fas fa-bars" id="toggle"></i>
   </span>
 
-  <div class="sidebar-container">
-    <div class="logo-container">
-      <img src="/static/images/Logo.png" alt="Logo" class="logo-small" />
-      <img src="/static/images/Hunter.png" alt="Hunter" class="logo-large" />
+  <div class="nav-sidebar-container">
+    <div class="nav-logo-container">
+      <img src="/static/images/Logo.png" alt="Logo" class="nav-logo-small" />
+      <img
+        src="/static/images/Hunter.png"
+        alt="Hunter"
+        class="nav-logo-large"
+      />
     </div>
 
-    <div class="menu">
+    <div class="nav-menu">
       <div class="nav-links">
         <a href="/onboarding" class="nav-link" data-tooltip="On Boarding">
           <i class="fas fa-home"></i>
@@ -23,150 +27,21 @@
           <i class="fas fa-user-shield"></i>
           <span>Crea tu Hunter</span>
         </a>
-        <a href="/index" class="nav-link" data-tooltip="Agregar Cuenta">
+        <a href="/index" class="nav-link" data-tooltip="Admin">
           <i class="fas fa-user-cog"></i>
           <span>Admin</span>
-
         </a>
-        <!-- <a href="/instagram" class="nav-link" data-tooltip="Agregar Cuenta">
-          <i class="fas fa-user-cog"></i>
-          <span>Saliente</span>
-        </a> -->
-        <!-- <a href="/campaigns" class="nav-link" data-tooltip="Agregar Cuenta">
-          <i class="fas fa-bullhorn"></i>
-          <span>Campañas</span>
-        </a> -->
-        <!-- <a href="/index" class="nav-link" data-tooltip="Agregar Cuenta">
-          <i class="fas fa-satellite-dish"></i>
-          <span>Canales</span>
-        </a>
-        <a href="/index" class="nav-link" data-tooltip="Agregar Cuenta">
-          <i class="fas fa-robot"></i>
-          <span>Automatizaciones</span>
-        </a> -->
-        <!-- <a href="/index" class="nav-link" data-tooltip="Agregar Cuenta">
-          <i class="fas fa-network-wired"></i>
-          <span>Multicanal</span>
-        </a> -->
-        <!-- <a href="/index" class="nav-link" data-tooltip="Agregar Cuenta">
-          <i class="fas fa-address-book"></i>
-          <span>CRM</span>
-        </a> -->
-        <!-- Nicho -->
-        <!-- <a href="/nicho" class="nav-link" data-tooltip="Nicho">
-          <i class="fas fa-cogs"></i>
-          <span>Configuracion</span>
-        </a> -->
-
-        <a href="/logout" class="nav-link logout-link" data-tooltip="Logout (<%= user ? user.username : 'Usuario' %>)">
+        <a
+          href="/logout"
+          class="nav-link nav-logout-link"
+          data-tooltip="Logout (<%= user ? user.username : 'Usuario' %>)"
+        >
           <i class="fas fa-sign-out-alt"></i>
-          <span>Log ut - <%= user ? user.username : 'Usuario' %></span>
+          <span>Log out - <%= user ? user.username : 'Usuario' %></span>
         </a>
       </div>
     </div>
   </div>
 </div>
 
-<style>
-  /* Estilos para el sidebar colapsado */
-  .sidebar {
-    transition: width 0.3s ease;
-  }
-  
-  .sidebar.collapsed {
-    width: 60px;
-  }
-  
-  .sidebar.collapsed .logo-large,
-  .sidebar.collapsed .nav-links span {
-    display: none;
-  }
-  
-  /* Tooltips para items del menú */
-  .sidebar.collapsed .nav-link {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .sidebar.collapsed .nav-link:hover::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    left: 100%;
-    top: 50%;
-    transform: translateY(-50%);
-    margin-left: 15px;
-    white-space: nowrap;
-    background: #2c3e50;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 14px;
-    z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-    animation: fadeIn 0.2s ease-out;
-  }
-  
-  /* Flecha del tooltip */
-  .sidebar.collapsed .nav-link:hover::before {
-    content: '';
-    position: absolute;
-    left: 100%;
-    top: 50%;
-    transform: translateY(-50%);
-    border-right: 6px solid #2c3e50;
-    border-top: 6px solid transparent;
-    border-bottom: 6px solid transparent;
-    z-index: 1001;
-  }
-  
-  /* Animación para el tooltip */
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-50%) translateX(5px); }
-    to { opacity: 1; transform: translateY(-50%) translateX(0); }
-  }
-  
-  /* Asegurar que el sidebar esté por encima de otros elementos */
-  .sidebar {
-    z-index: 100;
-  }
-  
-  /* Estilo para el botón de logout */
-  .logout-link {
-    margin-top: auto;
-  }
-</style>
-
-<script>
-  function toggleNav() {
-    const sidebar = document.getElementById("mySidebar");
-    const toggle = document.getElementById("toggle");
-    
-    if (sidebar.classList.contains('collapsed')) {
-      // Abrir el menú lateral
-      sidebar.classList.remove('collapsed');
-      toggle.classList.remove('fa-bars');
-      toggle.classList.add('fa-times');
-    } else {
-      // Cerrar el menú lateral
-      sidebar.classList.add('collapsed');
-      toggle.classList.remove('fa-times');
-      toggle.classList.add('fa-bars');
-    }
-  }
-  console.log("Cambios")
-  
-  // Opcional: Mejorar comportamiento de los tooltips
-  document.addEventListener('DOMContentLoaded', function() {
-    const links = document.querySelectorAll('.nav-link');
-    links.forEach(link => {
-      link.addEventListener('mouseenter', function() {
-        this.style.zIndex = '1002'; // Asegura que el tooltip esté encima
-      });
-      link.addEventListener('mouseleave', function() {
-        this.style.zIndex = '';
-      });
-    });
-  });
-</script>
+<script src="/static/js/navbar.js"></script>

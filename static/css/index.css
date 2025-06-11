@@ -7,17 +7,23 @@
 
 body {
   min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   background: linear-gradient(135deg, #d9e9e0 0%, #a8d8c8 50%, #78c2ad 100%);
   background-attachment: fixed;
   width: 100%;
-  margin: 0 auto;
-  padding-left: 3.7rem;
+  margin: 0;
+  padding: 0 !important;
   position: relative;
+  overflow-x: hidden;
 }
-
+.main-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+  padding-top: 4em;
+}
 /* Elementos decorativos de fondo */
 body::before {
   content: '';
@@ -520,10 +526,14 @@ button.loading::after {
     padding-right: 1rem;
   }
 
+  .main-content {
+    padding-top: 2em;
+    max-width: 100% !important;
+  }
   .login-container {
     padding: 30px 20px;
     border-radius: 24px;
-    max-width: 95%;
+    width: 100%;
   }
 
   .avatar {

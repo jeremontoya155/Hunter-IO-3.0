@@ -1,4 +1,4 @@
-.sidebar {
+.nav-sidebar {
   height: 100%;
   width: 3.7rem;
   position: fixed;
@@ -12,14 +12,14 @@
   z-index: 1;
 }
 
-.sidebar-container {
+.nav-sidebar-container {
   display: flex;
   flex-direction: column;
   height: 100%;
   margin-top: 30px;
 }
 
-.logo-container {
+.nav-logo-container {
   padding: 0.5rem;
   min-height: 130px;
   display: flex;
@@ -27,25 +27,25 @@
   align-items: center;
 }
 
-.logo-small {
+.nav-logo-small {
   width: 2.5rem;
   height: 2.5rem;
 }
 
-.logo-large {
+.nav-logo-large {
   display: none;
   width: 160px;
   height: auto;
 }
 
-.togglebtn {
+.nav-togglebtn {
   position: absolute;
   border-top-left-radius: 0.3em;
   border-bottom-right-radius: 0.3em;
   border-bottom-left-radius: 0.3em;
   padding: 10px;
-  top: 10px;
-  right: 10px;
+  top: 15px;
+  right: 15px;
   width: 1em;
   height: 1em;
   background-color: #4caf91;
@@ -59,17 +59,17 @@
   justify-content: center;
 }
 
-.togglebtn:hover {
+.nav-togglebtn:hover {
   background-color: #4caf91;
   color: #fff;
   border: 1px solid #ffc552;
 }
 
-.togglebtn i {
+.nav-togglebtn i {
   font-size: 0.5em;
 }
 
-.menu {
+.nav-menu {
   margin-top: 3em;
 }
 
@@ -108,68 +108,68 @@
 }
 
 /* Estados del sidebar */
-.sidebar.collapsed {
+.nav-sidebar.nav-collapsed {
   width: 3.7rem;
 }
 
-.sidebar.collapsed .logo-small {
+.nav-sidebar.nav-collapsed .nav-logo-small {
   display: block;
 }
 
-.sidebar.collapsed .logo-large {
+.nav-sidebar.nav-collapsed .nav-logo-large {
   display: none;
 }
 
-.sidebar.collapsed .nav-links a i {
-  margin: 0;
-  text-align: center;
-  width: 95%;
+.nav-sidebar.nav-collapsed .nav-links a i {
+  margin: 0 !important;
+  text-align: center !important;
+  width: 95% !important;
 }
 
-.sidebar.collapsed .nav-links a span {
-  display: none;
+.nav-sidebar.nav-collapsed .nav-links a span {
+  display: none !important;
 }
 
-.sidebar.collapsed .togglebtn {
+.nav-sidebar.nav-collapsed .nav-togglebtn {
   border-top-right-radius: 0.3em;
   border-bottom-left-radius: 0;
 }
 
 /* Sidebar expandido */
-.sidebar:not(.collapsed) {
+.nav-sidebar:not(.nav-collapsed) {
   width: 17em;
   box-shadow: 0 0 15px rgba(0, 0, 0, 1);
   background: rgba(0, 0, 0, 0.5);
 }
 
-.sidebar:not(.collapsed) .logo-small {
+.nav-sidebar:not(.nav-collapsed) .nav-logo-small {
   display: none;
 }
 
-.sidebar:not(.collapsed) .logo-large {
+.nav-sidebar:not(.nav-collapsed) .nav-logo-large {
   display: block;
 }
 
-.sidebar:not(.collapsed) .nav-links a span {
+.nav-sidebar:not(.nav-collapsed) .nav-links a span {
   display: inline-block;
 }
 
 /* Estilos para el sidebar colapsado y los tooltips */
-.sidebar.collapsed {
+.nav-sidebar.nav-collapsed {
   width: 60px !important; /* Ancho cuando está colapsado */
   transition: width 0.3s ease;
 }
 
-.sidebar.collapsed .nav-links span {
+.nav-sidebar.nav-collapsed .nav-links span {
   display: none; /* Oculta los textos normalmente */
 }
 
-.sidebar.collapsed .nav-links a {
+.nav-sidebar.nav-collapsed .nav-links a {
   position: relative;
 }
 
 /* Tooltip que aparece al hacer hover */
-.sidebar.collapsed .nav-links a:hover::after {
+.nav-sidebar.nav-collapsed .nav-links a:hover::after {
   content: attr(data-tooltip);
   position: absolute;
   left: 100%;
@@ -187,7 +187,7 @@
 }
 
 /* Pequeño triángulo para el tooltip */
-.sidebar.collapsed .nav-links a:hover::before {
+.nav-sidebar.nav-collapsed .nav-links a:hover::before {
   content: '';
   position: absolute;
   left: 100%;
@@ -201,11 +201,11 @@
 }
 
 /* Tooltip para items del menú colapsado */
-.collapsed .nav-link {
+.nav-collapsed .nav-link {
   position: relative;
 }
 
-.collapsed .nav-link:hover::after {
+.nav-collapsed .nav-link:hover::after {
   content: attr(data-tooltip);
   position: absolute;
   left: 100%;
@@ -224,7 +224,7 @@
 }
 
 /* Pequeña flecha del tooltip */
-.collapsed .nav-link:hover::before {
+.nav-collapsed .nav-link:hover::before {
   content: '';
   position: absolute;
   left: 100%;
@@ -244,11 +244,11 @@
   }
 }
 
-.sidebar.collapsed .nav-links span {
+.nav-sidebar.nav-collapsed .nav-links span {
   display: none;
 }
 /* Muestra el contenido del atributo data-tooltip */
-.sidebar.collapsed .nav-link:hover::after {
+.nav-sidebar.nav-collapsed .nav-link:hover::after {
   content: attr(data-tooltip); /* <-- Clave aquí */
   position: absolute;
   left: 100%;
@@ -267,7 +267,7 @@
 }
 
 /* Crea la flecha del tooltip */
-.sidebar.collapsed .nav-link:hover::before {
+.nav-sidebar.nav-collapsed .nav-link:hover::before {
   content: '';
   position: absolute;
   left: 100%;
@@ -278,4 +278,68 @@
   border-bottom: 6px solid transparent;
   z-index: 1001;
   margin-left: 9px; /* Ajuste para que la flecha toque el tooltip (15px - 6px)*/
+}
+@media (max-width: 768px) {
+  .nav-sidebar {
+    position: relative;
+    width: 100% !important;
+    height: 50px;
+    padding-top: 5px;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .nav-sidebar-container {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    margin-top: 0;
+    /* padding: 0.5em 0.5em; */
+  }
+
+  .nav-logo-container {
+    flex-flow: row nowrap;
+    gap: 1rem;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .nav-togglebtn {
+    display: none !important;
+  }
+
+  .nav-menu {
+    margin-top: 0;
+    width: 100%;
+  }
+
+  .nav-links {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+
+  .nav-links a {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+
+  .nav-links a span {
+    display: inline !important;
+  }
+
+  .nav-sidebar.nav-collapsed {
+    width: 100% !important;
+  }
+
+  .nav-sidebar.nav-collapsed .nav-links span {
+    display: inline !important;
+  }
 }

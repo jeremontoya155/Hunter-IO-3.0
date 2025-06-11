@@ -503,6 +503,7 @@ html, body {
   .main-content {
       padding: 15px;
       padding-left: 15px; /* Anular padding navbar si se oculta */
+      margin-left:0;
   }
    .header-content h1 { font-size: 1.5rem; } /* 24px */
   .accounts-list { justify-content: center; } /* Centrar botones cuenta */
