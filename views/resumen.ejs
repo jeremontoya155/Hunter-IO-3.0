@@ -88,83 +88,136 @@
         </header>
 
         <div class="dashboard-grid">
-                  <!-- Fila 2: Resumen General (Ocupa todo el ancho) -->
-                  <section class="key-metrics-section">
-                    <h2 class="section-title"><i class="fas fa-tachometer-alt mr-2"></i><span data-translate-key="summaryTitle">General Summary</span></h2>
-                    <div class="metrics-container">
-                       <%
-                           let totalMensajes = parseInt(total_mensajes_enviados) || 0;
-                           let totalLikesRecibidos = parseInt(total_likes) || 0;
-                           let likeRate = totalMensajes > 0 ? (totalLikesRecibidos / totalMensajes) * 100 : 0;
-                           let likeRateFormatted = likeRate.toFixed(1) + '%';
-                           let efectividadClass = '';
-                           if (likeRate < 10) { efectividadClass = 'alert-low'; }
-                           else if (likeRate < 20) { efectividadClass = 'alert-medium'; }
-                           else if (likeRate < 30) { efectividadClass = 'alert-good'; }
-                           else { efectividadClass = 'alert-excellent'; }
-                       %>
-                       <div class="metric-card">
-                           <h3 class="metric-title" data-translate-key="messagesSent">Messages Sent</h3>
-                           <p class="metric-value"><%= totalMensajes %></p>
-                           <i class="fas fa-paper-plane metric-icon"></i>
-                       </div>
-                        <div class="metric-card">
-                           <h3 class="metric-title" data-translate-key="likesReceived">"Likes" Received</h3>
-                           <p class="metric-value"><%= totalLikesRecibidos %></p>
-                            <i class="fas fa-thumbs-up metric-icon"></i>
-                       </div>
-                       <div class="metric-card <%= efectividadClass %>">
-                           <h3 class="metric-title" data-translate-key="likeRateProxy">Like Rate (Proxy)</h3>
-                           <p class="metric-value"><%= likeRateFormatted %></p>
-                           <i class="fas fa-chart-line metric-icon"></i>
-                            <span class="metric-note" data-translate-key="likeRateNote">Based on Likes / Messages Sent</span>
-                       </div>
-                        <div class="metric-card metric-card-small">
-                            <h3 class="metric-title-small" data-translate-key="lastMessageSimple">Last Message</h3>
-                            <!-- Mostrar fecha/hora completa aquí, ya que es un resumen -->
-                            <p class="metric-value-small"><%= fechaUltimoMensaje %></p>
-                            <p class="metric-detail-small"><span data-translate-key="toRecipient">To</span>: <%= destinatarioUltimo %></p>
-                        </div>
-                    </div>
-               </section>
-
-               <section class="filter-section card">
-                <h2 class="card-title"><i class="fas fa-filter mr-2"></i><span data-translate-key="filtersTitle">Filters</span></h2>
-                <div class="filter-controls">
-                    <div class="filter-control-group">
-                        <label for="accountSelector" data-translate-key="accountLabel">Account:</label>
-                        <select id="accountSelector" name="account">
-                            <option value="" <%= !selectedAccount ? 'selected' : '' %> data-translate-key="allAccountsOption">All Accounts</option>
-                            <% if (userAccounts && userAccounts.length > 0) { %>
-                                <% userAccounts.forEach(function(ac) { %>
-                                    <option value="<%= ac.insta_username %>" <%= selectedAccount === ac.insta_username ? 'selected' : '' %>>
-                                        <%= ac.insta_username %>
-                                    </option>
-                                <% }); %>
-                           <% } %>
-                        </select>
-                    </div>
-                    <div class="filter-control-group">
-                        <label for="fromDate" data-translate-key="fromLabel">From:</label>
-                        <input type="date" id="fromDate" name="fromDate" value="<%= fromDate %>">
-                    </div>
-                    <div class="filter-control-group">
-                        <label for="toDate" data-translate-key="toLabel">To:</label>
-                        <input type="date" id="toDate" name="toDate" value="<%= toDate %>">
-                    </div>
-                    <button id="btnFiltrar" class="filter-button">
-                        <i class="fas fa-search mr-1"></i> <span data-translate-key="filterButton">Filter</span>
-                    </button>
+            <!-- Fila 2: Resumen General (Ocupa todo el ancho) -->
+            <section class="key-metrics-section">
+            <h2 class="section-title"><i class="fas fa-tachometer-alt mr-2"></i><span data-translate-key="summaryTitle">General Summary</span></h2>
+            <div class="metrics-container">
+                <%
+                    let totalMensajes = parseInt(total_mensajes_enviados) || 0;
+                    let totalLikesRecibidos = parseInt(total_likes) || 0;
+                    let likeRate = totalMensajes > 0 ? (totalLikesRecibidos / totalMensajes) * 100 : 0;
+                    let likeRateFormatted = likeRate.toFixed(1) + '%';
+                    let efectividadClass = '';
+                    if (likeRate < 10) { efectividadClass = 'alert-low'; }
+                    else if (likeRate < 20) { efectividadClass = 'alert-medium'; }
+                    else if (likeRate < 30) { efectividadClass = 'alert-good'; }
+                    else { efectividadClass = 'alert-excellent'; }
+                %>
+                <div class="metric-card">
+                    <h3 class="metric-title" data-translate-key="messagesSent">Messages Sent</h3>
+                    <p class="metric-value"><%= totalMensajes %></p>
+                    <i class="fas fa-paper-plane metric-icon"></i>
                 </div>
-           </section>
-     <!-- Fila 3: Gráfico (Ocupa todo el ancho) -->
-     <section class="chart-section card">
-        <h2 class="card-title"><i class="fas fa-chart-line mr-2"></i><span data-translate-key="activityChartTitle">Activity per Day</span></h2>
-        <div class="chart-container">
-             <canvas id="graficoMensajes"></canvas>
-             <!-- Placeholder text will be managed by JS -->
-        </div>
-    </section>
+                <div class="metric-card">
+                    <h3 class="metric-title" data-translate-key="likesReceived">"Likes" Received</h3>
+                    <p class="metric-value"><%= totalLikesRecibidos %></p>
+                    <i class="fas fa-thumbs-up metric-icon"></i>
+                </div>
+                <div class="metric-card <%= efectividadClass %>">
+                    <h3 class="metric-title" data-translate-key="likeRateProxy">Like Rate (Proxy)</h3>
+                    <p class="metric-value"><%= likeRateFormatted %></p>
+                    <i class="fas fa-chart-line metric-icon"></i>
+                    <span class="metric-note" data-translate-key="likeRateNote">Based on Likes / Messages Sent</span>
+                </div>
+                <div class="metric-card metric-card-small">
+                    <h3 class="metric-title-small" data-translate-key="lastMessageSimple">Last Message</h3>
+                    <!-- Mostrar fecha/hora completa aquí, ya que es un resumen -->
+                    <p class="metric-value-small"><%= fechaUltimoMensaje %></p>
+                    <p class="metric-detail-small"><span data-translate-key="toRecipient">To</span>: <%= destinatarioUltimo %></p>
+                </div>
+            </div>
+        </section>
+
+        <section class="filter-section card">
+            <div class="titleSection">
+                <h2 class="card-title"><i class="fas fa-filter mr-2"></i><span data-translate-key="filtersTitle">Filters</span></h2>
+            </div>
+            <div class="filter-controls">
+                <div class="filter-control-group">
+                    <label for="accountSelector" data-translate-key="accountLabel">Account:</label>
+                    <select id="accountSelector" name="account">
+                        <option value="" <%= !selectedAccount ? 'selected' : '' %> data-translate-key="allAccountsOption">All Accounts</option>
+                        <% if (userAccounts && userAccounts.length > 0) { %>
+                            <% userAccounts.forEach(function(ac) { %>
+                                <option value="<%= ac.insta_username %>" <%= selectedAccount === ac.insta_username ? 'selected' : '' %>>
+                                    <%= ac.insta_username %>
+                                </option>
+                            <% }); %>
+                        <% } %>
+                    </select>
+                </div>
+                <div class="filter-control-group">
+                    <label for="fromDate" data-translate-key="fromLabel">From:</label>
+                    <input type="date" id="fromDate" name="fromDate" value="<%= fromDate %>">
+                </div>
+                <div class="filter-control-group">
+                    <label for="toDate" data-translate-key="toLabel">To:</label>
+                    <input type="date" id="toDate" name="toDate" value="<%= toDate %>">
+                </div>
+                <button id="btnFiltrar" class="filter-button">
+                    <i class="fas fa-search mr-1"></i> <span data-translate-key="filterButton">Filter</span>
+                </button>
+            </div>
+        </section>
+        <section class="robot-control-panel card ">
+            <div class="rpanel-float">
+
+                <div class="rpanel-visualizer">
+                    <div id="orbit1" class="orbit-layer layer1">
+                        <div class="orbit-dot top pulse"></div>
+                    </div>
+                    <div id="orbit2" class="orbit-layer layer2">
+                        <div class="orbit-dot bottom"></div>
+                    </div>
+                    <div class="core-circle">⚡</div>
+                    </div>
+
+            </div>
+            <div class="rpanel-header">
+                <div class="rpanel-status">
+                <div id="rpanel-circle" class="status-circle inactive"></div>
+                <span id="rpanel-status-text" class="status-text inactive">INACTIVO</span>
+                </div>
+                <div>
+                <h2 class="rpanel-title">CONTROL DE PROCESO</h2>
+                <p class="rpanel-subtitle">Sistema Autónomo v2.1</p>
+                </div>
+            </div>
+
+            
+
+            <div class="rpanel-buttons">
+                <button id="startBtn" class="btn rpanel-btn start">▶ INICIAR</button>
+                <button id="stopBtn" class="btn rpanel-btn stop" disabled>■ DETENER</button>
+            </div>
+
+            <div class="rpanel-metrics">
+                <div>
+                <div class="metric-label">TIEMPO</div>
+                <div id="metric-time" class="metric-value">--:--:--</div>
+                </div>
+                <div>
+                <div class="metric-label">EFICIENCIA</div>
+                <div id="metric-efficiency" class="metric-value">--%</div>
+                </div>
+                <div>
+                <div class="metric-label">TAREAS</div>
+                <div id="metric-tasks" class="metric-value">---</div>
+                </div>
+            </div>
+
+            <div class="rpanel-link">
+                <a href="#" id="viewDetailsLink">🔧 Ver detalles del sistema</a>
+            </div>
+        </section>
+        <!-- Fila 3: Gráfico (Ocupa todo el ancho) -->
+        <section class="chart-section card">
+            <h2 class="card-title"><i class="fas fa-chart-line mr-2"></i><span data-translate-key="activityChartTitle">Activity per Day</span></h2>
+            <div class="chart-container">
+                <canvas id="graficoMensajes"></canvas>
+                <!-- Placeholder text will be managed by JS -->
+            </div>
+        </section>
 
           <!-- Fila 4 (lg+): Contenido Último Mensaje | Mensajes por Tipo -->
           <section class="last-message-section card">
@@ -544,6 +597,74 @@
                  updateChartPlaceholder(); // Show translated placeholder text
             }
         });
+
+        let isActive = false;
+        let startTime = null;
+        let timerInterval = null;
+        const totalMensajes = 34;
+
+        function formatTime(seconds) {
+            const h = String(Math.floor(seconds / 3600)).padStart(2, '0');
+            const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+            const s = String(seconds % 60).padStart(2, '0');
+            return `${h}:${m}:${s}`;
+        }
+
+        function calcularRendimiento(segundos) {
+            const ratio = totalMensajes / (segundos / 600);
+            return Math.min(100, ratio * 100).toFixed(1);
+        }
+
+        function actualizarUI(tiempoSegundos) {
+            document.getElementById('metric-time').textContent = formatTime(tiempoSegundos);
+            document.getElementById('metric-efficiency').textContent = calcularRendimiento(tiempoSegundos) + '%';
+            document.getElementById('metric-tasks').textContent = totalMensajes;
+        }
+
+        document.getElementById('startBtn').addEventListener('click', () => {
+            isActive = true;
+            startTime = Date.now();
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
+
+            // Cambiar estado visual
+            document.getElementById('rpanel-circle').classList.replace('inactive', 'active');
+            document.getElementById('rpanel-status-text').classList.replace('inactive', 'active');
+            document.getElementById('rpanel-status-text').textContent = 'ACTIVO';
+
+            // Activar animaciones orbitadoras
+            document.getElementById('orbit1').classList.add('active');
+            document.getElementById('orbit2').classList.add('active');
+
+            // Iniciar reloj
+            timerInterval = setInterval(() => {
+            const now = Date.now();
+            const tiempoTranscurrido = Math.floor((now - startTime) / 1000);
+            actualizarUI(tiempoTranscurrido);
+            }, 1000);
+        });
+
+        document.getElementById('stopBtn').addEventListener('click', () => {
+            isActive = false;
+            clearInterval(timerInterval);
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+
+            // Estado visual OFF
+            document.getElementById('rpanel-circle').classList.replace('active', 'inactive');
+            document.getElementById('rpanel-status-text').classList.replace('active', 'inactive');
+            document.getElementById('rpanel-status-text').textContent = 'INACTIVO';
+
+            // Detener animaciones
+            document.getElementById('orbit1').classList.remove('active');
+            document.getElementById('orbit2').classList.remove('active');
+        });
+
+        document.getElementById('viewDetailsLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('Detalle del sistema (simulado)');
+        });
+
     </script>
 </body>
 </html>
