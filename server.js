@@ -1075,112 +1075,6 @@ app.get('/logout', (req, res) => {
 // Agrega esto con las otras rutas en server.js
 
 // Rutas para Campañas
-app.get('/campaigns', isAuthenticated, async (req, res) => {
-  try {
-    // Obtener todas las campañas
-    const campaignsQuery = await pool.query('SELECT * FROM campaigns ORDER BY start_date DESC');
-    const campaigns = campaignsQuery.rows;
-
-    // Obtener estadísticas para las cards
-    const statsQuery = await pool.query(`
-      SELECT 
-        COUNT(*) as total_campaigns,
-        SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active_campaigns,
-        SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_campaigns,
-        SUM(CASE WHEN status = 'paused' THEN 1 ELSE 0 END) as paused_campaigns
-      FROM campaigns
-    `);
-    const stats = statsQuery.rows[0];
-
-    res.render('campaigns', {
-      user: req.session.user,
-      campaigns: campaigns,
-      stats: stats,
-      success: req.query.success,
-      error: req.query.error
-    });
-  } catch (error) {
-    console.error('Error al obtener campañas:', error);
-    res.status(500).render('error', {
-      message: 'Error al cargar las campañas',
-      error: error,
-      user: req.session.user
-    });
-  }
-});
-
-// Crear nueva campaña
-app.post('/campaigns', isAuthenticated, async (req, res) => {
-  const {
-    name,
-    description,
-    start_date,
-    end_date,
-    target_accounts,
-    daily_messages_limit,
-    status
-  } = req.body;
-
-  try {
-    const queryText = `
-      INSERT INTO campaigns (
-        name, description, start_date, end_date, 
-        target_accounts, daily_messages_limit, status, created_by
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-      RETURNING *;
-    `;
-    const { rows } = await pool.query(queryText, [
-      name, description, start_date, end_date, 
-      JSON.stringify(target_accounts.split(',')), 
-      daily_messages_limit, status, req.session.user.id
-    ]);
-
-    res.redirect('/campaigns?success=Campaña creada correctamente');
-  } catch (error) {
-    console.error('Error al crear campaña:', error);
-    res.redirect('/campaigns?error=Error al crear campaña');
-  }
-});
-
-// Actualizar campaña
-app.put('/campaigns/:id', isAuthenticated, async (req, res) => {
-  const campaignId = req.params.id;
-  const {
-    name,
-    description,
-    start_date,
-    end_date,
-    target_accounts,
-    daily_messages_limit,
-    status
-  } = req.body;
-
-  try {
-    const queryText = `
-      UPDATE campaigns SET
-        name = $1,
-        description = $2,
-        start_date = $3,
-        end_date = $4,
-        target_accounts = $5,
-        daily_messages_limit = $6,
-        status = $7,
-        updated_at = NOW()
-      WHERE id = $8
-      RETURNING *;
-    `;
-    const { rows } = await pool.query(queryText, [
-      name, description, start_date, end_date, 
-      JSON.stringify(target_accounts.split(',')), 
-      daily_messages_limit, status, campaignId
-    ]);
-
-    res.json({ success: true, campaign: rows[0] });
-  } catch (error) {
-    console.error('Error al actualizar campaña:', error);
-    res.status(500).json({ error: 'Error al actualizar campaña' });
-  }
-});
 
 
 // Rutas para Carga de Cuentas Objetivo
@@ -1277,18 +1171,151 @@ app.post('/targets', isAuthenticated, async (req, res) => {
 });
 
 // Obtener estadísticas de campaña
+// Asegúrate de tener esta ruta para mostrar el formulario de campañas
+app.get('/campaigns', isAuthenticated, async (req, res) => {
+  try {
+    // Obtener todas las campañas del usuario actual
+    const campaignsQuery = await pool.query(
+      'SELECT * FROM campaigns WHERE created_by = $1 ORDER BY start_date DESC', 
+      [req.session.user.id]
+    );
+    const campaigns = campaignsQuery.rows;
+
+    // Obtener estadísticas para las cards
+    const statsQuery = await pool.query(`
+      SELECT 
+        COUNT(*) as total_campaigns,
+        SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active_campaigns,
+        SUM(CASE WHEN status = 'paused' THEN 1 ELSE 0 END) as paused_campaigns,
+        SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_campaigns
+      FROM campaigns
+      WHERE created_by = $1
+    `, [req.session.user.id]);
+    
+    const stats = statsQuery.rows[0];
+
+    res.render('campaigns', {
+      user: req.session.user,
+      campaigns: campaigns,
+      stats: stats,
+      success: req.query.success,
+      error: req.query.error
+    });
+  } catch (error) {
+    console.error('Error al obtener campañas:', error);
+    res.status(500).render('error', {
+      message: 'Error al cargar las campañas',
+      error: error,
+      user: req.session.user
+    });
+  }
+});
+
+// Crear nueva campaña
+app.post('/campaigns', isAuthenticated, async (req, res) => {
+  const {
+    name,
+    description,
+    insta_account,
+    start_date,
+    end_date,
+    daily_messages_limit,
+    status
+  } = req.body;
+
+  // Validación básica
+  if (!name || !insta_account || !start_date || !end_date || !daily_messages_limit) {
+    return res.redirect('/campaigns?error=Todos los campos son obligatorios');
+  }
+
+  try {
+    const queryText = `
+      INSERT INTO campaigns (
+        name, description, insta_account, start_date, end_date, 
+        daily_messages_limit, status, created_by
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      RETURNING *;
+    `;
+    const { rows } = await pool.query(queryText, [
+      name, 
+      description, 
+      insta_account,
+      start_date, 
+      end_date, 
+      daily_messages_limit, 
+      status || 'active',
+      req.session.user.id
+    ]);
+
+    // Actualizar el estado de campaña en el usuario
+    await pool.query(
+      'UPDATE users SET campaign_status = jsonb_set(campaign_status, $1, $2) WHERE id = $3',
+      [`{${rows[0].id}}`, JSON.stringify({ active: status === 'active' }), req.session.user.id]
+    );
+
+    res.redirect('/campaigns?success=Campaña creada correctamente');
+  } catch (error) {
+    console.error('Error al crear campaña:', error);
+    res.redirect('/campaigns?error=Error al crear campaña');
+  }
+});
+
+// Actualizar campaña (para pausar/reanudar)
+app.put('/campaigns/:id', isAuthenticated, async (req, res) => {
+  const campaignId = req.params.id;
+  const { status } = req.body;
+
+  try {
+    // Verificar que la campaña pertenece al usuario
+    const verifyQuery = await pool.query(
+      'SELECT id FROM campaigns WHERE id = $1 AND created_by = $2',
+      [campaignId, req.session.user.id]
+    );
+    
+    if (verifyQuery.rows.length === 0) {
+      return res.status(403).json({ error: 'No tienes permiso para modificar esta campaña' });
+    }
+
+    const queryText = `
+      UPDATE campaigns SET
+        status = $1,
+        updated_at = NOW()
+      WHERE id = $2
+      RETURNING *;
+    `;
+    const { rows } = await pool.query(queryText, [status, campaignId]);
+
+    // Actualizar el estado de campaña en el usuario
+    await pool.query(
+      'UPDATE users SET campaign_status = jsonb_set(campaign_status, $1, $2) WHERE id = $3',
+      [`{${campaignId}}`, JSON.stringify({ active: status === 'active' }), req.session.user.id]
+    );
+
+    res.json({ success: true, campaign: rows[0] });
+  } catch (error) {
+    console.error('Error al actualizar campaña:', error);
+    res.status(500).json({ error: 'Error al actualizar campaña' });
+  }
+});
+
+// Obtener estadísticas de campaña
 app.get('/campaigns/:id/stats', isAuthenticated, async (req, res) => {
   const campaignId = req.params.id;
 
   try {
-    // 1. Obtener datos de la campaña
-    const campaignQuery = await pool.query('SELECT * FROM campaigns WHERE id = $1', [campaignId]);
+    // Verificar que la campaña pertenece al usuario
+    const campaignQuery = await pool.query(
+      'SELECT * FROM campaigns WHERE id = $1 AND created_by = $2',
+      [campaignId, req.session.user.id]
+    );
+    
     if (campaignQuery.rows.length === 0) {
-      return res.status(404).json({ error: 'Campaña no encontrada' });
+      return res.status(404).json({ error: 'Campaña no encontrada o no tienes acceso' });
     }
+
     const campaign = campaignQuery.rows[0];
 
-    // 2. Obtener estadísticas de mensajes desde MongoDB
+    // Obtener estadísticas de mensajes desde MongoDB
     const client = new MongoClient(mongoUri, { useUnifiedTopology: true });
     await client.connect();
     const db = client.db(mongoDbName);
@@ -1297,8 +1324,8 @@ app.get('/campaigns/:id/stats', isAuthenticated, async (req, res) => {
     const filter = {
       campaign_id: campaignId,
       fecha: {
-        $gte: `${campaign.start_date.toISOString().split('T')[0]} 00:00:00`,
-        $lte: `${campaign.end_date.toISOString().split('T')[0]} 23:59:59`
+        $gte: `${new Date(campaign.start_date).toISOString().split('T')[0]} 00:00:00`,
+        $lte: `${new Date(campaign.end_date).toISOString().split('T')[0]} 23:59:59`
       }
     };
 
