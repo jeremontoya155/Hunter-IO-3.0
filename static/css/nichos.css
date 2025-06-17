@@ -295,10 +295,6 @@ textarea {
 }
 
 @media screen and (max-width: 480px) {
-  body {
-    padding-top: 60px; /* Menos espacio para navbar más pequeña */
-  }
-
   .form-container {
     padding: 20px 10px; /* Aún menos padding lateral */
   }
@@ -450,4 +446,68 @@ td {
 
 .lang-btn i {
   font-size: 16px;
+}
+
+/* ========== MOBILE IMPROVEMENTS ========== */
+
+@media screen and (max-width: 768px) {
+  .choice-card {
+    width: 100%;
+    max-width: 90vw;
+    padding: 25px 20px;
+  }
+
+  .choice-container {
+    padding: 20px 10px;
+    gap: 20px;
+  }
+
+  .choice-card .icon-choice {
+    font-size: 2.5em;
+  }
+
+  .choice-card h3 {
+    font-size: 1.2em;
+  }
+
+  .choice-card p {
+    font-size: 0.9em;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .form-container {
+    padding: 10px 15px;
+  }
+
+  .form-card {
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  label {
+    font-size: 14px;
+  }
+
+  input[type='text'],
+  input[type='number'],
+  textarea {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .back-button,
+  .submit-button {
+    width: 100%;
+    margin: 0;
+  }
 }

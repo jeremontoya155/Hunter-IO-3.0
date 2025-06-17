@@ -269,6 +269,8 @@ textarea.form-control {
     width: 100%;
     margin-left: 0;
     padding: 2rem 1rem;
+    margin: 0;
+    padding: 0;
   }
 
   .targets-container {
@@ -302,5 +304,54 @@ textarea.form-control {
   .btn-primary {
     padding: 0.875rem 1.5rem;
     font-size: 1rem;
+  }
+}
+
+/* ========== MOBILE ENHANCEMENTS ========== */
+@media (max-width: 480px) {
+  .targets-card {
+    border-radius: 12px;
+  }
+
+  .targets-title {
+    font-size: 1.3rem;
+    text-align: center;
+  }
+
+  .targets-title i {
+    font-size: 1.2rem;
+  }
+
+  .form-label {
+    font-size: 1rem;
+  }
+
+  .form-control {
+    font-size: 0.95rem;
+    padding: 0.8rem 1rem;
+  }
+
+  textarea.form-control {
+    min-height: 120px;
+  }
+
+  .btn-primary {
+    padding: 0.85rem 1.25rem;
+    font-size: 0.95rem;
+    width: 100%;
+  }
+
+  .summary-title {
+    font-size: 1.2rem;
+  }
+
+  .summary-item {
+    padding: 0.8rem 1rem;
+  }
+
+  .summary-item-content {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.95rem;
   }
 }

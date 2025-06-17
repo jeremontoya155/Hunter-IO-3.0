@@ -187,7 +187,7 @@
             
 
             <div class="rpanel-buttons">
-                <button id="startBtn" class="btn rpanel-btn start">▶ INICIAR</button>
+                <button id="startBtn" class="btn rpanel-btn start">▶ Ir a campañas</button>
                 <button id="stopBtn" class="btn rpanel-btn stop" disabled>■ DETENER</button>
             </div>
 
@@ -622,26 +622,28 @@
         }
 
         document.getElementById('startBtn').addEventListener('click', () => {
-            isActive = true;
-            startTime = Date.now();
-            document.getElementById('startBtn').disabled = true;
-            document.getElementById('stopBtn').disabled = false;
+            
+            window.location.href = '/campaigns';
+            // isActive = true;
+            // startTime = Date.now();
+            // document.getElementById('startBtn').disabled = true;
+            // document.getElementById('stopBtn').disabled = false;
 
-            // Cambiar estado visual
-            document.getElementById('rpanel-circle').classList.replace('inactive', 'active');
-            document.getElementById('rpanel-status-text').classList.replace('inactive', 'active');
-            document.getElementById('rpanel-status-text').textContent = 'ACTIVO';
+            // // Cambiar estado visual
+            // document.getElementById('rpanel-circle').classList.replace('inactive', 'active');
+            // document.getElementById('rpanel-status-text').classList.replace('inactive', 'active');
+            // document.getElementById('rpanel-status-text').textContent = 'ACTIVO';
 
-            // Activar animaciones orbitadoras
-            document.getElementById('orbit1').classList.add('active');
-            document.getElementById('orbit2').classList.add('active');
+            // // Activar animaciones orbitadoras
+            // document.getElementById('orbit1').classList.add('active');
+            // document.getElementById('orbit2').classList.add('active');
 
-            // Iniciar reloj
-            timerInterval = setInterval(() => {
-            const now = Date.now();
-            const tiempoTranscurrido = Math.floor((now - startTime) / 1000);
-            actualizarUI(tiempoTranscurrido);
-            }, 1000);
+            // // Iniciar reloj
+            // timerInterval = setInterval(() => {
+            // const now = Date.now();
+            // const tiempoTranscurrido = Math.floor((now - startTime) / 1000);
+            // actualizarUI(tiempoTranscurrido);
+            // }, 1000);
         });
 
         document.getElementById('stopBtn').addEventListener('click', () => {

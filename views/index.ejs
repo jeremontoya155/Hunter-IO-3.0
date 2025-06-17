@@ -23,94 +23,151 @@
   <body>
     <%- include('partials/navbar') %>
 
-    <!-- Contenedor principal del login -->
-    <div class="main-content">
+    <div class="platform-choice-container" id="platform-choice-container">
+      <h1 class="platform-choice-title">Elige tu plataforma:</h1>
+
       <div
-        class="login-container card"
-        data-tooltip-target="tooltip-login"
-        data-tooltip-placement="right"
+        class="platform-card platform-card-instagram"
+        data-platform="instagram"
       >
-        <div class="avatar-wrapper">
-          <div class="avatar"></div>
-        </div>
-
-        <% if (messages && messages.length > 0) { %> <%
-        messages.forEach(function(item) { %>
-        <div class="alert alert-<%= item.category %>">
-          <i class="fas fa-info-circle" style="margin-right: 8px"></i>
-          <%= item.message %>
-        </div>
-        <% }); %> <% } %>
-
-        <!-- Formulario para agregar una cuenta de Instagram -->
-        <form id="addAccountForm" class="addAccountForm">
-          <div class="form-group">
-            <input
-              type="text"
-              name="insta_username"
-              placeholder="Instagram Username"
-              required
-            />
-            <i class="fab fa-instagram"></i>
+        <i class="fab fa-instagram icon-choice"></i>
+        <!-- <h3>Instagram</h3> -->
+      </div>
+      <div
+        class="platform-card platform-card-whatsapp disabled"
+        data-platform="whatsapp"
+      >
+        <i class="fab fa-whatsapp icon-choice"></i>
+        <!-- <h3>WhatsApp</h3> -->
+      </div>
+      <div
+        class="platform-card platform-card-facebook disabled"
+        data-platform="facebook"
+      >
+        <i class="fab fa-facebook icon-choice"></i>
+        <!-- <h3>Facebook</h3> -->
+      </div>
+      <input type="hidden" id="selected_platform" name="platform" value="" />
+    </div>
+    <div id="full-content">
+      <!-- Contenedor principal del login -->
+      <div class="main-content">
+        <div
+          class="login-container card"
+          data-tooltip-target="tooltip-login"
+          data-tooltip-placement="right"
+        >
+          <div class="avatar-wrapper">
+            <div class="avatar"></div>
           </div>
 
-          <div class="form-group">
-            <input
-              type="password"
-              name="insta_password"
-              placeholder="Instagram Password"
-              required
-            />
-            <i class="fas fa-lock"></i>
+          <% if (messages && messages.length > 0) { %> <%
+          messages.forEach(function(item) { %>
+          <div class="alert alert-<%= item.category %>">
+            <i class="fas fa-info-circle" style="margin-right: 8px"></i>
+            <%= item.message %>
           </div>
+          <% }); %> <% } %>
 
-          <button type="submit" id="submitBtn" class="btn btn-primary">
-            <span>Agregar Cuenta</span>
-          </button>
-        </form>
+          <!-- Formulario para agregar una cuenta de Instagram -->
+          <form id="addAccountForm" class="addAccountForm">
+            <div class="form-group">
+              <input
+                type="text"
+                name="insta_username"
+                placeholder="Instagram Username"
+                required
+              />
+              <i class="platform-icon-placeholder"></i>
+            </div>
+
+            <div class="form-group">
+              <input
+                type="password"
+                name="insta_password"
+                placeholder="Instagram Password"
+                required
+              />
+              <i class="fas fa-lock"></i>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn btn-primary">
+              <span>Agregar Cuenta</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Card para gestión de cuentas objetivo -->
+        <div class="card">
+          <div class="card-body">
+            <div class="card-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <h5 class="card-title">Gestión de Cuentas Objetivo</h5>
+            <p class="card-text">
+              Carga o actualiza la lista de cuentas de Instagram a las que
+              dirigir tus acciones de manera automática y eficiente.
+            </p>
+            <a href="/targets" class="btn btn-primary">
+              <i class="fas fa-upload" style="margin-right: 8px"></i>
+              Gestionar Cuentas Objetivo
+            </a>
+          </div>
+        </div>
       </div>
 
-      <!-- Card para gestión de cuentas objetivo -->
-      <div class="card">
-        <div class="card-body">
-          <div class="card-icon">
-            <i class="fas fa-users"></i>
-          </div>
-          <h5 class="card-title">Gestión de Cuentas Objetivo</h5>
-          <p class="card-text">
-            Carga o actualiza la lista de cuentas de Instagram a las que dirigir
-            tus acciones de manera automática y eficiente.
-          </p>
-          <a href="/targets" class="btn btn-primary">
-            <i class="fas fa-upload" style="margin-right: 8px"></i>
-            Gestionar Cuentas Objetivo
-          </a>
-        </div>
+      <!-- Tooltip content -->
+      <div
+        id="tooltip-login"
+        role="tooltip"
+        class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
+      >
+        <i class="fas fa-rocket" style="margin-right: 6px"></i>
+        ¡Carga aquí tus usuarios para ver sus avances!
+        <div class="tooltip-arrow" data-popper-arrow></div>
       </div>
-    </div>
 
-    <!-- Tooltip content -->
-    <div
-      id="tooltip-login"
-      role="tooltip"
-      class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
-    >
-      <i class="fas fa-rocket" style="margin-right: 6px"></i>
-      ¡Carga aquí tus usuarios para ver sus avances!
-      <div class="tooltip-arrow" data-popper-arrow></div>
-    </div>
-
-    <!-- Elementos decorativos adicionales -->
-    <div class="floating-shapes">
-      <div class="shape shape-1"></div>
-      <div class="shape shape-2"></div>
-      <div class="shape shape-3"></div>
+      <!-- Elementos decorativos adicionales -->
+      <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+      </div>
     </div>
 
     <script>
+      const iconMap = {
+        instagram: 'fab fa-instagram',
+        whatsapp: 'fab fa-whatsapp',
+        facebook: 'fab fa-facebook',
+      };
       // Se intercepta el submit para enviar una petición PUT vía fetch
       const addAccountForm = document.getElementById('addAccountForm');
       const submitBtn = document.getElementById('submitBtn');
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const platformCards = document.querySelectorAll('.platform-card');
+        const formContainer = document.getElementById('full-content');
+        const platformSelector = document.getElementById(
+          'platform-choice-container'
+        );
+
+        platformCards.forEach((card) => {
+          card.addEventListener('click', () => {
+            if (card.classList.contains('disabled')) return;
+            const platform = card.dataset.platform;
+            console.log(platform);
+            document.getElementById('selected_platform').value = platform;
+
+            platformSelector.style.display = 'none';
+            formContainer.style.display = 'block'; // mostrar form principal
+            const iconEl = document.querySelector('.platform-icon-placeholder');
+            iconEl.className = iconMap[platform] || '';
+          });
+        });
+        // Ocultar formulario por defecto al cargar
+        formContainer.style.display = 'none';
+      });
 
       addAccountForm.addEventListener('submit', async (e) => {
         e.preventDefault();

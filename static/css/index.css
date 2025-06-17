@@ -646,3 +646,177 @@ button.loading::after {
     display: none;
   }
 }
+
+.platform-choice-container {
+  display: flex;
+  justify-content: center;
+  background-color: #252525;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 30px;
+  height: 100vh;
+
+  animation: fadeInScale 0.5s ease-in-out;
+  position: relative;
+}
+.platform-choice-title {
+  position: absolute;
+  font-size: 2em;
+  text-align: left;
+  top: 10%;
+  left: 10%;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  color: #cbd5e1;
+  margin-bottom: 2.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+.platform-choice-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  margin: 10px auto 0;
+  background: linear-gradient(90deg, #14b8a6, #0ea5e9);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+}
+@keyframes pulse-glow {
+  0%,
+  100% {
+    text-shadow: 0 0 6px rgba(14, 165, 233, 0.2);
+  }
+  50% {
+    text-shadow: 0 0 12px rgba(14, 165, 233, 0.4),
+      0 0 24px rgba(20, 184, 166, 0.2);
+  }
+}
+
+.platform-card {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 35px 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 280px;
+  height: 280px;
+  max-width: 90vw;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.platform-card:hover {
+  transform: translateY(-5px);
+}
+
+.platform-card .icon-choice {
+  font-size: 3em;
+  margin-bottom: 20px;
+}
+
+.platform-card h3 {
+  font-size: 1.5em;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+/* Instagram */
+.platform-card-instagram:hover {
+  border-color: rgba(225, 48, 108, 0.4);
+  background: rgba(225, 48, 108, 0.05);
+  box-shadow: 0 8px 25px rgba(250, 28, 113, 0.15);
+}
+.platform-card-instagram .icon-choice {
+  color: #e1306c;
+}
+
+/* WhatsApp */
+.platform-card-whatsapp:hover {
+  border-color: rgba(37, 211, 102, 0.4);
+  background: rgba(37, 211, 102, 0.05);
+  box-shadow: 0 8px 25px rgba(46, 204, 113, 0.15);
+}
+.platform-card-whatsapp .icon-choice {
+  color: #25d366;
+}
+
+/* Facebook */
+.platform-card-facebook:hover {
+  border-color: rgba(24, 119, 242, 0.4);
+  background: rgba(24, 119, 242, 0.05);
+  box-shadow: 0 8px 25px rgba(32, 109, 240, 0.15);
+}
+.platform-card-facebook .icon-choice {
+  color: #1877f2;
+}
+.platform-card.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+  filter: grayscale(0.5);
+  box-shadow: none;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@media screen and (max-width: 768px) {
+  .platform-choice-container {
+    height: 95vh;
+    overflow-y: hidden;
+    padding: 0;
+    margin: 0;
+    flex-flow: column nowrap;
+    justify-content: space-evenly;
+    gap: 2px;
+  }
+  .platform-card {
+    width: 70%;
+    max-width: 90vw;
+
+    height: 140px;
+  }
+  .platform-card .icon-choice {
+    margin: 0;
+    padding: 0;
+  }
+
+  .platform-card .icon-choice {
+    font-size: 2.5em;
+  }
+
+  .platform-card h3 {
+    font-size: 1.2em;
+  }
+
+  .platform-card-instagram {
+    background: rgba(225, 48, 108, 0.05);
+  }
+
+  /* WhatsApp */
+  .platform-card-whatsapp {
+    background: rgba(37, 211, 102, 0.05);
+  }
+  /* Facebook */
+  .platform-card-facebook {
+    background: rgba(24, 119, 242, 0.05);
+  }
+  .platform-choice-title {
+    top: 5%;
+    font-size: 1.2em;
+  }
+}

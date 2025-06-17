@@ -43,13 +43,13 @@
   border-top-left-radius: 0.3em;
   border-bottom-right-radius: 0.3em;
   border-bottom-left-radius: 0.3em;
-  padding: 10px;
+  padding: 15px !important;
   top: 15px;
   right: 15px;
-  width: 1em;
-  height: 1em;
+  width: 10px !important;
+  height: 10px !important;
   background-color: #4caf91;
-  font-size: 2em;
+  font-size: 14px !important;
   cursor: pointer;
   color: #ffc552;
   z-index: 99;
@@ -63,10 +63,6 @@
   background-color: #4caf91;
   color: #fff;
   border: 1px solid #ffc552;
-}
-
-.nav-togglebtn i {
-  font-size: 0.5em;
 }
 
 .nav-menu {

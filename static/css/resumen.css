@@ -573,10 +573,27 @@ html, body {
      .mensaje-contenido {
         font-size: 0.85rem; /* Slightly smaller font on mobile */
      }
+     .mensaje-destinatario {
+    font-size: 1.2rem; /* Reducir tamaño en mobile */
+  }
 
-     
-}
-@media (max-width: 768px) {
+  .mensaje-fecha-parte {
+    font-size: 1.2rem; /* Ajustar también */
+  }
+
+  .main-content {
+    padding-left: 15px !important;
+    margin-left: 0 !important;
+  }
+
+  .recent-messages-section {
+    max-height: none;
+  }
+
+  .messages-list {
+    max-height: none;
+  }
+  
   .resumen-chart-container {
     width: 100%;
     height: 300px;
