@@ -1,236 +1,233 @@
-/* Estilo general */
-body {
-  font-family: 'Poppins', sans-serif;
-  /* background-color: #1a1d24; */ /* Fondo oscuro principal */
-  background: linear-gradient(
-    135deg,
-    #1a1d24 0%,
-    #2c3e50 100%
-  ); /* Fondo oscuro con gradiente sutil */
-  color: #e0e0e0; /* Texto claro para contraste */
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  box-sizing: border-box;
-}
+@import url('/static/css/variables.css');
 
-/* Contenedor del formulario */
+/* === FORM CONTAINER === */
 .form-container {
   width: 100%;
   display: flex;
   justify-content: center;
+  padding: 1rem;
 }
 
-/* Tarjeta del formulario */
+/* === CARD BASE === */
 .form-card {
-  border-radius: 25px; /* Bordes más redondeados */
-  padding: 40px 50px; /* Más padding interno */
-  box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada y suave */
   width: 100%;
-  max-width: 650px; /* Ancho máximo mayor */
+  max-width: 650px;
+  padding: 40px 50px;
+  border-radius: var(--border-radius);
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-soft);
+  color: var(--color-text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: fadeInScale 0.5s ease forwards;
   text-align: center;
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  background: rgba(255, 255, 255, 0.05); /* translúcido */
-  backdrop-filter: blur(10px); /* efecto de desenfoque moderno */
-  -webkit-backdrop-filter: blur(10px); /* para Safari */
-  color: #e0e0e0;
-  border: 1px solid rgba(255, 255, 255, 0.1); /* borde sutil */
+  transition: transform var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
-
 .form-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0px 25px 50px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-glow);
 }
 
-/* Título */
+/* === TITULOS === */
 h2 {
-  font-size: 28px; /* Más grande */
-  color: rgb(37, 165, 125); /* Verde principal */
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-accent-green);
   margin-bottom: 10px;
-  font-weight: 700; /* Más grueso */
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px; /* Espacio entre icono y texto */
+  gap: 10px;
 }
-
-.icon-title {
-  font-size: 24px; /* Tamaño del icono del título */
-}
-
 .subtitle {
   font-size: 16px;
-  color: rgb(186, 196, 211);
+  color: var(--color-text-secondary);
   margin-bottom: 35px;
   font-weight: 400;
 }
+.icon-title {
+  font-size: 1.5rem;
+  color: var(--color-accent-green);
+}
 
-/* Formulario */
+/* === FORMULARIO GENERAL === */
 .nicho-form {
   display: flex;
   flex-direction: column;
-  gap: 25px; /* Mayor espacio entre grupos */
-  text-align: left; /* Alineación izquierda para labels e inputs */
+  gap: 25px;
+  text-align: left;
 }
 
-/* Grupos de formulario */
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px; /* Espacio entre label e input */
-}
-
-/* Filas para elementos lado a lado */
-.form-row {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap; /* Para que se ajusten en pantallas pequeñas */
-}
-
-.form-group.half-width {
-  flex: 1; /* Ocupan el espacio disponible */
-  min-width: 200px; /* Ancho mínimo antes de envolver */
-}
-
-/* Etiquetas del formulario */
-label {
-  font-weight: 600; /* Más grueso */
-  color: #94a3b8; /* Un gris azulado oscuro */
-  font-size: 15px;
-  display: flex;
-  align-items: center;
-  gap: 8px; /* Espacio entre icono y texto */
-}
-
-label i {
-  color: rgb(52, 172, 134); /* Iconos en verde */
-  font-size: 1.1em; /* Ligeramente más grandes */
-  width: 20px; /* Ancho fijo para alinear */
-  text-align: center;
-}
-
-/* Inputs y textareas */
+/* === INPUTS Y TEXTAREAS === */
 input[type='text'],
 input[type='number'],
 textarea {
   width: 100%;
-  padding: 15px 20px; /* Padding más generoso */
-  border-radius: 12px; /* Bordes redondeados */
+  padding: 15px 20px;
   font-size: 16px;
-  background-color: #f8fafc; /* Fondo muy claro, casi blanco */
-  transition: all 0.3s ease-in-out;
+  border-radius: var(--border-radius);
+  font-family: var(--font-family-base);
+  background-color: var(--color-bg-light);
+  color: var(--color-text-primary);
+  border: 1px solid #334155;
+  transition: all var(--transition-fast);
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif; /* Asegurar la fuente */
-  background-color: #1e293b; /* fondo más oscuro */
-  border: 1px solid #334155; /* gris azulado */
-  color: #e0e0e0; /* texto claro */
 }
-
 input::placeholder,
 textarea::placeholder {
-  color: #94a3b8; /* Placeholder más claro */
+  color: var(--color-text-secondary);
 }
-
 input:focus,
 textarea:focus {
   outline: none;
-  border-color: rgb(16, 153, 110); /* Borde verde al enfocar */
-  box-shadow: 0 0 0 3px rgba(11, 110, 79, 0.15); /* Resplandor suave verde */
-  background-color: #0f172a; /* un poco más oscuro al enfocar */
-  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.2); /* resplandor suave cian */
+  border-color: var(--color-accent-blue);
+  background-color: var(--color-bg-darker);
+  box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.2);
 }
-
 textarea {
-  resize: vertical; /* Permitir redimensionar solo verticalmente */
-  min-height: 80px; /* Altura mínima */
+  resize: vertical;
+  min-height: 80px;
 }
 
-/* Estilo personalizado para carga de archivos */
-.file-upload-wrapper {
-  margin-top: 10px;
+/* === LABELS === */
+label {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+label i {
+  color: var(--color-accent-green);
+  width: 20px;
+  text-align: center;
 }
 
-.file-input-hidden {
-  display: none; /* Ocultar el input real */
-}
-
+/* === FILE UPLOAD === */
 .file-upload-label {
-  display: inline-flex; /* Para alinear icono y texto */
+  display: inline-flex;
   align-items: center;
   gap: 10px;
   padding: 12px 25px;
-  background-color: #e7f3ef; /* Fondo verde muy claro */
-  color: #0b6e4f; /* Texto verde */
-  border: 2px dashed #a3d1c3; /* Borde discontinuo verde claro */
-  border-radius: 12px;
+  background-color: var(--color-bg-light);
+  color: var(--color-accent-green);
+  border: 2px dashed #4ade80;
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
-  transition: all 0.3s ease;
+  transition: all var(--transition-fast);
 }
-
-.file-upload-label i {
-  font-size: 1.3em;
-}
-
 .file-upload-label:hover {
-  background-color: #d1e7dd; /* Fondo ligeramente más oscuro al pasar el ratón */
-  border-color: #0b6e4f; /* Borde sólido al pasar el ratón */
-  color: #075e40;
+  background-color: var(--color-bg-panel);
+  border-color: var(--color-accent-green);
 }
-
 .file-name {
-  display: block; /* Para que aparezca debajo del botón */
   margin-top: 10px;
   font-size: 14px;
-  color: #556; /* Color para el nombre del archivo */
+  color: var(--color-text-secondary);
   font-style: italic;
-  word-break: break-all; /* Evitar que nombres largos rompan el layout */
+  word-break: break-word;
 }
 
-/* Botón de enviar */
+/* === BOTONES === */
 .submit-button {
-  background: linear-gradient(
-    135deg,
-    rgb(26, 110, 84) 0%,
-    rgb(26, 171, 118) 100%
-  ); /* Gradiente para el botón */
-  color: white;
-  padding: 18px; /* Padding más grande */
+  background: var(--button-bg-blue);
+  color: var(--button-text-color);
+  padding: 18px;
   border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 17px; /* Fuente más grande */
-  font-weight: 600; /* Más grueso */
-  transition: all 0.3s ease-in-out;
+  border-radius: var(--border-radius);
+  font-size: 17px;
+  font-weight: 600;
   width: 100%;
-  margin-top: 20px; /* Mayor margen superior */
+  cursor: pointer;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   gap: 10px;
-  box-shadow: 0px 8px 15px rgba(11, 110, 79, 0.2); /* Sombra inicial */
-}
-
-.submit-button i {
-  font-size: 1.1em;
+  margin-top: 10px;
+  transition: all var(--transition-fast);
+  box-shadow: var(--button-shadow);
+  background-size: 200%;
+  background-position: left center;
 }
 
 .submit-button:hover {
-  background: linear-gradient(
-    135deg,
-    rgb(26, 171, 118) 0%,
-    rgb(26, 110, 84) 100%
-  ); /* Invertir gradiente al pasar */
-  transform: translateY(-3px) scale(1.02); /* Efecto de elevación y escala */
-  box-shadow: 0px 12px 20px rgba(11, 110, 79, 0.3); /* Sombra más intensa */
+  background: var(--button-bg-gradient-hover);
+  background-position: right center;
+  box-shadow: var(--button-shadow-hover);
+  transform: translateY(-2px) scale(1.02);
 }
 
-.submit-button:active {
-  transform: translateY(-1px) scale(1); /* Efecto al hacer clic */
-  box-shadow: 0px 5px 10px rgba(11, 110, 79, 0.25);
+.back-button {
+  background-color: var(--color-bg-light);
+  color: var(--color-text-primary);
+  padding: 12px 25px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  border: none;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  margin-top: 10px;
+}
+.back-button:hover {
+  background-color: var(--color-bg-panel);
 }
 
-/* Animaciones Sutiles */
+/* === CHOICE CARD === */
+.choice-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 80px);
+  padding: 40px 20px;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+.choice-card {
+  background-color: var(--color-bg-light);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius);
+  padding: 35px 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+  width: 300px;
+  box-shadow: var(--shadow-soft);
+}
+.choice-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-glow);
+}
+.choice-card .icon-choice {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  color: var(--color-accent-green);
+}
+.choice-card h3 {
+  font-size: 1.5em;
+  color: var(--color-text-primary);
+  margin-bottom: 10px;
+}
+.choice-card p {
+  font-size: 0.95em;
+  color: var(--color-text-secondary);
+}
+
+/* === FORM SECTION TOGGLE === */
+.form-section {
+  display: none;
+  padding-top: 20px;
+  padding-bottom: 40px;
+}
+.form-section.active {
+  display: block;
+}
+
+/* === ANIMACIÓN === */
 @keyframes fadeInScale {
   from {
     opacity: 0;
@@ -242,272 +239,37 @@ textarea {
   }
 }
 
-/* ------------------------- */
-/* Responsive Design */
-/* ------------------------- */
-
-/* Pantallas pequeñas (móviles) */
+/* === RESPONSIVE === */
 @media screen and (max-width: 768px) {
   .form-card {
-    padding: 30px 25px; /* Menos padding en móviles */
-    border-radius: 20px;
+    padding: 30px 25px;
   }
-
-  h2 {
-    font-size: 24px;
-  }
-
-  .subtitle {
-    font-size: 15px;
-    margin-bottom: 25px;
-  }
-
-  .form-row {
-    flex-direction: column; /* Apilar elementos de la fila */
-    gap: 25px; /* Mantener el espacio vertical */
-  }
-
-  .form-group.half-width {
-    min-width: 100%; /* Ocupar todo el ancho en la columna */
-  }
-
-  input[type='text'],
-  input[type='number'],
-  textarea {
-    padding: 14px 18px;
-    font-size: 15px;
-  }
-
-  .submit-button {
-    padding: 16px;
-    font-size: 16px;
-  }
-
-  .file-upload-label {
-    padding: 12px 20px;
-    width: 100%; /* Hacer el botón de archivo full-width */
-    justify-content: center;
-  }
-
-  .file-name {
-    text-align: center; /* Centrar nombre de archivo */
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .form-container {
-    padding: 20px 10px; /* Aún menos padding lateral */
-  }
-
-  .form-card {
-    padding: 25px 20px; /* Menos padding interno */
-    border-radius: 15px;
-  }
-
-  h2 {
-    font-size: 22px;
-  }
-
-  .subtitle {
-    font-size: 14px;
-  }
-
-  .nicho-form {
-    gap: 20px; /* Menos espacio entre campos */
-  }
-}
-
-/* --- Estilos para la pantalla de selección --- */
-.choice-container {
-  display: flex; /* Usa flexbox para centrar */
-  justify-content: center;
-  align-items: center;
-  min-height: calc(100vh - 80px); /* Ajusta según altura de tu navbar */
-  padding: 40px 20px;
-  gap: 30px; /* Espacio entre las tarjetas */
-  flex-wrap: wrap; /* Para que se ajusten en pantallas pequeñas */
-}
-
-.choice-card {
-  background-color: rgba(255, 255, 255, 0.05); /* Similar al form-card */
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
-  padding: 35px 40px;
-  text-align: center;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  width: 300px; /* Ancho fijo para las tarjetas */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.choice-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(46, 204, 113, 0.15); /* Sombra sutil al pasar el ratón */
-}
-
-.choice-card .icon-choice {
-  font-size: 3em;
-  margin-bottom: 20px;
-  color: #2ecc71; /* Verde característico */
-}
-
-.choice-card h3 {
-  font-size: 1.5em;
-  font-weight: 600;
-  color: #ffffff;
-  margin-bottom: 10px;
-}
-
-.choice-card p {
-  font-size: 0.95em;
-  color: #bdc3c7;
-  line-height: 1.6;
-}
-
-/* --- Estilos para ocultar/mostrar secciones --- */
-.form-section {
-  display: none; /* Oculto por defecto */
-  /* Los estilos del form-container original se aplicarán cuando se muestre */
-  padding-top: 20px; /* Añadir espacio desde la navbar si es necesario */
-  padding-bottom: 40px;
-}
-
-.form-section.active {
-  display: block; /* Mostrar la sección activa */
-}
-
-/* --- Estilo Botón Volver --- */
-.back-button {
-  display: inline-block; /* Para que respete márgenes */
-  background-color: #7f8c8d; /* Un color secundario/neutro */
-  color: #ffffff;
-  border: none;
-  width: 60%;
-  padding: 12px 25px;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: 'Poppins', sans-serif;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  margin-top: 20px; /* Espacio arriba */
-  margin-right: 10px; /* Espacio respecto al botón de guardar */
-  text-decoration: none; /* Si se usa como enlace */
-  text-align: center;
-}
-
-.back-button:hover {
-  background-color: #95a5a6;
-  transform: translateY(-2px);
-}
-
-.back-button i {
-  margin-right: 8px;
-}
-
-/* Ajuste para que el botón volver esté al lado del submit si se quiere */
-.form-actions {
-  display: flex;
-  justify-content: flex-start; /* O 'flex-end' si los quieres a la derecha */
-  align-items: center;
-  margin-top: 20px; /* Ajusta el espacio superior si es necesario */
-}
-
-/* Estilos para el botón de idioma */
-.language-switcher {
-  margin-left: auto;
-  margin-right: 20px;
-}
-
-th,
-td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #0b0909;
-  color: black;
-}
-.lang-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  padding: 8px 15px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.lang-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.lang-btn i {
-  font-size: 16px;
-}
-
-/* ========== MOBILE IMPROVEMENTS ========== */
-
-@media screen and (max-width: 768px) {
   .choice-card {
     width: 100%;
     max-width: 90vw;
-    padding: 25px 20px;
-  }
-
-  .choice-container {
-    padding: 20px 10px;
-    gap: 20px;
-  }
-
-  .choice-card .icon-choice {
-    font-size: 2.5em;
-  }
-
-  .choice-card h3 {
-    font-size: 1.2em;
-  }
-
-  .choice-card p {
-    font-size: 0.9em;
   }
 }
-
 @media screen and (max-width: 480px) {
   .form-container {
-    padding: 10px 15px;
+    padding: 20px 10px;
   }
-
-  .form-card {
-    padding: 20px;
-    border-radius: 12px;
-  }
-
-  h2 {
-    font-size: 20px;
-  }
-
-  label {
-    font-size: 14px;
-  }
-
-  input[type='text'],
-  input[type='number'],
-  textarea {
-    padding: 12px;
-    font-size: 14px;
-  }
-
   .form-actions {
     flex-direction: column;
     gap: 10px;
   }
-
   .back-button,
   .submit-button {
     width: 100%;
     margin: 0;
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 15px rgba(0, 255, 148, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(0, 255, 148, 0.7);
   }
 }

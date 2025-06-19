@@ -1,17 +1,5 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
-
+@import url('/static/css/variables.css');
 body {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #d9e9e0 0%, #a8d8c8 50%, #78c2ad 100%);
-  background-attachment: fixed;
-  width: 100%;
-  margin: 0;
-  padding: 0 !important;
   position: relative;
   overflow-x: hidden;
 }
@@ -19,36 +7,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   width: 100%;
+  gap: 30px;
   margin: 0 auto;
   padding: 20px;
   padding-top: 4em;
-}
-/* Elementos decorativos de fondo */
-body::before {
-  content: '';
-  position: absolute;
-  top: 10%;
-  left: 15%;
-  width: 100px;
-  height: 100px;
-  background: rgba(120, 194, 173, 0.1);
-  border-radius: 50% 30% 70% 40%;
-  animation: float 6s ease-in-out infinite;
-  z-index: 0;
-}
-
-body::after {
-  content: '';
-  position: absolute;
-  bottom: 20%;
-  right: 20%;
-  width: 80px;
-  height: 80px;
-  background: rgba(120, 194, 173, 0.08);
-  border-radius: 40% 60% 70% 30%;
-  animation: float 8s ease-in-out infinite reverse;
-  z-index: 0;
+  z-index: 1;
+  max-width: 600px;
 }
 
 @keyframes float {
@@ -650,7 +616,7 @@ button.loading::after {
 .platform-choice-container {
   display: flex;
   justify-content: center;
-  background-color: #252525;
+
   align-items: center;
   flex-wrap: wrap;
   gap: 30px;
@@ -818,5 +784,130 @@ button.loading::after {
   .platform-choice-title {
     top: 5%;
     font-size: 1.2em;
+  }
+}
+
+/* Estilos adicionales para notificaciones */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  color: white;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+}
+
+.notification.show {
+  transform: translateX(0);
+}
+
+.notification-success {
+  background: rgba(34, 197, 94, 0.9);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.notification-error {
+  background: rgba(239, 68, 68, 0.9);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Icono de la card */
+.card-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.card-icon i {
+  font-size: 24px;
+  color: white;
+}
+
+/* Formas flotantes decorativas */
+.floating-shapes {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.shape {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+  animation: floatShape 20s infinite linear;
+}
+
+.shape-1 {
+  width: 40px;
+  height: 40px;
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.shape-2 {
+  width: 60px;
+  height: 60px;
+  top: 60%;
+  right: 15%;
+  animation-delay: -5s;
+}
+
+.shape-3 {
+  width: 30px;
+  height: 30px;
+  bottom: 30%;
+  left: 80%;
+  animation-delay: -10s;
+}
+
+@keyframes floatShape {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-50px) rotate(180deg);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(0px) rotate(360deg);
+    opacity: 0.3;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    max-width: 90%;
+  }
+
+  .notification {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    transform: translateY(-100%);
+  }
+
+  .notification.show {
+    transform: translateY(0);
   }
 }

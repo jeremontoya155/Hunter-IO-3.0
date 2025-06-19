@@ -1,3 +1,6 @@
+body {
+  margin-left: 3.7rem;
+}
 .nav-sidebar {
   height: 100%;
   width: 3.7rem;
@@ -276,6 +279,9 @@
   margin-left: 9px; /* Ajuste para que la flecha toque el tooltip (15px - 6px)*/
 }
 @media (max-width: 768px) {
+  body {
+    margin-left: 0;
+  }
   .nav-sidebar {
     position: relative;
     width: 100% !important;

@@ -531,19 +531,18 @@
     <!-- Esto puede necesitar un wrapper div si tu navbar es fixed y afecta el padding del body -->
     <%- include('partials/navbar') %>
 
-    <!-- Selector de Idioma -->
-    <div class="language-switcher">
-      <button id="btn-es" class="lang-btn" onclick="changeLanguage('es')">
-        <span>SP</span>
-      </button>
-      <div class="separator"></div>
-      <button id="btn-en" class="lang-btn" onclick="changeLanguage('en')">
-        <span>EN</span>
-      </button>
-    </div>
-
     <!-- Contenido Principal del Onboarding -->
     <div class="onboarding-background">
+      <!-- Selector de Idioma -->
+      <div class="language-switcher">
+        <button id="btn-es" class="lang-btn" onclick="changeLanguage('es')">
+          <span>SP</span>
+        </button>
+        <div class="separator"></div>
+        <button id="btn-en" class="lang-btn" onclick="changeLanguage('en')">
+          <span>EN</span>
+        </button>
+      </div>
       <div class="onboarding-container">
         <!-- NUEVO: Encabezado con Logo y Texto -->
         <header class="onboarding-header-content">
