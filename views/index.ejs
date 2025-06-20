@@ -9,8 +9,14 @@
     <link rel="stylesheet" href="/static/css/index.css" />
     <link rel="stylesheet" href="/static/css/scrollbar.css" />
     <link rel="stylesheet" href="/static/css/navbar.css" />
-    <script src="/static/js/index.js"></script>
-    <script src="/static/js/navbar.js"></script>
+    <!-- Asegúrate de que esta ruta es correcta y el archivo existe, si no, puede causar problemas -->
+    <!-- <link rel="stylesheet" href="/static/css/all.csss" /> --> <!-- Posible errata: all.csss -->
+    <link rel="stylesheet" href="/static/css/all.css" /> <!-- Corregido si era una errata -->
+
+
+    <script src="/static/js/index.js" defer></script> <!-- Added defer -->
+    <script src="/static/js/navbar.js" defer></script> <!-- Added defer -->
+
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
       rel="stylesheet"
@@ -24,7 +30,7 @@
     <%- include('partials/navbar') %>
 
     <div class="platform-choice-container" id="platform-choice-container">
-      <h1 class="platform-choice-title">Elige tu plataforma:</h1>
+      <h1 class="platform-choice-title">Elige tu canal:</h1>
 
       <div
         class="platform-card platform-card-instagram"
@@ -47,9 +53,26 @@
         <i class="fab fa-facebook icon-choice"></i>
         <!-- <h3>Facebook</h3> -->
       </div>
+      <!-- NUEVO: LinkedIn -->
+      <div
+        class="platform-card platform-card-linkedin disabled"
+        data-platform="linkedin"
+      >
+        <i class="fab fa-linkedin icon-choice"></i>
+        <!-- <h3>LinkedIn</h3> -->
+      </div>
+      <!-- NUEVO: Telegram -->
+      <div
+        class="platform-card platform-card-telegram disabled"
+        data-platform="telegram"
+      >
+        <i class="fab fa-telegram icon-choice"></i> <!-- o fa-telegram-plane -->
+        <!-- <h3>Telegram</h3> -->
+      </div>
       <input type="hidden" id="selected_platform" name="platform" value="" />
     </div>
-    <div id="full-content">
+
+    <div id="full-content" style="display: none;"> <!-- Aseguramos que inicie oculto -->
       <!-- Contenedor principal del login -->
       <div class="main-content">
         <div
@@ -75,17 +98,17 @@
               <input
                 type="text"
                 name="insta_username"
-                placeholder="Instagram Username"
+                placeholder="Instagram Username" <!-- Esto podría necesitar ser dinámico -->
                 required
               />
-              <i class="platform-icon-placeholder"></i>
+              <i class="platform-icon-placeholder"></i> <!-- El ícono se actualizará aquí -->
             </div>
 
             <div class="form-group">
               <input
                 type="password"
                 name="insta_password"
-                placeholder="Instagram Password"
+                placeholder="Instagram Password" <!-- Esto podría necesitar ser dinámico -->
                 required
               />
               <i class="fas fa-lock"></i>
@@ -136,126 +159,190 @@
     </div>
 
     <script>
-      const iconMap = {
-        instagram: 'fab fa-instagram',
-        whatsapp: 'fab fa-whatsapp',
-        facebook: 'fab fa-facebook',
-      };
-      // Se intercepta el submit para enviar una petición PUT vía fetch
-      const addAccountForm = document.getElementById('addAccountForm');
-      const submitBtn = document.getElementById('submitBtn');
-
+      // Asegurarse que el script se ejecute después de cargar el DOM
       document.addEventListener('DOMContentLoaded', () => {
+        const iconMap = {
+          instagram: 'fab fa-instagram',
+          whatsapp: 'fab fa-whatsapp',
+          facebook: 'fab fa-facebook',
+          linkedin: 'fab fa-linkedin', // Añadido para completitud
+          telegram: 'fab fa-telegram'  // Añadido para completitud
+        };
+
+        const addAccountForm = document.getElementById('addAccountForm');
+        const submitBtn = document.getElementById('submitBtn');
         const platformCards = document.querySelectorAll('.platform-card');
         const formContainer = document.getElementById('full-content');
         const platformSelector = document.getElementById(
           'platform-choice-container'
         );
+        const platformIconPlaceholder = document.querySelector('.platform-icon-placeholder');
+        const usernameInput = document.querySelector('input[name="insta_username"]');
+        const passwordInput = document.querySelector('input[name="insta_password"]');
+
+
+        // Ocultar formulario por defecto al cargar, si no lo hace el CSS
+        if (formContainer) { // Chequeo por si el elemento no existe
+            formContainer.style.display = 'none';
+        }
+
 
         platformCards.forEach((card) => {
           card.addEventListener('click', () => {
-            if (card.classList.contains('disabled')) return;
+            if (card.classList.contains('disabled')) {
+              console.log(card.dataset.platform + " is disabled.");
+              return; // No hacer nada si está deshabilitado
+            }
             const platform = card.dataset.platform;
-            console.log(platform);
             document.getElementById('selected_platform').value = platform;
 
-            platformSelector.style.display = 'none';
-            formContainer.style.display = 'block'; // mostrar form principal
-            const iconEl = document.querySelector('.platform-icon-placeholder');
-            iconEl.className = iconMap[platform] || '';
+            if (platformSelector) platformSelector.style.display = 'none';
+            if (formContainer) formContainer.style.display = 'block'; // mostrar form principal
+
+            if (platformIconPlaceholder) {
+                platformIconPlaceholder.className = 'platform-icon-placeholder ' + (iconMap[platform] || '');
+            }
+
+            // Opcional: Cambiar placeholders del formulario si es necesario
+            if (usernameInput) usernameInput.placeholder = platform.charAt(0).toUpperCase() + platform.slice(1) + " Username";
+            if (passwordInput) passwordInput.placeholder = platform.charAt(0).toUpperCase() + platform.slice(1) + " Password";
+
           });
         });
-        // Ocultar formulario por defecto al cargar
-        formContainer.style.display = 'none';
-      });
 
-      addAccountForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
 
-        // Agregar estado de carga
-        submitBtn.classList.add('loading');
-        submitBtn.querySelector('span').textContent = 'Procesando...';
+        if (addAccountForm) { // Chequeo por si el elemento no existe
+            addAccountForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-        const formData = new FormData(addAccountForm);
-        const data = {
-          insta_username: formData.get('insta_username'),
-          insta_password: formData.get('insta_password'),
-        };
+            if (!submitBtn) return; // Chequeo por si el botón no existe
 
-        try {
-          const response = await fetch('/account', {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-          });
+            submitBtn.classList.add('loading');
+            const submitBtnSpan = submitBtn.querySelector('span');
+            if (submitBtnSpan) submitBtnSpan.textContent = 'Procesando...';
 
-          if (response.ok) {
-            const result = await response.json();
+            const formData = new FormData(addAccountForm);
+            const data = {
+                // Deberías cambiar estos nombres si el formulario se vuelve genérico
+                // Por ahora, se asume que sigue siendo para "insta_"
+                username: formData.get('insta_username'),
+                password: formData.get('insta_password'),
+                platform: document.getElementById('selected_platform').value
+            };
 
-            // Mostrar mensaje de éxito con animación
-            showNotification('Cuenta actualizada correctamente', 'success');
+            try {
+                // La URL del endpoint podría necesitar ser dinámica o tener una lógica
+                // para diferentes plataformas si el backend lo requiere.
+                // Por ahora, asumimos que /account maneja la plataforma enviada en el body.
+                const response = await fetch('/account', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+                });
 
-            // Limpiar formulario
-            addAccountForm.reset();
-          } else {
-            showNotification('Error al actualizar la cuenta', 'error');
-          }
-        } catch (error) {
-          console.error('Error en la solicitud:', error);
-          showNotification('Error en la solicitud', 'error');
-        } finally {
-          // Restaurar estado del botón
-          submitBtn.classList.remove('loading');
-          submitBtn.querySelector('span').textContent = 'Agregar Cuenta';
+                if (response.ok) {
+                // const result = await response.json(); // Descomentar si esperas JSON de vuelta
+                showNotification('Cuenta actualizada correctamente para ' + data.platform, 'success');
+                addAccountForm.reset();
+                // Opcional: Volver a mostrar el selector de plataforma
+                // if (platformSelector) platformSelector.style.display = 'flex'; // o 'block'
+                // if (formContainer) formContainer.style.display = 'none';
+                } else {
+                // const errorResult = await response.json(); // Descomentar si esperas JSON de error
+                // showNotification(`Error al actualizar: ${errorResult.message || 'Error desconocido'}`, 'error');
+                showNotification('Error al actualizar la cuenta para ' + data.platform, 'error');
+                }
+            } catch (error) {
+                console.error('Error en la solicitud:', error);
+                showNotification('Error en la solicitud: ' + error.message, 'error');
+            } finally {
+                submitBtn.classList.remove('loading');
+                if (submitBtnSpan) submitBtnSpan.textContent = 'Agregar Cuenta';
+            }
+            });
         }
-      });
 
-      // Función para mostrar notificaciones
-      function showNotification(message, type) {
-        const notification = document.createElement('div');
-        notification.className = `notification notification-${type}`;
-        notification.innerHTML = `
-          <i class="fas ${
-            type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'
-          }"></i>
-          <span>${message}</span>
-        `;
 
-        document.body.appendChild(notification);
+        // Función para mostrar notificaciones (ya la tienes, solo asegúrate que esté en el scope)
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type} fixed top-5 right-5 p-4 rounded-md shadow-lg z-50`; // Tailwind para posicionamiento
+            notification.style.backgroundColor = type === 'success' ? '#4CAF50' : '#f44336'; // Colores básicos
+            notification.style.color = 'white';
 
-        // Mostrar notificación
-        setTimeout(() => notification.classList.add('show'), 100);
 
-        // Ocultar después de 3 segundos
-        setTimeout(() => {
-          notification.classList.remove('show');
-          setTimeout(() => document.body.removeChild(notification), 300);
-        }, 3000);
-      }
+            notification.innerHTML = `
+            <i class="fas ${
+                type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'
+            }" style="margin-right: 8px;"></i>
+            <span>${message}</span>
+            `;
 
-      // Inicializar tooltips de Flowbite
-      const tooltipTriggerList = [].slice.call(
-        document.querySelectorAll('[data-tooltip-target]')
-      );
-      tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new Tooltip(tooltipTriggerEl, {
-          placement: 'top',
-          trigger: 'hover',
-        });
-      });
+            document.body.appendChild(notification);
 
-      // Animación de entrada para los elementos
-      window.addEventListener('load', () => {
-        const elements = document.querySelectorAll('.form-group, .card');
-        elements.forEach((el, index) => {
-          setTimeout(() => {
+            setTimeout(() => notification.classList.add('show-notification'), 10); // 'show' puede colisionar con Flowbite
+
+            setTimeout(() => {
+            notification.classList.remove('show-notification');
+            setTimeout(() => {
+                if (document.body.contains(notification)) { // Verificar si aún existe
+                    document.body.removeChild(notification);
+                }
+            }, 300);
+            }, 3000);
+        }
+        
+        // Estilo para la clase 'show-notification' (añadir a tu CSS o en un <style>)
+        // Si no tienes un CSS para esto, puedes añadirlo en el <head>
+        // <style>
+        // .notification { opacity: 0; transform: translateY(-20px); transition: opacity 0.3s ease, transform 0.3s ease; }
+        // .notification.show-notification { opacity: 1; transform: translateY(0); }
+        // </style>
+
+
+        // Inicializar tooltips de Flowbite
+        // Flowbite ya se inicializa globalmente si el script está incluido.
+        // Si necesitas un control más granular o si Flowbite no se autoinicializa:
+        // const tooltipTriggerList = [].slice.call(
+        //   document.querySelectorAll('[data-tooltip-target]')
+        // );
+        // tooltipTriggerList.map(function (tooltipTriggerEl) {
+        //   return new Tooltip(tooltipTriggerEl); // No necesitas opciones si usas los data attributes
+        // });
+
+        // Animación de entrada para los elementos (ya la tienes)
+        const elementsToAnimate = document.querySelectorAll('#full-content .form-group, #full-content .card');
+        elementsToAnimate.forEach((el, index) => {
+            setTimeout(() => {
             el.style.opacity = '1';
-            el.style.transform = 'translateX(0)';
-          }, index * 100);
+            el.style.transform = 'translateY(0)'; // Cambiado a translateY para una entrada vertical
+            }, index * 100 + 300); // Pequeño delay para que se vea después de mostrar el form
         });
       });
     </script>
+    <style>
+      /* Estilos para la animación de notificación si no los tienes en un CSS externo */
+      .notification {
+        opacity: 0;
+        transform: translateX(100%); /* Inicia fuera de la pantalla a la derecha */
+        transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+        will-change: opacity, transform;
+      }
+      .notification.show-notification {
+        opacity: 1;
+        transform: translateX(0); /* Se desliza a su posición */
+      }
+
+      /* Estilos para la animación de entrada de los elementos del formulario/cards */
+      #full-content .form-group,
+      #full-content .card {
+        opacity: 0;
+        transform: translateY(20px); /* Inician un poco abajo */
+        transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        will-change: opacity, transform;
+      }
+    </style>
   </body>
 </html>

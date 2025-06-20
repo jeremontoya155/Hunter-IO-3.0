@@ -8,8 +8,10 @@
     <link rel="stylesheet" href="/static/css/nichos.css" />
     <link rel="stylesheet" href="/static/css/navbar.css" />
     <link rel="stylesheet" href="/static/css/scrollbar.css" />
+        <link rel="stylesheet" href="/static/css/all.css" />
+
     <!-- FontAwesome para íconos -->
-    <link
+    <link 
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
       integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
@@ -44,6 +46,12 @@
         <h3>Crear tu Blanco</h3>
         <p>Define un nuevo nicho objetivo con sus características.</p>
       </div>
+
+       <div class="choice-card" data-target="arco-form-section">
+  <i class="fas fa-arrow-circle-right icon-choice"></i> <!-- Alternativa -->
+  <h3>Crea tu Arco</h3>
+  <p>Configura una nueva arma de lanzamiento para tus campañas.</p>
+</div>
     </div>
 
     <!-- Sección para el Formulario "Crear Hunter" (Inicialmente Oculta) -->
@@ -233,7 +241,10 @@
         choiceCards.forEach((card) => {
           card.addEventListener('click', () => {
             const targetId = card.dataset.target; // Obtiene 'hunter-form-section' o 'blanco-form-section'
-
+            if (targetId === 'arco-form-section') {
+              // Si es la de "Crear tu Blanco", redirige a /targets
+              window.location.href = '/index'; // <--- Redirección aquí
+            }
             // Verifica si la tarjeta es la de "Crear tu Blanco"
             if (targetId === 'blanco-form-section') {
               // Si es la de "Crear tu Blanco", redirige a /targets
