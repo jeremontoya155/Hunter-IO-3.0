@@ -30,8 +30,7 @@
     <!-- <link rel="stylesheet" href="/static/css/onboarding.css" /> -->
     <link rel="stylesheet" href="/static/css/onboarding2.css" />
     <link rel="stylesheet" href="/static/css/scrollbar.css" />
-        <link rel="stylesheet" href="/static/css/all.css" />
-
+    <link rel="stylesheet" href="/static/css/all.css" />
 
     <!-- Estilos Internos (SOLO si necesitas sobreescribir algo muy específico, idealmente vacío) -->
     <style>
@@ -449,6 +448,10 @@
             // Actualizar la referencia en stepElements si es necesario, o asegurarse de usar newHeader
             // Simplificamos usando newHeader para el listener y re-obteniendo arrowIcon
             const currentHeader = newHeader;
+
+            stepElements[stepNumber].title =
+              newHeader.querySelector('.step-title');
+
             const currentArrowIcon =
               currentHeader.querySelector('.step-icon i');
 

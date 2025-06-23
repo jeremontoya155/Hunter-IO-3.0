@@ -1,15 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 /* --- Estilos Base y Reset --- */
-html, body {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  font-family: 'Poppins', sans-serif;
-  background-color: #111827; /* Gris azulado oscuro */
-  color: #e5e7eb; /* Gris muy claro */
-  font-size: 14px; /* Tamaño base */
-}
 
 /* --- Contenedor Principal --- */
 /* Ajusta el padding-left si tu navbar tiene un ancho fijo */
@@ -18,7 +8,7 @@ html, body {
   padding-left: 75px; /* Ejemplo si la navbar mide 75px */
   max-width: 1600px; /* Máximo ancho para el contenido */
   margin: 0 auto; /* Centrar si es más estrecho */
-  margin-left:3.5rem;
+  margin-left: 3.5rem;
 }
 
 /* --- Header --- */
@@ -81,7 +71,8 @@ html, body {
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
+  width: 100%;
+  overflow-x: auto;
 }
 
 /* --- Estilo Base para Tarjetas (Card) --- */
@@ -92,14 +83,15 @@ html, body {
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   display: flex; /* Para control interno */
-  flex-direction: column; /* Apilar título y contenido */
+  flex-flow: column wrap; /* Apilar título y contenido */
   position: relative;
+  width: 100%;
+  overflow: hidden;
 }
-
-.titleSection{
+.titleSection {
   position: absolute;
-  top:10px;
-  left:10px;
+  top: 10px;
+  left: 10px;
 }
 .card-title {
   font-size: 1.1rem; /* 17-18px */
@@ -108,69 +100,108 @@ html, body {
   margin-bottom: 15px;
   display: flex;
   align-items: center;
-
+  gap: 10px;
 }
 
 /* --- Sección de Filtros --- */
 .filter-section {
-  /* grid-column will be set in responsive section if needed */
-  display:flex;
-  align-items:center;
-  justify-content: center;
-  gap:1em;
-  flex-flow: column wrap;
+  border-left: 3px solid var(--color-accent-blue); /* distintivo */
 }
-
 .filter-controls {
   display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  align-items: flex-end; /* Alinear base de inputs y botón */
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+  width: 100%;
 }
 
-.date-input {
+.filter-control-group {
   display: flex;
   flex-direction: column;
-  gap: 5px;
 }
 
-.date-input label {
-  font-size: 0.8rem; /* 13px */
-  color: #9ca3af;
-  margin-bottom: 2px;
+.filter-control-row {
+  display: flex;
+  width: 80%;
+  gap: 1rem;
 }
 
-.date-input input[type="date"] {
-  background-color: #374151; /* Gris medio */
-  border: 1px solid #4b5563; /* Gris ligeramente más claro */
-  color: #e5e7eb;
-  padding: 8px 10px;
-  border-radius: 6px;
-  font-size: 0.9rem;
+.filter-control-row .filter-control-group {
+  flex: 1;
+}
+
+.filter-control-group label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+  color: var(--color-text-secondary);
+}
+
+.filter-control-group input,
+.filter-control-group select {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  background: var(--color-bg-light);
+  color: var(--color-text-accent);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  transition: border-color 0.3s ease;
+}
+
+.filter-control-group input:focus,
+.filter-control-group select:focus {
   outline: none;
-}
-/* Estilo para el icono del calendario si el navegador lo soporta */
-.date-input input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(0.8); /* Hacer el icono más claro */
-  cursor: pointer;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px rgba(0, 255, 148, 0.2);
 }
 
 .filter-button {
-  background-color: #14b8a6; /* Teal principal */
-  color: #fff;
+  background: var(--color-accent-gradient);
+  color: #000;
   border: none;
-  padding: 10px 18px;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 500;
+  padding: 0.65rem 1.5rem;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  font-size: 0.85rem;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
+  box-shadow: var(--button-shadow);
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  position: relative;
 }
 
 .filter-button:hover {
-  background-color: #0f766e; /* Teal más oscuro */
+  transform: translateY(-2px);
+  box-shadow: var(--button-shadow-hover);
+}
+
+.filter-button.loading {
+  pointer-events: none;
+  color: transparent;
+}
+
+.filter-button.loading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid black;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* --- Sección Métricas Clave --- */
@@ -180,15 +211,16 @@ html, body {
   border: none;
   box-shadow: none;
   padding: 0;
+  max-width: 100wv;
 }
 
 .section-title {
-   font-size: 1.3rem; /* 20-21px */
-   font-weight: 600;
-   color: #fff;
-   margin-bottom: 15px;
-   padding-left: 5px; /* Pequeño indentado */
-   border-left: 3px solid #14b8a6; /* Barra lateral teal */
+  font-size: 1.3rem; /* 20-21px */
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 15px;
+  padding-left: 5px; /* Pequeño indentado */
+  border-left: 3px solid #14b8a6; /* Barra lateral teal */
 }
 
 .metrics-container {
@@ -215,9 +247,9 @@ html, body {
 }
 
 .metric-card:hover {
-   transform: translateY(-3px);
-   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
-   border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .metric-title {
@@ -238,7 +270,7 @@ html, body {
   color: #fff;
   /* Reducir margen inferior y altura de línea */
   margin-bottom: 5px;
-  line-height: 1.0; /* Muy importante para quitar espacio extra */
+  line-height: 1; /* Muy importante para quitar espacio extra */
   order: 2; /* Asegurar que el valor esté después del título */
   flex-grow: 1; /* Permitir que ocupe espacio vertical si es necesario */
   display: flex; /* Para centrar el número si es corto */
@@ -275,11 +307,11 @@ html, body {
 }
 
 .metric-title-small {
-   font-size: 0.9rem; /* 14px - Mantener o aumentar ligeramente */
-   font-weight: 500;
-   color: #9ca3af;
-   /* Reducir margen si es necesario */
-   margin-bottom: 6px;
+  font-size: 0.9rem; /* 14px - Mantener o aumentar ligeramente */
+  font-weight: 500;
+  color: #9ca3af;
+  /* Reducir margen si es necesario */
+  margin-bottom: 6px;
 }
 
 .metric-value-small {
@@ -289,12 +321,11 @@ html, body {
   font-size: 0.9rem; /* 14px */
 }
 
-
 .metric-detail-small {
-   /* Aumentar tamaño del destinatario */
-   font-size: 1rem; /* 16px */
-   color: #9ca3af; /* Mantener gris o cambiar si prefieres */
-   line-height: 1.3;
+  /* Aumentar tamaño del destinatario */
+  font-size: 1rem; /* 16px */
+  color: #9ca3af; /* Mantener gris o cambiar si prefieres */
+  line-height: 1.3;
 }
 
 /* --- Alertas Visuales para Tasa de Likes --- */
@@ -302,38 +333,49 @@ html, body {
   background-color: #450a0a; /* Rojo muy oscuro */
   border-left: 4px solid #ef4444; /* Borde izquierdo rojo */
 }
-.metric-card.alert-low .metric-value { color: #fca5a5; /* Rojo claro */ }
-.metric-card.alert-low .metric-title { color: #fecaca; }
+.metric-card.alert-low .metric-value {
+  color: #fca5a5; /* Rojo claro */
+}
+.metric-card.alert-low .metric-title {
+  color: #fecaca;
+}
 
 .metric-card.alert-medium {
   background-color: #7c2d12; /* Naranja oscuro */
   border-left: 4px solid #f97316; /* Borde izquierdo naranja */
 }
-.metric-card.alert-medium .metric-value { color: #fdba74; /* Naranja claro */ }
-.metric-card.alert-medium .metric-title { color: #fed7aa; }
+.metric-card.alert-medium .metric-value {
+  color: #fdba74; /* Naranja claro */
+}
+.metric-card.alert-medium .metric-title {
+  color: #fed7aa;
+}
 
 .metric-card.alert-good {
-  border-left: 4: #2dd4bf; /* Borde izquierdo teal (principal) */
-  /* Color de fondo y texto por defecto */
+  border-left: 4px solid #2dd4bf;
 }
 
 .metric-card.alert-excellent {
   background-color: #065f46; /* Verde oscuro */
   border-left: 4px solid #10b981; /* Borde izquierdo verde */
 }
-.metric-card.alert-excellent .metric-value { color: #6ee7b7; /* Verde claro */ }
-.metric-card.alert-excellent .metric-title { color: #a7f3d0; }
+.metric-card.alert-excellent .metric-value {
+  color: #6ee7b7; /* Verde claro */
+}
+.metric-card.alert-excellent .metric-title {
+  color: #a7f3d0;
+}
 
 /* --- Sección de Gráfico --- */
 .chart-section {
   /* Ajusta el grid-column si quieres que ocupe más espacio */
-   grid-column: span 2; /* Ejemplo: Ocupar 2 columnas */
+  grid-column: span 2; /* Ejemplo: Ocupar 2 columnas */
   min-height: 400px; /* Altura mínima */
 }
 .chart-container {
   position: relative;
   height: 350px; /* Altura fija para el contenedor del canvas */
-  width: 100%;
+  max-width: 100wv;
 }
 #graficoMensajes {
   max-height: 100%;
@@ -346,7 +388,7 @@ html, body {
 
 /* --- Sección Mensajes por Tipo --- */
 .message-types-section {
-   /* Puede ocupar 1 columna */
+  /* Puede ocupar 1 columna */
 }
 .types-container {
   display: flex;
@@ -374,18 +416,18 @@ html, body {
 
 /* --- Sección Últimos Mensajes Enviados (MODIFIED FOR LARGER SIZE) --- */
 .recent-messages-section {
-    /* Original: grid-column: span 2; */ /* Removed from here, moved to responsive */
-    /* New: Increased max-height */
-    max-height: 800px; /* Significantly increased height */
-    overflow: hidden;
-    display: flex; /* Use flex to manage inner list height */
-    flex-direction: column; /* Stack title and list */
-    /* Ensure card styles are inherited */
-    background-color: #1f2937; /* bg-gray-800 */
-    border-radius: 12px;
-    padding: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  /* Original: grid-column: span 2; */ /* Removed from here, moved to responsive */
+  /* New: Increased max-height */
+  max-height: 800px; /* Significantly increased height */
+  overflow: hidden;
+  display: flex; /* Use flex to manage inner list height */
+  flex-direction: column; /* Stack title and list */
+  /* Ensure card styles are inherited */
+  background-color: #1f2937; /* bg-gray-800 */
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .messages-list {
@@ -400,7 +442,12 @@ html, body {
 }
 .mensaje-item {
   /* background-color: rgba(55, 65, 81, 0.4); Remove base background if adding new subtle one */
-  background-color: rgba(55, 65, 81, 0.1); /* Add a subtle background to each item */
+  background-color: rgba(
+    55,
+    65,
+    81,
+    0.1
+  ); /* Add a subtle background to each item */
   border-radius: 6px;
   padding: 15px 20px; /* Increased padding for more spacious look */
   margin-bottom: 10px; /* Keep gap between items */
@@ -408,7 +455,7 @@ html, body {
   transition: background-color 0.2s ease;
 }
 .mensaje-item:hover {
-   background-color: rgba(55, 65, 81, 0.7); /* Keep hover effect */
+  background-color: rgba(55, 65, 81, 0.7); /* Keep hover effect */
 }
 
 .mensaje-header {
@@ -436,10 +483,10 @@ html, body {
   gap: 5px; /* Space between date and time */
   flex-shrink: 0; /* Prevent from shrinking */
 }
-.mensaje-fecha-parte, .mensaje-hora-parte {
-    white-space: nowrap; /* Prevent splitting date/time */
+.mensaje-fecha-parte,
+.mensaje-hora-parte {
+  white-space: nowrap; /* Prevent splitting date/time */
 }
-
 
 .mensaje-contenido {
   color: #d1d5db; /* Gris claro */
@@ -454,7 +501,6 @@ html, body {
   text-align: center;
   padding: 20px;
 }
-
 /* --- Sección Último Mensaje Completo --- */
 .last-message-section {
   /* grid-column: span 1; o como prefieras */
@@ -478,102 +524,131 @@ html, body {
 /* --- Responsive --- */
 @media (max-width: 1024px) {
   .dashboard-grid {
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Columnas más pequeñas */
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(280px, 1fr)
+    ); /* Columnas más pequeñas */
   }
   .chart-section {
-      grid-column: 1 / -1; /* Gráfico a ancho completo */
+    grid-column: 1 / -1; /* Gráfico a ancho completo */
   }
   /* RECENT MESSAGES SECTION NOW SPANS FULL WIDTH ON LARGE SCREENS */
-   /* .recent-messages-section {
-        grid-column: 1 / -1; /* Mensajes a ancho completo */
-   /* } */ /* Removed from here, will be handled by the 1fr template on small screens */
+  /* .recent-messages-section {
+          grid-column: 1 / -1; /* Mensajes a ancho completo */
+  /* } */ /* Removed from here, will be handled by the 1fr template on small screens */
 
-   .key-metrics-section .metrics-container {
-       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-   }
-    .metric-value { font-size: 2.5rem; } /* 40px - Ajustar si es necesario */
+  .key-metrics-section .metrics-container {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+  .metric-value {
+    font-size: 2.5rem;
+  } /* 40px - Ajustar si es necesario */
 }
 
 @media (min-width: 1024px) {
-    .dashboard-grid {
-        grid-template-columns: 1fr 1fr; /* Two columns on large screens */
-    }
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr; /* Two columns on large screens */
+  }
 
-    /* Make specific sections span the full width */
-    .key-metrics-section,
-    .chart-section,
-    .recent-messages-section { /* ADDED recent-messages-section here */
-        grid-column: 1 / -1; /* Span all columns */
-    }
+  /* Make specific sections span the full width */
+  .key-metrics-section,
+  .chart-section,
+  .recent-messages-section {
+    /* ADDED recent-messages-section here */
+    grid-column: 1 / -1; /* Span all columns */
+  }
 
-    /* The other sections (.filter-section, .last-message-section, .message-types-section)
-       will flow into the 1fr 1fr grid below the full-width sections */
+  /* The other sections (.filter-section, .last-message-section, .message-types-section)
+        will flow into the 1fr 1fr grid below the full-width sections */
 }
-
 
 @media (max-width: 768px) {
   .main-content {
-      padding: 15px;
-      padding-left: 15px; /* Anular padding navbar si se oculta */
-      margin-left:0;
+    padding: 15px;
+    padding-left: 15px; /* Anular padding navbar si se oculta */
+    margin-left: 0;
+    width: 100%;
+    overflow-x: hidden;
   }
-   .header-content h1 { font-size: 1.5rem; } /* 24px */
-  .accounts-list { justify-content: center; } /* Centrar botones cuenta */
+  .header-content h1 {
+    font-size: 1.5rem;
+  } /* 24px */
+  .accounts-list {
+    justify-content: center;
+  } /* Centrar botones cuenta */
 
   .dashboard-grid {
-      grid-template-columns: 1fr; /* Una sola columna */
-      gap: 15px;
+    grid-template-columns: 1fr; /* Una sola columna */
+    gap: 15px;
+    width: 100%;
+    max-width: 100wv;
   }
   /* Ensure all sections occupy 1 column on small screens */
-  .filter-section, .key-metrics-section, .chart-section, .message-types-section, .recent-messages-section, .last-message-section {
-      grid-column: 1 / -1;
+  .filter-section,
+  .key-metrics-section,
+  .chart-section,
+  .message-types-section,
+  .recent-messages-section,
+  .last-message-section {
+    grid-column: 1 / -1;
   }
-   .filter-controls { flex-direction: column; align-items: stretch; }
-   .filter-button { width: 100%; justify-content: center; }
-   .date-input input[type="date"] { width: 100%; box-sizing: border-box; }
+  .filter-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filter-button {
+    width: 100%;
+    justify-content: center;
+  }
+  .date-input input[type='date'] {
+    width: 100%;
+    box-sizing: border-box;
+  }
 
-    .key-metrics-section .metrics-container {
-       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-       gap: 12px;
-   }
-    /* -- AJUSTE RESPONSIVE METRICAS -- */
-    .metric-value {
-      font-size: 2.25rem; /* 36px - Reducir un poco en móviles */
+  .key-metrics-section .metrics-container {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+  }
+  /* -- AJUSTE RESPONSIVE METRICAS -- */
+  .metric-value {
+    font-size: 2.25rem; /* 36px - Reducir un poco en móviles */
   }
   .metric-card {
-      min-height: 100px; /* Reducir altura mínima en móvil */
-      padding: 12px 15px; /* Reducir padding en móvil */
+    min-height: 100px; /* Reducir altura mínima en móvil */
+    padding: 12px 15px; /* Reducir padding en móvil */
   }
   .metric-title {
-      font-size: 0.75rem; /* 12px */
+    font-size: 0.75rem; /* 12px */
   }
   /* -- FIN AJUSTE -- */
 
   .mensaje-header {
-      align-items: flex-start; /* Mejor alineación en móvil si se apilan */
+    align-items: flex-start; /* Mejor alineación en móvil si se apilan */
   }
   .mensaje-fecha-hora {
-      margin-top: 3px; /* Pequeño espacio si la fecha queda abajo */
-      font-size: 0.7rem; /* More space for longer dates/times on small screen */
-      flex-direction: column; /* Stack date and time on very small screens */
-      gap: 0; /* Remove gap when stacked */
+    margin-top: 3px; /* Pequeño espacio si la fecha queda abajo */
+    font-size: 0.7rem; /* More space for longer dates/times on small screen */
+    flex-direction: column; /* Stack date and time on very small screens */
+    gap: 0; /* Remove gap when stacked */
   }
-    .chart-container { height: 300px; }
+  .chart-container {
+    height: 300px;
+  }
 
-    /* Adjust Recent Messages height on smaller screens if needed */
-    .recent-messages-section {
-         max-height: 500px; /* Smaller max height on mobile */
-    }
-    .messages-list {
-        max-height: calc(500px - 80px); /* Adjust inner list height */
-    }
-     .mensaje-item {
-        padding: 10px 15px; /* Slightly less padding on mobile */
-     }
-     .mensaje-contenido {
-        font-size: 0.85rem; /* Slightly smaller font on mobile */
-     }
-     .mensaje-destinatario {
+  /* Adjust Recent Messages height on smaller screens if needed */
+  .recent-messages-section {
+    max-height: 500px; /* Smaller max height on mobile */
+  }
+  .messages-list {
+    max-height: calc(500px - 80px); /* Adjust inner list height */
+  }
+  .mensaje-item {
+    padding: 10px 15px; /* Slightly less padding on mobile */
+  }
+  .mensaje-contenido {
+    font-size: 0.85rem; /* Slightly smaller font on mobile */
+  }
+  .mensaje-destinatario {
     font-size: 1.2rem; /* Reducir tamaño en mobile */
   }
 
@@ -593,7 +668,7 @@ html, body {
   .messages-list {
     max-height: none;
   }
-  
+
   .resumen-chart-container {
     width: 100%;
     height: 300px;
@@ -606,497 +681,511 @@ html, body {
     height: 100% !important;
   }
 }
-
-
-
-
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-
-/* --- Estilos Base y Generales --- */
-body {
-    background-color: #111827; /* bg-gray-900 */
-    color: #d1d5db; /* text-gray-300 (ajustado de 200 para un poco más de contraste) */
-    font-family: 'Poppins', sans-serif;
-    overflow-x:auto;
-}
-.main-content {
-    padding: 1.5rem; /* Espaciado general */
-    /* Considerar padding-left si la navbar es lateral y fija */
-    /* padding-left: 280px; /* Ejemplo si navbar.css usa ese ancho */
-}
 .page-header {
-    margin-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 .header-content h1 {
-     color: #f3f4f6; /* text-gray-100 */
+  color: #f3f4f6; /* text-gray-100 */
 }
 
 .card {
-    background-color: #1f2937; /* bg-gray-800 */
-    border-radius: 0.5rem; /* rounded-lg */
-    padding: 1.25rem; /* p-5 */
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    color: #d1d5db; /* Color texto base dentro de cards */
+  background-color: #1f2937; /* bg-gray-800 */
+  border-radius: 0.5rem; /* rounded-lg */
+  padding: 1.25rem; /* p-5 */
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  color: #d1d5db; /* Color texto base dentro de cards */
 }
 .card-title {
-    font-size: 1.125rem; /* text-lg */
-    font-weight: 600; /* font-semibold */
-    margin-bottom: 1rem; /* mb-4 */
-    color: #e5e7eb; /* text-gray-200 */
-    display: flex;
-    align-items: center;
+  font-size: 1.125rem; /* text-lg */
+  font-weight: 600; /* font-semibold */
+  margin-bottom: 1rem; /* mb-4 */
+  color: #e5e7eb; /* text-gray-200 */
+  display: flex;
+  align-items: center;
 }
-.section-title { /* Para títulos fuera de cards */
-     font-size: 1.25rem; /* text-xl */
-     font-weight: 600;
-     margin-bottom: 1rem;
-     color: #e5e7eb;
-     display: flex;
-     align-items: center;
- }
+.section-title {
+  /* Para títulos fuera de cards */
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #e5e7eb;
+  display: flex;
+  align-items: center;
+}
 
 /* --- Ajustes de Layout para Grid --- */
 .dashboard-grid {
-    display: grid;
-    grid-template-columns: 1fr; /* Por defecto una columna */
-    gap: 1.5rem; /* Espacio entre tarjetas */
+  display: grid;
+  grid-template-columns: 1fr; /* Por defecto una columna */
+  gap: 1.5rem; /* Espacio entre tarjetas */
 }
 
 /* A partir de 'lg' (1024px), usamos dos columnas */
 /* Aquí es donde las tarjetas se ordenan lado a lado si caben */
 @media (min-width: 1024px) {
-    .dashboard-grid {
-        grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
-    }
-    /* SECTIONS SPANNING FULL WIDTH ON LG SCREENS */
-    .key-metrics-section,
-    .chart-section,
-    .recent-messages-section { /* ADDED recent-messages-section HERE */
-        grid-column: 1 / -1; /* Ocupa todas las columnas */
-    }
-    /* The other sections (.filter-section, .last-message-section, .message-types-section)
-       will flow into the 1fr 1fr grid below the full-width sections */
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+  }
+  /* SECTIONS SPANNING FULL WIDTH ON LG SCREENS */
+  .key-metrics-section,
+  .chart-section,
+  .recent-messages-section {
+    /* ADDED recent-messages-section HERE */
+    grid-column: 1 / -1; /* Ocupa todas las columnas */
+  }
+  /* The other sections (.filter-section, .last-message-section, .message-types-section)
+        will flow into the 1fr 1fr grid below the full-width sections */
 }
-
 
 /* --- Estilos para Filtros --- */
-.filter-section { /* Inherits .card */
-     /* Fluye en el grid */
+.filter-section {
+  /* Inherits .card */
+  /* Fluye en el grid */
 }
 .filter-controls {
-    display: flex;
-    flex-wrap: wrap; /* Adjust on small screens */
-    gap: 1rem;      /* Space between controls */
-    align-items: flex-end; /* Align vertically at the bottom */
+  display: flex;
+  flex-wrap: wrap; /* Adjust on small screens */
+  gap: 1rem; /* Space between controls */
+  align-items: center; /* Align vertically at the bottom */
+
+  width: 100%;
 }
 .filter-control-group {
-     display: flex;
-     flex-direction: column;
-     gap: 0.25rem;
-     flex-grow: 1; /* Allow them to grow a bit */
-     min-width: 130px; /* Minimum width for date/account controls */
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex-grow: 1; /* Allow them to grow a bit */
+  min-width: 130px; /* Minimum width for date/account controls */
 }
 .filter-control-group label {
-    font-size: 0.75rem; /* Smaller */
-    color: #9ca3af; /* text-gray-400 */
-    margin-bottom: 0.1rem;
+  font-size: 0.75rem; /* Smaller */
+  color: #9ca3af; /* text-gray-400 */
+  margin-bottom: 0.1rem;
 }
 .filter-control-group select,
-.filter-control-group input[type="date"] {
-    padding: 0.5rem 0.75rem;
-    background-color: #374151; /* bg-gray-700 */
-    border: 1px solid #4b5563; /* border-gray-600 */
-    border-radius: 0.375rem; /* rounded-md */
-    color: #e5e7eb; /* text-gray-200 */
-    font-size: 0.875rem;
-    height: 42px; /* Fixed height to align with button */
-    width: 100%; /* Occupy available space in the group */
-    box-sizing: border-box;
+.filter-control-group input[type='date'] {
+  padding: 0.5rem 0.75rem;
+  background-color: #374151; /* bg-gray-700 */
+  border: 1px solid #4b5563; /* border-gray-600 */
+  border-radius: 0.375rem; /* rounded-md */
+  color: #e5e7eb; /* text-gray-200 */
+  font-size: 0.875rem;
+  height: 42px; /* Fixed height to align with button */
+  width: 100%; /* Occupy available space in the group */
+  box-sizing: border-box;
 }
-.filter-button { /* Filter button style */
-    padding: 0.5rem 1rem;
-    background-color: #10b981; /* bg-emerald-500 */
-    color: white;
-    border: none;
-    border-radius: 0.375rem;
-    height: 42px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    font-weight: 500;
-    white-space: nowrap; /* Prevent text wrapping */
-    align-self: flex-end; /* Align with inputs */
+.filter-button {
+  /* Filter button style */
+  padding: 0.5rem 1rem;
+  background-color: #10b981; /* bg-emerald-500 */
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  height: 42px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-weight: 500;
+  white-space: nowrap; /* Prevent text wrapping */
+  align-self: flex-end; /* Align with inputs */
 }
 .filter-button:hover {
-    background-color: #059669; /* bg-emerald-600 */
+  background-color: #059669; /* bg-emerald-600 */
 }
 .filter-button i {
-    margin-right: 0.25rem;
+  margin-right: 0.25rem;
 }
-
 
 /* --- Estilos para Métricas Clave (General Summary) --- */
-.key-metrics-section { /* Not a .card by default, just a container */
-     grid-column: 1 / -1; /* Already applied */
+.key-metrics-section {
+  /* Not a .card by default, just a container */
+  grid-column: 1 / -1; /* Already applied */
 }
 .metrics-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Responsive grid */
-    gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(180px, 1fr)
+  ); /* Responsive grid */
+  gap: 1rem;
 }
-.metric-card { /* Styles inherited from resumen.css or defined here */
-    background-color: #1f2937;
-    border-radius: 0.5rem;
-    padding: 1rem 1.25rem;
-    position: relative; /* For icon positioning */
-    overflow: hidden; /* For visual effects if added */
+.metric-card {
+  /* Styles inherited from resumen.css or defined here */
+  background-color: #1f2937;
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  position: relative; /* For icon positioning */
+  overflow: hidden; /* For visual effects if added */
 }
-.metric-title { font-size: 0.875rem; font-weight: 500; color: #9ca3af; margin-bottom: 0.5rem; }
-.metric-value { font-size: 1.875rem; font-weight: 700; color: #f3f4f6; line-height: 1.2; }
-.metric-icon { position: absolute; right: 1rem; top: 1rem; font-size: 1.5rem; color: rgba(255, 255, 255, 0.1); }
-.metric-note { font-size: 0.75rem; color: #6b7280; margin-top: 0.5rem; display: block; }
+.metric-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #9ca3af;
+  margin-bottom: 0.5rem;
+}
+.metric-value {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #f3f4f6;
+  line-height: 1.2;
+}
+.metric-icon {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.1);
+}
+.metric-note {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+  display: block;
+}
 /* Specific styles for the small last message card */
-.metric-card-small { padding: 0.75rem 1rem; }
-.metric-title-small { font-size: 0.8rem; font-weight: 500; color: #9ca3af; margin-bottom: 0.25rem; }
-.metric-value-small { font-size: 0.875rem; font-weight: 600; color: #e5e7eb; }
-.metric-detail-small { font-size: 0.75rem; color: #9ca3af; margin-top: 0.1rem; }
+.metric-card-small {
+  padding: 0.75rem 1rem;
+}
+.metric-title-small {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #9ca3af;
+  margin-bottom: 0.25rem;
+}
+.metric-value-small {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+.metric-detail-small {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.1rem;
+}
 /* Alert Classes for Like Rate */
-.alert-low { background-color: #4f3434; border-left: 4px solid #ef4444; } /* Dark Red */
-.alert-medium { background-color: #5f483c; border-left: 4px solid #f97316; } /* Dark Orange */
-.alert-good { background-color: #5f5f3c; border-left: 4px solid #eab308; } /* Dark Yellow */
-.alert-excellent { background-color: #344f3e; border-left: 4px solid #22c55e; } /* Dark Green */
-
+.alert-low {
+  background-color: #4f3434;
+  border-left: 4px solid #ef4444;
+} /* Dark Red */
+.alert-medium {
+  background-color: #5f483c;
+  border-left: 4px solid #f97316;
+} /* Dark Orange */
+.alert-good {
+  background-color: #5f5f3c;
+  border-left: 4px solid #eab308;
+} /* Dark Yellow */
+.alert-excellent {
+  background-color: #344f3e;
+  border-left: 4px solid #22c55e;
+} /* Dark Green */
 
 /* --- Estilos para el Gráfico --- */
-.chart-section { /* Inherits .card */
-     grid-column: 1 / -1; /* Already applied */
+.chart-section {
+  /* Inherits .card */
+  grid-column: 1 / -1; /* Already applied */
 }
 .chart-container {
-     height: 350px; /* Fixed height or aspect-ratio */
-     position: relative;
+  height: 350px; /* Fixed height or aspect-ratio */
+  position: relative;
 }
-
 
 /* --- Estilos para 'Messages by Type' --- */
-.message-types-section { /* Inherits .card */
-     /* Flows in the grid */
+.message-types-section {
+  /* Inherits .card */
+  /* Flows in the grid */
 }
-.message-types-section .types-container { padding-top: 0.5rem; }
+.message-types-section .types-container {
+  padding-top: 0.5rem;
+}
 .message-types-section .type-item {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0.75rem 0; /* Adjusted vertical padding */
-    border-bottom: 1px solid #374151; /* Separator */
-    font-size: 1rem; /* Base size increased */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0; /* Adjusted vertical padding */
+  border-bottom: 1px solid #374151; /* Separator */
+  font-size: 1rem; /* Base size increased */
 }
-.message-types-section .type-item:last-child { border-bottom: none; }
+.message-types-section .type-item:last-child {
+  border-bottom: none;
+}
 .message-types-section .type-label {
-    font-weight: 500; /* Medium */
-    color: #cbd5e1;
-    margin-right: 1rem; /* Space between label and value */
+  font-weight: 500; /* Medium */
+  color: #cbd5e1;
+  margin-right: 1rem; /* Space between label and value */
 }
 .message-types-section .type-value {
-    font-weight: 600; /* Semi-bold */
-    color: #e5e7eb;
+  font-weight: 600; /* Semi-bold */
+  color: #e5e7eb;
 }
 
-
 /* --- Estilos para 'Recent Messages Sent' (MODIFIED FOR LARGER SIZE) --- */
-.recent-messages-section { /* Inherits .card */
-    /* grid-column: span 2; */ /* REMOVED from here, added to responsive block */
-    max-height: 800px; /* <-- INCREASED MAX HEIGHT significantly */
-    overflow: hidden;
-    display: flex; /* Added to control inner list height */
-    flex-direction: column; /* Stack title and list */
+.recent-messages-section {
+  /* Inherits .card */
+  /* grid-column: span 2; */ /* REMOVED from here, added to responsive block */
+  max-height: 800px; /* <-- INCREASED MAX HEIGHT significantly */
+  overflow: hidden;
+  display: flex; /* Added to control inner list height */
+  flex-direction: column; /* Stack title and list */
 }
 
 .messages-list {
-    overflow-y: auto;
-    flex-grow: 1; /* Allow list to fill available space */
-    /* Adjusted max-height based on new container height (800px)
-       and estimating space used by title (h2), its margin, and card padding */
-    max-height: calc(800px - 100px); /* Approx calc: 800px - (20px top padding + ~30px h2 + 15px h2 margin-bottom + 20px bottom padding) */
-    padding-right: 8px; /* Space for scrollbar */
-    margin-right: -8px; /* Compensate padding for alignment */
-     /* Optional: Add margin-bottom to the list if needed */
-    /* margin-bottom: -8px; */
+  overflow-y: auto;
+  flex-grow: 1; /* Allow list to fill available space */
+  /* Adjusted max-height based on new container height (800px)
+        and estimating space used by title (h2), its margin, and card padding */
+  max-height: calc(
+    800px - 100px
+  ); /* Approx calc: 800px - (20px top padding + ~30px h2 + 15px h2 margin-bottom + 20px bottom padding) */
+  padding-right: 8px; /* Space for scrollbar */
+  margin-right: -8px; /* Compensate padding for alignment */
+  /* Optional: Add margin-bottom to the list if needed */
+  /* margin-bottom: -8px; */
 }
 .mensaje-item {
-    /* background-color: rgba(55, 65, 81, 0.4); Remove base background if adding new subtle one */
-    background-color: rgba(55, 65, 81, 0.1); /* <-- Added subtle background */
-    border-radius: 6px;
-    padding: 15px 20px; /* <-- Increased padding for more spacious look */
-    margin-bottom: 10px; /* Keep gap between items */
-    border: 1px solid rgba(255, 255, 255, 0.05); /* Keep border */
-    transition: background-color 0.2s ease;
+  /* background-color: rgba(55, 65, 81, 0.4); Remove base background if adding new subtle one */
+  background-color: rgba(55, 65, 81, 0.1); /* <-- Added subtle background */
+  border-radius: 6px;
+  padding: 15px 20px; /* <-- Increased padding for more spacious look */
+  margin-bottom: 10px; /* Keep gap between items */
+  border: 1px solid rgba(255, 255, 255, 0.05); /* Keep border */
+  transition: background-color 0.2s ease;
 }
 .mensaje-item:hover {
-   background-color: rgba(55, 65, 81, 0.7); /* Keep hover effect */
+  background-color: rgba(55, 65, 81, 0.7); /* Keep hover effect */
 }
 
 .mensaje-header {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 0.4rem; /* Space before message text */
-    flex-wrap: wrap; /* Allow wrapping */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem; /* Space before message text */
+  flex-wrap: wrap; /* Allow wrapping */
 }
 .mensaje-destinatario {
-    font-weight: 600; color: #e5e7eb; /* More clear */
-    font-size: 0.9rem;
-    display: inline-flex;
-    align-items: center;
-    margin-right: 1rem; /* Space between user and date */
+  font-weight: 600;
+  color: #e5e7eb; /* More clear */
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  margin-right: 1rem; /* Space between user and date */
 }
-.mensaje-destinatario i { color: #9ca3af; margin-right: 0.25rem; } /* Grey icon */
+.mensaje-destinatario i {
+  color: #9ca3af;
+  margin-right: 0.25rem;
+} /* Grey icon */
 .mensaje-fecha-hora {
-    display: flex; gap: 0.5rem; /* Space between date and time */
-    font-size: 0.75rem; /* Small */
-    color: #6b7280; /* Darker grey */
-    text-align: right;
-    flex-shrink: 0; /* Prevent shrinking */
+  display: flex;
+  gap: 0.5rem; /* Space between date and time */
+  font-size: 0.75rem; /* Small */
+  color: #6b7280; /* Darker grey */
+  text-align: right;
+  flex-shrink: 0; /* Prevent shrinking */
 }
-.mensaje-fecha-parte, .mensaje-hora-parte { white-space: nowrap; }
+.mensaje-fecha-parte,
+.mensaje-hora-parte {
+  white-space: nowrap;
+}
 
 .mensaje-contenido {
-    font-size: 0.9rem; /* <-- Increased font size slightly */
-    color: #adb5bd; /* Medium grey */
-    padding-left: 0; /* <-- Removed indentation if not needed */
-    line-height: 1.4;
-    overflow-wrap: break-word; /* Handle long words */
+  font-size: 0.9rem; /* <-- Increased font size slightly */
+  color: #adb5bd; /* Medium grey */
+  padding-left: 0; /* <-- Removed indentation if not needed */
+  line-height: 1.4;
+  overflow-wrap: break-word; /* Handle long words */
 }
-.no-messages { color: #6b7280; padding: 1rem 0; text-align: center; }
-
+.no-messages {
+  color: #6b7280;
+  padding: 1rem 0;
+  text-align: center;
+}
 
 /* --- Estilos para 'Last Message Content' --- */
-.last-message-section { /* Inherits .card */
-     /* Flows in the grid */
-     display: flex; /* Internal control */
-     flex-direction: column;
-     justify-content: space-between; /* Push 'To:' down */
+.last-message-section {
+  /* Inherits .card */
+  /* Flows in the grid */
+  display: flex; /* Internal control */
+  flex-direction: column;
+  justify-content: space-between; /* Push 'To:' down */
 }
 .last-message-content {
-    background-color: #374151; /* bg-gray-700 */
-    padding: 0.75rem 1rem;
-    border-radius: 0.375rem;
-    color: #e5e7eb;
-    font-size: 0.9rem;
-    margin-bottom: 0.75rem;
-    flex-grow: 1; /* Occupy available vertical space */
-    line-height: 1.4;
-    overflow-wrap: break-word;
-    min-height: 50px; /* Minimum height so it doesn't collapse */
+  background-color: #374151; /* bg-gray-700 */
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+  flex-grow: 1; /* Occupy available vertical space */
+  line-height: 1.4;
+  overflow-wrap: break-word;
+  min-height: 50px; /* Minimum height so it doesn't collapse */
 }
 .last-message-recipient {
-    font-size: 0.8rem;
-    color: #9ca3af; /* text-gray-400 */
-    align-self: flex-start;
+  font-size: 0.8rem;
+  color: #9ca3af; /* text-gray-400 */
+  align-self: flex-start;
 }
 
 /* --- Scrollbar Styles (from scrollbar.css if it exists) --- */
 /* Ensure these classes match your scrollbar.css file if you use one */
-/* Basic styles example if you don't have the file */
-.messages-list::-webkit-scrollbar { width: 8px; }
-.messages-list::-webkit-scrollbar-track { background: #1f2937; border-radius: 4px; }
-.messages-list::-webkit-scrollbar-thumb { background-color: #4b5563; border-radius: 4px; border: 2px solid #1f2937; }
-.messages-list::-webkit-scrollbar-thumb:hover { background-color: #6b7280; }
+
 .mensaje-destinatario {
   font-weight: 600;
   color: #e5e7eb;
   font-size: 1.6rem;
-  display: inline-flex
-;
+  display: inline-flex;
   align-items: center;
   margin-right: 1rem;
 }
-.robot-control-panel {
-  position: relative;
-  background: linear-gradient(to right, #0f172a, #1e293b);
-  padding: 2rem;
-  border-radius: 1.5rem;
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
-  color: #fff;
-  border: 2px solid rgba(34, 211, 238, 0.3);
+
+.campaigns-summary {
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--color-border);
+  backdrop-filter: blur(12px);
   overflow: hidden;
-  font-family: 'Poppins', sans-serif;
+  padding-top: 20px;
 }
 
-.rpanel-header {
+.active-campaigns-list {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1rem;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-.status-circle {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  margin-right: 8px;
-}
-.status-text {
-  font-weight: bold;
-  font-size: 0.9rem;
-}
-.status-circle.inactive, .status-text.inactive {
-  background-color: #dc2626;
-  color: #dc2626;
-}
-.status-circle.active, .status-text.active {
-  background-color: #10b981;
-  color: #10b981;
-  animation: pulse 1s infinite;
+.active-campaign-card {
+  flex: 0 0 calc(50% - 0.5rem); /* 2 campañas visibles */
+  scroll-snap-align: start;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  box-shadow: 0 0 6px rgba(0, 255, 148, 0.04);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  min-width: 280px; /* para mobile mínimo */
 }
 
-.rpanel-title {
-  font-size: 1.4rem;
+.active-campaign-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
+}
+.active-campaign-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.active-campaign-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-text-accent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.active-campaign-meta {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.active-campaign-meta i {
+  margin-right: 0.3rem;
+  color: var(--color-accent-green);
+}
+
+.active-campaign-badge {
+  margin-top: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  display: inline-block;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  background: var(--color-accent-gradient);
+  color: #000;
+  text-transform: uppercase;
+  align-self: flex-start;
+}
+
+.campaigns-link-bottom {
+  margin-top: 1rem;
+  text-align: right;
+  width: 100%;
+}
+
+.active-campaigns-scroll {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 0.5rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .active-campaign-card {
+    flex: 0 0 85%; /* scroll de a 1.2 campañas en mobile */
+  }
+  .active-campaign-card {
+    min-width: unset;
+    width: 100%;
+  }
+  .recent-messages-section {
+    width: 100%;
+  }
+  .mensaje-destinatario {
+    font-size: 1.3rem;
+  }
+}
+
+.card > * {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.metric-card-small {
+  width: 100%;
+  background: var(--color-bg-panel, #1f2937);
+  border-radius: var(--border-radius, 12px);
+  padding: 1rem;
+  box-shadow: var(--shadow-soft, 0 4px 12px rgba(0, 0, 0, 0.2));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.3rem;
+  overflow: hidden;
+}
+
+.metric-title-small {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.metric-value-small {
+  font-size: 1rem;
   font-weight: 700;
-}
-.rpanel-subtitle {
-  color: #67e8f9;
-  font-size: 0.8rem;
-}
-.rpanel-float{
-  position:absolute;
-  bottom:10%;
-  right:5%;
-  transform: scale(.65)
-}
-.rpanel-visualizer {
-  position: relative;
-  margin: 0 auto 2rem auto;
-}
-
-.core-circle {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: rgba(34, 211, 238, 0.2);
-  border: 3px solid #22d3ee;
+  color: var(--color-accent, #00ff94);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
-  z-index: 2;
-  transform: translate(-50%, -50%);
-}
-.orbit-layer {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  border: 1px dashed rgba(34, 211, 238, 0.2);
-  pointer-events: none;
+  flex-flow: column wrap;
 }
 
-.orbit-layer.layer1 {
-  width: 70px;
-  height: 75px;
-}
-.orbit-layer.layer2 {
-  width: 46px;
-  height: 60px;
-}
-
-.orbit-layer.active.layer1 {
-  animation: spin 6s linear infinite;
-}
-.orbit-layer.active.layer2 {
-  animation: spin-reverse 4s linear infinite;
-}
-
-/* Punto fijo en el borde superior/inferior */
-.orbit-dot {
-  width: 8px;
-  height: 8px;
-  background-color: #22d3ee;
-  border-radius: 50%;
-  position: absolute;
-}
-
-.orbit-dot.top {
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-}
-.orbit-dot.bottom {
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-/* Opcional: efecto de pulso */
-.pulse {
-  animation: pulse 3s ease-in-out infinite;
-}
-@keyframes spin {
-  0% { transform: translate(-50%, -50%) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
-@keyframes spin-reverse {
-  0% { transform: translate(-50%, -50%) rotate(360deg); }
-  100% { transform: translate(-50%, -50%) rotate(0deg); }
-}
-.rpanel-buttons {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  margin-bottom: 1.5rem;
-}
-.rpanel-btn {
-  padding: 0.8rem 1.5rem;
-  border: none;
-  border-radius: 0.5rem;
-  font-weight: bold;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-.rpanel-btn.start {
-  background: linear-gradient(to right, #059669, #10b981);
-  color: white;
-}
-.rpanel-btn.stop {
-  background: linear-gradient(to right, #dc2626, #ef4444);
-  color: white;
-}
-.rpanel-btn:disabled {
-  background-color: #1f2937;
-  color: #6b7280;
-  cursor: not-allowed;
-}
-
-.rpanel-metrics {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  text-align: center;
-}
-.metric-label {
-  font-size: 0.8rem;
-  color: #67e8f9;
-}
-.metric-value {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: white;
-}
-
-.rpanel-link {
-  text-align: center;
-  margin-top: 1.5rem;
-}
-.rpanel-link a {
-  color: #22d3ee;
-  font-size: 0.9rem;
-  text-decoration: underline;
-}
-.rpanel-link a:hover {
-  color: #38bdf8;
-}
-
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.2); opacity: 0.6; }
+.metric-detail-small {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
 }

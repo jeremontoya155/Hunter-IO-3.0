@@ -4,8 +4,8 @@
  */
 /* Estilo del contenedor del scrollbar */
 ::-webkit-scrollbar {
-  width: 12px; /* Ancho del scrollbar */
-  height: 12px; /* Altura para scroll horizontal */
+  width: 8px; /* Ancho del scrollbar */
+  height: 4px; /* Altura para scroll horizontal */
 }
 
 /* Track (fondo del scrollbar) */

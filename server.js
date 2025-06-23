@@ -223,6 +223,11 @@ app.get('/resumen', isAuthenticated, async (req, res) => {
       fecha,
       cantidad: mensajesPorDia[fecha],
     }));
+    const result = await pool.query(
+      'SELECT * FROM campaigns WHERE created_by = $1 ORDER BY start_date DESC',
+      [req.session.user.id]
+    );
+    const campaigns = result.rows;
 
     res.render('resumen', {
       username: req.session.user.username,
@@ -240,6 +245,7 @@ app.get('/resumen', isAuthenticated, async (req, res) => {
       selectedAccount,
       fromDate,
       toDate,
+      campaigns,
     });
   } catch (error) {
     console.error('Error al obtener el historial desde MongoDB:', error);
@@ -255,6 +261,7 @@ app.get('/resumen', isAuthenticated, async (req, res) => {
       diaMasMensajes: 'N/A',
       mensajesPorTipo: { comunicacion: 0, venta: 0, imperativo: 0 },
       datosGrafico: [],
+      campaigns: [],
       userAccounts: req.session.user.accounts || [],
       selectedAccount: null,
       fromDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1)

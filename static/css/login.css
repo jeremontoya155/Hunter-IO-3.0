@@ -1,184 +1,531 @@
-/* Estilos globales */
-body {
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #e6f5ea, #c7e5d6); /* Gradiente verde claro */
-  color: #1a1a1a;
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  overflow: hidden;
-}
+ :root {
+        /* === Colores Base === */
+        --color-bg-dark: #1a1d24;
+        --color-bg-darker: #121417;
+        --color-bg-light: #2b2e36;
+        --color-bg-panel: #20232b;
+        --color-bg-gradient: linear-gradient(135deg, #1a1d24 0%, #2c3e50 100%);
 
-.form-container {
-  width: 100%;
-  max-width: 400px;
-  background: black; /* Fondo negro mantenido */
-  padding: 40px 30px; /* Espaciado más generoso */
-  border-radius: 20px; /* Bordes más redondeados */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Sombra más sutil */
-  text-align: center;
-  border: 2px solid #a7dfc0; /* Borde verde suave mantenido */
-  animation: fadeIn 0.8s ease-in-out; /* Animación al cargar */
-}
+        /* === Texto === */
+        --color-text-primary: #e0e0e0;
+        --color-text-secondary: #b0b3b8;
+        --color-text-accent: #ffffff;
 
-/* Logo */
-.logo-container {
-  margin-bottom: 25px;
-}
+        /* === Acentos Futuristas === */
+        --color-accent-blue: #00bfff;
+        --color-accent-purple: #b85cff;
+        --color-accent-green: #00ff94;
+        --color-accent-gradient: linear-gradient(
+          135deg,
+          #4caf91,
+          #00ff94,
+          rgb(28, 68, 56)
+        );
+        --color-accent: #4caf91;
+        --color-accent-hover: #5cdb95;
+        --color-border: rgba(76, 175, 145, 0.2);
 
-.logo-container img {
-  max-width: 10em; /* Tamaño ajustado */
-  max-height: 12em;
-  border: none; /* Sin recuadro negro */
-  border-radius: 15px; /* Esquinas redondeadas */
-  background: transparent; /* Sin fondo adicional */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra ligera */
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-}
+        /* === Borde y Sombra === */
+        --border-radius: 12px;
+        --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.4);
+        --shadow-glow: 0 0 8px rgba(0, 191, 255, 0.6);
 
-.logo-container img:hover {
-  transform: scale(1.03); /* Zoom sutil */
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
-}
+        --button-bg-blue: rgb(52, 188, 219);
+        --button-bg-gradient-hover: linear-gradient(135deg, #0088cc, #00cba9);
+        --button-shadow: 0 0 3px rgba(0, 255, 148, 0.2),
+          0 0 3px rgba(0, 191, 255, 0.15);
+        --button-shadow-hover: 0 0 6px rgba(0, 255, 148, 0.3),
+          0 0 20px rgba(0, 191, 255, 0.2);
 
-/* Etiquetas */
-label {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 8px;
-  color: #ffffff; /* Texto blanco para contraste */
-  text-align: left;
-  font-size: 0.9rem; /* Tamaño más pequeño */
-  letter-spacing: 0.5px; /* Espaciado entre letras */
-  transition: color 0.3s ease-in-out; /* Efecto hover */
-}
+        /* === Nuevas variables para el login === */
+        --transition-fast: 0.2s ease-out;
+        --transition-medium: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-slow: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        --glow-primary: rgba(76, 175, 145, 0.4);
+        --glow-secondary: rgba(0, 191, 255, 0.3);
+      }
 
-label:hover {
-  color: #a7dfc0; /* Cambia a verde suave al pasar el mouse */
-}
+      /* Reset mejorado */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-/* Inputs */
-input {
-  width: 100%;
-  padding: 15px; /* Padding más generoso */
-  margin-bottom: 20px;
-  border-radius: 10px; /* Bordes más redondeados */
-  border: 1px solid #a7dfc0; /* Verde claro */
-  background: #1a1a1a; /* Fondo oscuro para contraste */
-  font-size: 1rem;
-  color: #ffffff; /* Texto blanco */
-  transition: all 0.3s ease-in-out;
-  outline: none;
-  box-sizing: border-box;
-}
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+          Roboto, sans-serif;
+        background: var(--color-bg-gradient);
+        background-attachment: fixed;
+        color: var(--color-text-primary);
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        overflow-x: hidden;
+        position: relative;
+        font-weight: 400;
+        letter-spacing: -0.01em;
+      }
 
-input:focus {
-  border-color: #3a8b60; /* Verde más oscuro */
-  box-shadow: 0 0 10px rgba(58, 139, 96, 0.3); /* Brillo sutil */
-  background: #2a2a2a; /* Cambio de fondo al enfocar */
-}
+      /* Efectos de fondo animados futuristas */
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+            circle at 25% 25%,
+            var(--glow-primary) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 75% 75%,
+            var(--glow-secondary) 0%,
+            transparent 50%
+          );
+        animation: backgroundPulse 8s ease-in-out infinite alternate;
+        pointer-events: none;
+        z-index: -1;
+      }
 
-/* Botón */
-button {
-  width: 100%;
-  background: #3a8b60; /* Fondo verde */
-  color: #ffffff;
-  padding: 15px; /* Padding más generoso */
-  border-radius: 10px; /* Bordes más redondeados */
-  border: none;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: all 0.3s ease-in-out;
-}
+      /* Partículas flotantes */
+      body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: radial-gradient(
+            1px 1px at 20px 30px,
+            var(--color-accent),
+            transparent
+          ),
+          radial-gradient(
+            1px 1px at 40px 70px,
+            var(--color-accent-blue),
+            transparent
+          ),
+          radial-gradient(
+            1px 1px at 90px 40px,
+            var(--color-accent-green),
+            transparent
+          ),
+          radial-gradient(
+            1px 1px at 130px 80px,
+            var(--color-accent),
+            transparent
+          ),
+          radial-gradient(
+            1px 1px at 160px 30px,
+            var(--color-accent-blue),
+            transparent
+          );
+        background-repeat: repeat;
+        background-size: 200px 100px;
+        animation: particleFloat 20s linear infinite;
+        opacity: 0.1;
+        pointer-events: none;
+        z-index: -1;
+      }
 
-button:hover {
-  background: #2a6f4e; /* Verde más oscuro */
-  transform: translateY(-2px); /* Efecto de elevación */
-  box-shadow: 0 4px 10px rgba(58, 139, 96, 0.2);
-}
+      @keyframes backgroundPulse {
+        0% {
+          transform: scale(1) rotate(0deg);
+          opacity: 0.3;
+        }
+        100% {
+          transform: scale(1.2) rotate(2deg);
+          opacity: 0.5;
+        }
+      }
 
-button:active {
-  transform: translateY(0); /* Regresa al estado original al hacer clic */
-  box-shadow: none;
-}
+      @keyframes particleFloat {
+        0% {
+          transform: translateY(0px);
+        }
+        100% {
+          transform: translateY(-100px);
+        }
+      }
 
-/* Mensaje de error */
-.error {
-  color: #ff4d4d; /* Rojo suave */
-  margin-bottom: 20px;
-  font-weight: 500;
-  background: rgba(255, 77, 77, 0.1);
-  padding: 12px; /* Padding más generoso */
-  border-radius: 10px; /* Bordes más redondeados */
-  border: 1px solid #ffcccc; /* Borde rojo claro */
-  transition: background 0.3s ease-in-out; /* Efecto hover */
-}
+      .form-container {
+        width: 100%;
+        max-width: 440px;
+        background: rgba(32, 35, 43, 0.95);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        padding: 60px 45px;
+        border-radius: 28px;
+        box-shadow: var(--shadow-soft), 0 0 0 1px var(--color-border),
+          inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        text-align: center;
+        border: 1px solid var(--color-border);
+        animation: containerEntry 1.2s var(--transition-slow);
+        position: relative;
+        overflow: hidden;
+      }
 
-.error:hover {
-  background: rgba(255, 77, 77, 0.2); /* Cambio de fondo al pasar el mouse */
-}
+      /* Efecto de brillo dinámico en el contenedor */
+      .form-container::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          45deg,
+          transparent 30%,
+          rgba(76, 175, 145, 0.03) 50%,
+          transparent 70%
+        );
+        animation: shimmer 6s ease-in-out infinite;
+        pointer-events: none;
+      }
 
-/* Texto adicional */
-p {
-  margin-top: 15px;
-  font-size: 0.9rem;
-  color: #a7dfc0; /* Verde suave */
-  text-align: center;
-  transition: color 0.3s ease-in-out; /* Efecto hover */
-}
+      @keyframes containerEntry {
+        0% {
+          opacity: 0;
+          transform: translateY(40px) scale(0.95);
+          filter: blur(10px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+          filter: blur(0);
+        }
+      }
 
-p:hover {
-  color: #ffffff; /* Cambia a blanco al pasar el mouse */
-}
+      @keyframes shimmer {
+        0%,
+        100% {
+          transform: translateX(-100%) translateY(-100%) rotate(45deg);
+        }
+        50% {
+          transform: translateX(100%) translateY(100%) rotate(45deg);
+        }
+      }
 
-p a {
-  color: #3a8b60; /* Verde más oscuro */
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.3s ease-in-out;
-}
+      /* Logo con efectos futuristas */
+      .logo-container {
+        margin-bottom: 40px;
+        position: relative;
+        
+        caret-color: transparent;
+      }
 
-p a:hover {
-  color: #2a6f4e; /* Verde más intenso */
-}
+      .logo-container::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 120%;
+        height: 120%;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(
+          circle,
+          var(--glow-primary) 0%,
+          transparent 70%
+        );
+        opacity: 0;
+        transition: opacity var(--transition-medium);
+      }
 
-/* Animación sutil al cargar el formulario */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+      .logo-container:hover::before {
+        opacity: 0.3;
+        animation: logoPulse 2s ease-in-out infinite;
+      }
 
-/* Responsivo */
-@media (max-width: 768px) {
-  .form-container {
-    padding: 30px 20px; /* Reducimos el padding */
-  }
+      .logo-container img {
+        max-width: 11em;
+        max-height: 13em;
+        border: none;
+        border-radius: 20px;
+        background: transparent;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3),
+          0 0 20px rgba(76, 175, 145, 0.1);
+        transition: all var(--transition-medium);
+        position: relative;
+        z-index: 1;
+      }
 
-  label {
-    font-size: 0.8rem; /* Texto más pequeño */
-  }
+      .logo-container img:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4),
+          0 0 30px rgba(76, 175, 145, 0.2);
+      }
 
-  input {
-    font-size: 0.9rem;
-  }
+      @keyframes logoPulse {
+        0%,
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+        }
+        50% {
+          transform: translate(-50%, -50%) scale(1.05);
+        }
+      }
 
-  button {
-    font-size: 0.9rem;
-    padding: 12px; /* Padding más ajustado */
-  }
+      /* Etiquetas mejoradas */
+      label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 12px;
+        color: var(--color-text-primary);
+        text-align: left;
+        font-size: 0.95rem;
+        letter-spacing: 0.3px;
+        transition: all var(--transition-fast);
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        opacity: 0.9;
+      }
 
-  p {
-    font-size: 0.8rem;
-  }
-}
+      label:hover {
+        color: var(--color-accent);
+        transform: translateX(2px);
+      }
+
+      /* Inputs futuristas */
+      input {
+        width: 100%;
+        padding: 18px 20px;
+        margin-bottom: 24px;
+        border-radius: calc(var(--border-radius) + 4px);
+        border: 1px solid var(--color-border);
+        background: rgba(43, 46, 54, 0.8);
+        font-size: 1rem;
+        color: var(--color-text-primary);
+        transition: all var(--transition-medium);
+        outline: none;
+        box-sizing: border-box;
+        font-family: inherit;
+        position: relative;
+        backdrop-filter: blur(10px);
+      }
+
+      input::placeholder {
+        color: var(--color-text-secondary);
+        opacity: 0.7;
+      }
+
+      input:focus {
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 3px rgba(76, 175, 145, 0.1),
+          0 0 20px rgba(76, 175, 145, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        background: rgba(43, 46, 54, 0.95);
+        transform: translateY(-1px);
+      }
+
+      input:hover:not(:focus) {
+        border-color: rgba(76, 175, 145, 0.4);
+        background: rgba(43, 46, 54, 0.9);
+      }
+
+      /* Botón futurista */
+      button {
+        width: 100%;
+        background: var(--color-accent-gradient);
+        color: var(--color-text-accent);
+        padding: 18px 24px;
+        border-radius: calc(var(--border-radius) + 4px);
+        border: none;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        transition: all var(--transition-medium);
+        font-family: inherit;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--button-shadow);
+      }
+
+      button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left var(--transition-medium);
+      }
+
+      button:hover {
+        background: var(--button-bg-gradient-hover);
+        transform: translateY(-3px);
+        box-shadow: var(--button-shadow-hover);
+      }
+
+      button:hover::before {
+        left: 100%;
+      }
+
+      button:active {
+        transform: translateY(-1px);
+        box-shadow: var(--button-shadow);
+      }
+
+      /* Mensaje de error futurista */
+      .error {
+        color: #ff6b6b;
+        margin-bottom: 24px;
+        font-weight: 500;
+        background: rgba(255, 107, 107, 0.1);
+        padding: 16px 20px;
+        border-radius: var(--border-radius);
+        border: 1px solid rgba(255, 107, 107, 0.2);
+        transition: all var(--transition-fast);
+        backdrop-filter: blur(10px);
+        animation: errorShake 0.5s ease-out;
+      }
+
+      @keyframes errorShake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-5px);
+        }
+        75% {
+          transform: translateX(5px);
+        }
+      }
+
+      .error:hover {
+        background: rgba(255, 107, 107, 0.15);
+        transform: translateY(-1px);
+      }
+
+      /* Texto adicional */
+      p {
+        margin-top: 20px;
+        font-size: 0.9rem;
+        color: var(--color-text-secondary);
+        text-align: center;
+        transition: color var(--transition-fast);
+        line-height: 1.5;
+      }
+
+      p:hover {
+        color: var(--color-text-primary);
+      }
+
+      p a {
+        color: var(--color-accent);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all var(--transition-fast);
+        position: relative;
+      }
+
+      p a::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--color-accent-gradient);
+        transition: width var(--transition-fast);
+      }
+
+      p a:hover {
+        color: var(--color-accent-hover);
+        transform: translateY(-1px);
+      }
+
+      p a:hover::after {
+        width: 100%;
+      }
+
+      /* Responsivo mejorado */
+      @media (max-width: 768px) {
+        body {
+          padding: 20px;
+        }
+
+        .form-container {
+          padding: 40px 30px;
+          border-radius: 20px;
+        }
+
+        label {
+          font-size: 0.75rem;
+        }
+
+        input {
+          font-size: 0.95rem;
+          padding: 16px 18px;
+        }
+
+        button {
+          font-size: 0.95rem;
+          padding: 16px 20px;
+        }
+
+        p {
+          font-size: 0.85rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .form-container {
+          padding: 30px 25px;
+          border-radius: 16px;
+        }
+      }
+
+      /* Modo de alto contraste y accesibilidad */
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+
+      /* Efectos de loading states */
+      .loading {
+        pointer-events: none;
+        opacity: 0.7;
+      }
+
+      .loading button {
+        position: relative;
+      }
+
+      .loading button::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        margin: auto;
+        border: 2px solid transparent;
+        border-top-color: var(--color-text-accent);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>

@@ -97,6 +97,7 @@
   display: flex;
   align-items: center;
   padding: 1rem 1.5rem;
+  width: 100%;
   cursor: pointer;
   transition: background-color 0.3s ease;
   position: relative;
@@ -110,17 +111,21 @@
   color: #111;
   border-radius: 50%;
   width: 30px;
-  height: 30px;
+  height: 30px !important;
+  padding: 5px 5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
-  margin-right: 15px;
+  font-weight: 400;
+  margin-right: 10px;
   box-shadow: var(--shadow-glow);
   transition: background-color 0.3s ease;
+
+  font-size: 0.9rem;
 }
 
 .step-title {
+  width: 70px;
   flex-grow: 1;
   font-size: 1.3rem;
   font-weight: 700;

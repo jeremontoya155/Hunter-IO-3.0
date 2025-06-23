@@ -275,6 +275,8 @@ textarea.form-control {
 
   .targets-container {
     max-width: 95%;
+    padding-top: 2em;
+    padding-bottom: 2em;
   }
 
   .targets-header {

@@ -487,11 +487,6 @@ button.loading::after {
 }
 
 @media (max-width: 768px) {
-  body {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-
   .main-content {
     padding-top: 2em;
     max-width: 100% !important;
@@ -554,11 +549,6 @@ button.loading::after {
 }
 
 @media (max-width: 480px) {
-  body {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-  }
-
   .login-container {
     padding: 25px 15px;
     max-width: 100%;
@@ -621,6 +611,7 @@ button.loading::after {
   flex-wrap: wrap;
   gap: 30px;
   height: 100vh;
+  padding-top: 7em;
 
   animation: fadeInScale 0.5s ease-in-out;
   position: relative;
@@ -742,10 +733,11 @@ button.loading::after {
 }
 @media screen and (max-width: 768px) {
   .platform-choice-container {
-    height: 95vh;
-    overflow-y: hidden;
+    height: 100vh;
     padding: 0;
     margin: 0;
+
+    margin-top: 6em;
     flex-flow: column nowrap;
     justify-content: space-evenly;
     gap: 2px;
@@ -754,7 +746,7 @@ button.loading::after {
     width: 70%;
     max-width: 90vw;
 
-    height: 140px;
+    height: 90px;
   }
   .platform-card .icon-choice {
     margin: 0;
@@ -782,8 +774,23 @@ button.loading::after {
     background: rgba(24, 119, 242, 0.05);
   }
   .platform-choice-title {
-    top: 5%;
+    top: -2em;
     font-size: 1.2em;
+  }
+}
+@media screen and (max-width: 960px) {
+  .platform-card .icon-choice {
+    font-size: 2.5em;
+  }
+
+  .platform-card h3 {
+    font-size: 1.2em;
+  }
+  .platform-card {
+    width: 70%;
+    max-width: 90vw;
+
+    height: 90px;
   }
 }
 

@@ -1,31 +1,90 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Iniciar Sesión</title>
-    <link rel="stylesheet" href="/static/css/login.css">
-        <link rel="stylesheet" href="/static/css/all.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-</head>
-<body>
+    <link rel="stylesheet" href="/static/css/login.css" />
+  </head>
+  <body>
     <div class="form-container">
-        <!-- Logo en lugar del título -->
-        <div class="logo-container">
-            <img src="/static/images/Logo.png" alt="Logo de la aplicación">
-        </div>
-        <% if (error) { %>
-            <p class="error"><%= error %></p>
-        <% } %>
-        <form action="/login" method="POST">
-            <label for="username">Nombre de usuario:</label>
-            <input type="text" id="username" name="username" required>
-            <label for="password">Contraseña:</label>
-            <input type="password" id="password" name="password" required>
-            <button type="submit" class="btn">Ingresar</button>
-        </form>
-      
+      <!-- Logo en lugar del título -->
+      <div class="logo-container">
+        <img src="/static/images/Logo.png" alt="Logo de la aplicación" />
+      </div>
+      <% if (error) { %>
+      <p class="error"><%= error %></p>
+      <% } %>
+      <form action="/login" method="POST">
+        <label for="username">Nombre de usuario:</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Ingresa tu usuario"
+          required
+        />
+        <label for="password">Contraseña:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Ingresa tu contraseña"
+          required
+        />
+        <button type="submit" class="btn">Acceder al Sistema</button>
+      </form>
     </div>
-</body>
-</html>
 
+    <script>
+      // Mejoras de UX
+      document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form');
+        const inputs = document.querySelectorAll('input');
+        const button = document.querySelector('button');
+
+        // Efecto de focus mejorado
+        inputs.forEach((input) => {
+          input.addEventListener('focus', function () {
+            this.parentElement.style.transform = 'translateY(-2px)';
+          });
+
+          input.addEventListener('blur', function () {
+            this.parentElement.style.transform = 'translateY(0)';
+          });
+        });
+
+        // Estado de loading al enviar
+        form.addEventListener('submit', function () {
+          document.body.classList.add('loading');
+          button.textContent = 'Accediendo...';
+        });
+
+        // Animación de entrada escalonada
+        const elements = [
+          document.querySelector('.logo-container'),
+          ...document.querySelectorAll('label'),
+          ...document.querySelectorAll('input'),
+          button,
+        ];
+
+        elements.forEach((el, index) => {
+          if (el) {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+              el.style.transition = 'all 0.6s cubic-bezier(0.23, 1, 0.32, 1)';
+              el.style.opacity = '1';
+              el.style.transform = 'translateY(0)';
+            }, index * 100);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
