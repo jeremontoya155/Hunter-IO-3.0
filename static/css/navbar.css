@@ -345,3 +345,11 @@ body {
     display: inline !important;
   }
 }
+@media (max-height: 500px) and (orientation: landscape) {
+  .nav-logo-container {
+    min-height: 100px;
+  }
+  .nav-menu {
+    margin: 0;
+  }
+}
