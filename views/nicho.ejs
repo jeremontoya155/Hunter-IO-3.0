@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hunter Suite - Inicio ✨</title>
-    <!-- Enlaces a hojas de estilo -->
+    <title>Hunter Suite - Home ✨</title>
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="/static/css/nichos.css" />
     <link rel="stylesheet" href="/static/css/navbar.css" />
     <link rel="stylesheet" href="/static/css/scrollbar.css" />
-        <link rel="stylesheet" href="/static/css/all.css" />
+    <link rel="stylesheet" href="/static/css/all.css" />
 
-    <!-- FontAwesome para íconos -->
+    <!-- FontAwesome for icons -->
     <link 
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -30,39 +30,38 @@
     <script src="/static/js/file-input-label.js" defer></script>
   </head>
   <body>
-    <!-- Navbar incluida -->
+    <!-- Navbar included -->
     <%- include('partials/navbar') %>
 
-    <!-- Contenedor de Selección Inicial -->
+    <!-- Initial Selection Container -->
     <div class="choice-container" id="choice-container">
       <div class="choice-card" data-target="hunter-form-section">
-        <i class="fas fa-rocket icon-choice"></i>
-        <h3>Crea tu Flecha</h3>
-        <p>Configura una nueva instancia de Hunter para empezar.</p>
-      </div>
-      <!-- MODIFICADO: Este data-target ya no se usa para mostrar un form, pero se mantiene para identificar la tarjeta en JS -->
-      <div class="choice-card" data-target="blanco-form-section">
-        <i class="fas fa-bullseye icon-choice"></i>
-        <h3>Crear tu Blanco</h3>
-        <p>Define un nuevo nicho objetivo con sus características.</p>
+        <img src="/static/images/flecha.ico" alt="Arrow" class="icon-choice" width="45" height="45" />
+        <h3>Create your Arrow</h3>
+        <p>Set up a new Hunter instance to get started.</p>
       </div>
 
-       <div class="choice-card" data-target="arco-form-section">
-  <i class="fas fa-arrow-circle-right icon-choice"></i> <!-- Alternativa -->
-  <h3>Crea tu Arco</h3>
-  <p>Configura una nueva arma de lanzamiento para tus campañas.</p>
-</div>
+      <div class="choice-card" data-target="arco-form-section">
+        <img src="/static/images/arco.ico" alt="Bow" class="icon-choice" width="45" height="45" />
+        <h3>Create your Bow</h3>
+        <p>Configure a new launching weapon for your campaigns.</p>
+      </div>
+      <!-- MODIFIED: This data-target is no longer used to show a form, but is kept for JS card identification -->
+      <div class="choice-card" data-target="blanco-form-section">
+        <img src="/static/images/blanco.ico" alt="Target" class="icon-choice" width="45" height="45" />
+        <h3>Create your Target</h3>
+        <p>Define a new target niche with its characteristics.</p>
+      </div>
     </div>
 
-    <!-- Sección para el Formulario "Crear Hunter" (Inicialmente Oculta) -->
-    <!-- Esta sección se sigue mostrando en la misma página -->
+    <!-- "Create Hunter" Form Section (Initially Hidden) -->
     <section id="hunter-form-section" class="form-section">
       <div class="form-container">
         <div class="form-card">
           <h2>
-            <i class="fas fa-rocket icon-title"></i> CARGA TU LISTA DE MENSAJES
+            <i class="/static/images/arco.ico"></i> UPLOAD YOUR MESSAGE LIST
           </h2>
-          <p class="subtitle">Inicia una nueva caza.</p>
+          <p class="subtitle">Start a new hunt.</p>
 
           <form
             action="/api/flecha/mensajes"
@@ -72,19 +71,18 @@
           >
             <div class="form-group">
               <label for="mensajes"
-                ><i class="fas fa-signature"></i> Flechas:</label
+                ><i class="fas fa-signature"></i> Arrows:</label
               >
               <textarea
                 id="mensajes"
                 name="mensajes"
-                placeholder="Ej: Mensaje1&#10;Mensaje2"
+                placeholder="Ex: Message1&#10;Message2"
                 required
                 rows="5"
               ></textarea>
-              <small
-                >Recordá insertar las <strong><em>flechas</em></strong> con
-                salto de líneas</small
-              >
+              <small>
+                Remember to insert the <strong><em>arrows</em></strong> with line breaks
+              </small>
             </div>
 
             <div class="form-actions">
@@ -93,10 +91,10 @@
                 class="back-button"
                 data-action="show-choice"
               >
-                <i class="fas fa-arrow-left"></i> Volver
+                <i class="fas fa-arrow-left"></i> Back
               </button>
               <button type="submit" class="submit-button">
-                <i class="fas fa-cogs"></i> Iniciar Hunter
+                <i class="fas fa-cogs"></i> Start Hunter
               </button>
             </div>
           </form>
@@ -104,44 +102,42 @@
       </div>
     </section>
 
-    <!-- Sección para el Formulario "Crear tu Blanco" (Inicialmente Oculta) -->
-    <!-- Aunque esta sección existe en el HTML, el script modificado ahora redirige en lugar de mostrarla -->
-    <!-- Puedes considerar si quieres eliminar esta sección y su script de envío de formulario si la página /targets ahora maneja eso completamente -->
+    <!-- "Create your Target" Form Section (Initially Hidden) -->
+    <!-- Although this section exists in the HTML, the modified script now redirects instead of showing it -->
+    <!-- Consider removing this section and its form script if the /targets page now handles it completely -->
     <section id="blanco-form-section" class="form-section">
-      <!-- El contenido de este formulario ya no se mostrará en esta página al hacer clic en la tarjeta "Crear tu Blanco" -->
-      <!-- Si necesitas este formulario, deberá estar en la página /targets -->
+      <!-- The content of this form will no longer be shown on this page when clicking "Create your Target" -->
+      <!-- If you need this form, it should be on the /targets page -->
       <div class="form-container">
         <div class="form-card">
           <h2>
-            <i class="fas fa-bullseye icon-title"></i> Registrar Nuevo Nicho
-            (Blanco)
+            <i class="fas fa-bullseye icon-title"></i> Register New Niche (Target)
           </h2>
-          <p class="subtitle">Define los detalles de tu público objetivo.</p>
+          <p class="subtitle">Define the details of your target audience.</p>
 
-          <!-- Formulario modificado para usar JSON -->
+          <!-- Form modified to use JSON -->
           <form id="nicho-form" class="nicho-form">
             <div class="form-group">
               <label for="ubicacion"
-                ><i class="fas fa-map-marker-alt"></i> Ubicación:</label
+                ><i class="fas fa-map-marker-alt"></i> Location:</label
               >
               <input
                 type="text"
                 id="ubicacion"
                 name="ubicacion"
-                placeholder="Ej: Ciudad de México, Remoto"
+                placeholder="Ex: Mexico City, Remote"
                 required
               />
             </div>
 
             <div class="form-group">
               <label for="tipo_personas"
-                ><i class="fas fa-lightbulb"></i> Intereses (separados por
-                coma):</label
+                ><i class="fas fa-lightbulb"></i> Interests (comma separated):</label
               >
               <textarea
                 id="tipo_personas"
                 name="tipo_personas"
-                placeholder="Ej: Desarrollo web, Marketing digital, Viajes sostenibles"
+                placeholder="Ex: Web development, Digital marketing, Sustainable travel"
                 required
                 rows="3"
               ></textarea>
@@ -150,25 +146,25 @@
             <div class="form-row">
               <div class="form-group half-width">
                 <label for="edad_min"
-                  ><i class="fas fa-arrow-down-1-9"></i> Edad Mínima:</label
+                  ><i class="fas fa-arrow-down-1-9"></i> Minimum Age:</label
                 >
                 <input
                   type="number"
                   id="edad_min"
                   name="edad_min"
-                  placeholder="Ej: 21"
+                  placeholder="Ex: 21"
                   min="0"
                 />
               </div>
               <div class="form-group half-width">
                 <label for="edad_max"
-                  ><i class="fas fa-arrow-up-9-1"></i> Edad Máxima:</label
+                  ><i class="fas fa-arrow-up-9-1"></i> Maximum Age:</label
                 >
                 <input
                   type="number"
                   id="edad_max"
                   name="edad_max"
-                  placeholder="Ej: 45"
+                  placeholder="Ex: 45"
                   min="0"
                 />
               </div>
@@ -176,17 +172,16 @@
 
             <div class="form-group">
               <label for="cuentas"
-                ><i class="fas fa-envelope-open-text"></i> Cuentas
-                Objetivo:</label
+                ><i class="fas fa-envelope-open-text"></i> Target Accounts:</label
               >
               <textarea
                 id="cuentas"
                 name="cuentas"
-                placeholder="Ingresa mediante salto de lineas las cuentas similares a tus nichos"
+                placeholder="Enter accounts similar to your niches, one per line"
                 required
                 rows="4"
               ></textarea>
-              <small>Separa cada cuenta con un salto de línea</small>
+              <small>Separate each account with a line break</small>
             </div>
 
             <div class="form-actions">
@@ -195,10 +190,10 @@
                 class="back-button"
                 data-action="show-choice"
               >
-                <i class="fas fa-arrow-left"></i> Volver
+                <i class="fas fa-arrow-left"></i> Back
               </button>
               <button type="submit" class="submit-button">
-                <i class="fas fa-save"></i> Guardar Nicho
+                <i class="fas fa-save"></i> Save Niche
               </button>
             </div>
           </form>
@@ -206,7 +201,7 @@
       </div>
     </section>
 
-    <!-- Script para mostrar/ocultar secciones (MODIFICADO) -->
+    <!-- Script to show/hide sections (MODIFIED) -->
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const choiceContainer = document.getElementById('choice-container');
@@ -216,8 +211,8 @@
           '.back-button[data-action="show-choice"]'
         ); // Still needed for the other form
 
-        // --- Función para mostrar una sección y ocultar las demás ---
-        // This function is now only used for cards *other* than "Crear tu Blanco"
+        // --- Function to show a section and hide others ---
+        // This function is now only used for cards *other* than "Create your Target"
         function showSection(targetId) {
           if (choiceContainer) choiceContainer.style.display = 'none';
           formSections.forEach((section) => section.classList.remove('active'));
@@ -225,59 +220,58 @@
           if (targetSection) {
             targetSection.classList.add('active');
           } else {
-            console.warn(`Sección con ID '${targetId}' no encontrada.`);
+            console.warn(`Section with ID '${targetId}' not found.`);
             showChoiceScreen();
           }
         }
 
-        // --- Función para mostrar la pantalla de elección ---
-        // Still needed for "Volver" button
+        // --- Function to show the choice screen ---
+        // Still needed for "Back" button
         function showChoiceScreen() {
           formSections.forEach((section) => section.classList.remove('active'));
           if (choiceContainer) choiceContainer.style.display = 'flex';
         }
 
-        // --- Event Listeners para las Tarjetas de Elección ---
+        // --- Event Listeners for Choice Cards ---
         choiceCards.forEach((card) => {
           card.addEventListener('click', () => {
-            const targetId = card.dataset.target; // Obtiene 'hunter-form-section' o 'blanco-form-section'
+            const targetId = card.dataset.target; // Gets 'hunter-form-section' or 'blanco-form-section'
             if (targetId === 'arco-form-section') {
-              // Si es la de "Crear tu Blanco", redirige a /targets
-              window.location.href = '/index'; // <--- Redirección aquí
+              // If it's "Create your Bow", redirect to /index
+              window.location.href = '/index'; // <--- Redirect here
             }
-            // Verifica si la tarjeta es la de "Crear tu Blanco"
+            // Check if the card is "Create your Target"
             if (targetId === 'blanco-form-section') {
-              // Si es la de "Crear tu Blanco", redirige a /targets
-              window.location.href = '/targets'; // <--- Redirección aquí
+              // If it's "Create your Target", redirect to /targets
+              window.location.href = '/targets'; // <--- Redirect here
             } else if (targetId) {
-              // Si es otra tarjeta (como "Crea tu Flecha"), muestra la sección correspondiente
+              // If it's another card (like "Create your Arrow"), show the corresponding section
               showSection(targetId);
             }
-            // Si targetId es nulo o vacío, no hace nada (no debería pasar con el HTML actual)
+            // If targetId is null or empty, do nothing (shouldn't happen with current HTML)
           });
         });
 
-        // --- Event Listeners para los Botones "Volver" ---
-        // Estos botones solo aparecen en el formulario "Crear Flecha" ahora, y vuelven a la pantalla de elección
+        // --- Event Listeners for "Back" Buttons ---
+        // These buttons only appear in the "Create Arrow" form now, and return to the choice screen
         backButtons.forEach((button) => {
           button.addEventListener('click', showChoiceScreen);
         });
 
-        // --- Asegurar estado inicial correcto ---
+        // --- Ensure correct initial state ---
         const isActiveSection = document.querySelector('.form-section.active');
-        // Mostrar la pantalla de elección si no hay ninguna sección activa
+        // Show the choice screen if no section is active
         if (!isActiveSection && choiceContainer) {
           showChoiceScreen();
         }
-        // NOTA: Si llegaste a esta página desde una redirección, la bandera de sessionStorage
-        // para nichoJustSubmitted podría aún estar activa y mostrar una alerta aquí.
-        // Esto es un efecto secundario de la redirección en lugar de mostrar el formulario.
-        // Considera si necesitas esta alerta o si debería manejarse en la página /targets.
+        // NOTE: If you arrived at this page from a redirect, the sessionStorage
+        // flag for nichoJustSubmitted might still be active and show an alert here.
+        // This is a side effect of redirecting instead of showing the form.
+        // Consider if you need this alert or if it should be handled on the /targets page.
       });
     </script>
 
-    <!-- Script para manejar el formulario de Flechas (Hunter) -->
-    <!-- Este script no se modifica -->
+    <!-- Script to handle the Arrow (Hunter) form -->
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const hunterForm = document.getElementById('hunter-form');
@@ -304,47 +298,47 @@
               const result = await response.json();
 
               if (response.ok) {
-                alert('Mensajes guardados correctamente!');
+                alert('Messages saved successfully!');
                 textarea.value = '';
               } else {
                 alert(
-                  `Error: ${result.error || 'Error al guardar los mensajes'}`
+                  `Error: ${result.error || 'Error saving messages'}`
                 );
               }
             } catch (error) {
               console.error('Error:', error);
-              alert('Error al conectar con el servidor');
+              alert('Error connecting to the server');
             }
           });
         }
       });
     </script>
 
-    <!-- Script para manejar el formulario de Blancos (Nichos) -->
-    <!-- Este script NO SE EJECUTARÁ al hacer clic en la tarjeta "Crear tu Blanco" en esta página -->
-    <!-- porque la tarjeta ahora redirige. Si el formulario para crear un nicho existe en /targets, -->
-    <!-- DEBERÍAS MOVER ESTE SCRIPT COMPLETO a la página /targets. -->
-    <!-- Si lo dejas aquí, solo se ejecutaría si de alguna forma se muestra la sección blanco-form-section en esta página, -->
-    <!-- lo cual no ocurrirá con la modificación hecha. -->
+    <!-- Script to handle the Target (Niche) form -->
+    <!-- This script WILL NOT RUN when clicking the "Create your Target" card on this page -->
+    <!-- because the card now redirects. If the form to create a niche exists on /targets, -->
+    <!-- YOU SHOULD MOVE THIS ENTIRE SCRIPT to the /targets page. -->
+    <!-- If you leave it here, it would only run if somehow the blanco-form-section is shown on this page, -->
+    <!-- which won't happen with the current modification. -->
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const nichoForm = document.getElementById('nicho-form');
 
-        // Este listener solo se adjuntará si el formulario #nicho-form existe
-        // y si la página actual es la que lo contiene Y la sección está visible.
-        // Con la modificación, la sección blanco-form-section no se muestra,
-        // por lo que este script no se ejecutará en la práctica para el flujo de la tarjeta.
-        // Es altamente recomendable MOVER este script a la página /targets
-        // si ahí es donde se va a registrar el nicho.
+        // This listener will only attach if the #nicho-form exists
+        // and if the current page contains it AND the section is visible.
+        // With the modification, the blanco-form-section is not shown,
+        // so this script will not run in practice for the card flow.
+        // It is highly recommended to MOVE this script to the /targets page
+        // if that's where the niche is registered.
 
         if (nichoForm) {
           console.log(
-            'Script nicho-form cargado. Si ves esto y esperas ser redirigido por la tarjeta, algo va mal. El script debería estar en /targets.'
+            'nicho-form script loaded. If you see this and expect to be redirected by the card, something is wrong. The script should be on /targets.'
           );
           nichoForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // Obtener datos del formulario
+            // Get form data
             const ubicacion = document.getElementById('ubicacion').value;
             const tipo_personas =
               document.getElementById('tipo_personas').value;
@@ -352,21 +346,21 @@
             const edad_max = document.getElementById('edad_max').value;
             const cuentasTextarea = document.getElementById('cuentas');
 
-            // Procesar cuentas
+            // Process accounts
             const cuentas = cuentasTextarea.value
               .split('\n')
               .map((cuenta) => cuenta.trim())
               .filter((cuenta) => cuenta.length > 0);
 
-            // Validación básica
+            // Basic validation
             if (!ubicacion || !tipo_personas || cuentas.length === 0) {
               return alert(
-                'Error: Ubicación, intereses y cuentas son obligatorios'
+                'Error: Location, interests, and accounts are required'
               );
             }
 
             try {
-              // Primero guardamos las cuentas como un nuevo grupo
+              // First save the accounts as a new group
               const cuentasResponse = await fetch('/api/blancos/cuentas', {
                 method: 'POST',
                 headers: {
@@ -379,13 +373,13 @@
 
               if (!cuentasResponse.ok) {
                 throw new Error(
-                  cuentasResult.error || 'Error al guardar cuentas'
+                  cuentasResult.error || 'Error saving accounts'
                 );
               }
 
-              // Luego guardamos los metadatos del nicho
-              // NOTA: La URL '/nicho' aquí puede necesitar ajuste si el endpoint
-              // para guardar metadatos está en otro lugar, quizás en la página /targets.
+              // Then save the niche metadata
+              // NOTE: The '/nicho' URL here may need adjustment if the endpoint
+              // for saving metadata is elsewhere, perhaps on the /targets page.
               const nichoResponse = await fetch('/nicho', {
                 method: 'POST',
                 headers: {
@@ -396,37 +390,37 @@
                   tipo_personas,
                   edad_min: edad_min || null,
                   edad_max: edad_max || null,
-                  mensaje: `Grupo de cuentas guardado el ${new Date().toLocaleString()}`,
+                  mensaje: `Account group saved on ${new Date().toLocaleString()}`,
                 }),
               });
 
               if (nichoResponse.ok) {
-                alert('Nicho y cuentas guardados correctamente!');
-                // Limpiar formulario
+                alert('Niche and accounts saved successfully!');
+                // Clear form
                 nichoForm.reset();
                 cuentasTextarea.value = '';
-                // Guardar bandera para posible recarga
+                // Save flag for possible reload
                 sessionStorage.setItem('nichoJustSubmitted', 'true');
-                // Después de guardar, quizás quieras redirigir a la lista de nichos o a otra página
-                // window.location.href = '/lista-de-nichos'; // Ejemplo
+                // After saving, you may want to redirect to the niche list or another page
+                // window.location.href = '/niche-list'; // Example
               } else {
                 const errorResult = await nichoResponse.json();
                 throw new Error(
-                  errorResult.error || 'Error al guardar el nicho'
+                  errorResult.error || 'Error saving the niche'
                 );
               }
             } catch (error) {
               console.error('Error:', error);
-              alert(`Error: ${error.message || 'Error al guardar los datos'}`);
+              alert(`Error: ${error.message || 'Error saving data'}`);
             }
           });
         }
 
-        // Manejar la bandera de envío exitoso
-        // Si este script se mueve a /targets, esta parte también debería ir allí.
+        // Handle successful submission flag
+        // If this script is moved to /targets, this part should go there too.
         const formSubmittedFlag = sessionStorage.getItem('nichoJustSubmitted');
         if (formSubmittedFlag === 'true') {
-          alert('¡Nicho registrado correctamente!');
+          alert('Niche registered successfully!');
           sessionStorage.removeItem('nichoJustSubmitted');
         }
       });
