@@ -52,6 +52,12 @@
         <h3>Create your Target</h3>
         <p>Define a new target niche with its characteristics.</p>
       </div>
+
+      <div class="choice-card" data-target="mind-form-section" id="mind-card">
+        <img src="/static/images/brain.png" alt="Mind" class="icon-choice" width="45" height="45" />
+        <h3>Create your Mind</h3>
+        <p>Configure your Hunter Mind for advanced strategies.</p>
+      </div>
     </div>
 
     <!-- "Create Hunter" Form Section (Initially Hidden) -->
@@ -235,20 +241,16 @@
         // --- Event Listeners for Choice Cards ---
         choiceCards.forEach((card) => {
           card.addEventListener('click', () => {
-            const targetId = card.dataset.target; // Gets 'hunter-form-section' or 'blanco-form-section'
-            if (targetId === 'arco-form-section') {
-              // If it's "Create your Bow", redirect to /index
-              window.location.href = '/index'; // <--- Redirect here
-            }
-            // Check if the card is "Create your Target"
-            if (targetId === 'blanco-form-section') {
-              // If it's "Create your Target", redirect to /targets
-              window.location.href = '/targets'; // <--- Redirect here
+            const targetId = card.dataset.target;
+            if (card.id === 'mind-card') {
+              window.location.href = '/huntermind'; // Redirige a la página huntermind.ejs
+            } else if (targetId === 'arco-form-section') {
+              window.location.href = '/index';
+            } else if (targetId === 'blanco-form-section') {
+              window.location.href = '/targets';
             } else if (targetId) {
-              // If it's another card (like "Create your Arrow"), show the corresponding section
               showSection(targetId);
             }
-            // If targetId is null or empty, do nothing (shouldn't happen with current HTML)
           });
         });
 

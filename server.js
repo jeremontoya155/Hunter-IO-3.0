@@ -1044,6 +1044,10 @@ app.get('/onboarding', isAuthenticated, (req, res) => {
   res.render('onboarding');
 });
 
+app.get('/huntermind', isAuthenticated, (req, res) => {
+  res.render('huntermind');
+});
+
 app.get('/nicho', isAuthenticated, (req, res) => {
   res.render('nicho');
 });
