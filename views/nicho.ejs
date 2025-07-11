@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/static/css/navbar.css" />
     <link rel="stylesheet" href="/static/css/scrollbar.css" />
     <link rel="stylesheet" href="/static/css/all.css" />
+    <link rel="stylesheet" href="/static/css/variables.css" />
 
     <!-- FontAwesome for icons -->
     <link 
@@ -32,42 +33,56 @@
   <body>
     <!-- Navbar included -->
     <%- include('partials/navbar') %>
+    
+    <!-- Selector de Idioma -->
+    <div class="language-switcher">
+      <button id="btn-es" class="lang-btn active" onclick="changeLanguage('es')">
+        <span>SP</span>
+      </button>
+      <div class="separator"></div>
+      <button id="btn-en" class="lang-btn" onclick="changeLanguage('en')">
+        <span>EN</span>
+      </button>
+    </div>
 
     <!-- Initial Selection Container -->
-    <div class="choice-container" id="choice-container">
-      <div class="choice-card" data-target="hunter-form-section">
-        <img src="/static/images/flecha.ico" alt="Arrow" class="icon-choice" width="45" height="45" />
-        <h3>Create your Arrow</h3>
-        <p>Set up a new Hunter instance to get started.</p>
-      </div>
+     <div class="choice-wrapper">
 
-      <div class="choice-card" data-target="arco-form-section">
-        <img src="/static/images/arco.ico" alt="Bow" class="icon-choice" width="45" height="45" />
-        <h3>Create your Bow</h3>
-        <p>Configure a new launching weapon for your campaigns.</p>
-      </div>
-      <!-- MODIFIED: This data-target is no longer used to show a form, but is kept for JS card identification -->
-      <div class="choice-card" data-target="blanco-form-section">
-        <img src="/static/images/blanco.ico" alt="Target" class="icon-choice" width="45" height="45" />
-        <h3>Create your Target</h3>
-        <p>Define a new target niche with its characteristics.</p>
-      </div>
-
-      <div class="choice-card" data-target="mind-form-section" id="mind-card">
-        <img src="/static/images/brain.png" alt="Mind" class="icon-choice" width="45" height="45" />
-        <h3>Create your Mind</h3>
-        <p>Configure your Hunter Mind for advanced strategies.</p>
-      </div>
-    </div>
+       <div class="choice-container" id="choice-container">
+         <div class="choice-card" data-target="hunter-form-section">
+           <img src="/static/images/flecha.ico" alt="Arrow" class="icon-choice" width="45" height="45" />
+           <h3 data-translate-key="createArrow">Crea tu Flecha</h3>
+           <p data-translate-key="arrowDesc">Configura una nueva instancia de Hunter para empezar.</p>
+         </div>
+   
+         <div class="choice-card" data-target="arco-form-section">
+           <img src="/static/images/arco.ico" alt="Bow" class="icon-choice" width="45" height="45" />
+           <h3 data-translate-key="createBow">Crea tu Arco</h3>
+           <p data-translate-key="bowDesc">Configura un nuevo lanzador para tus campañas.</p>
+         </div>
+         <!-- MODIFIED: This data-target is no longer used to show a form, but is kept for JS card identification -->
+         <div class="choice-card" data-target="blanco-form-section">
+           <img src="/static/images/blanco.ico" alt="Target" class="icon-choice" width="45" height="45" />
+           <h3 data-translate-key="createTarget">Crea tu Blanco</h3>
+           <p data-translate-key="targetDesc">Define un nuevo nicho objetivo con sus características.</p>
+         </div>
+   
+         <div class="choice-card" data-target="mind-form-section" id="mind-card">
+           <img src="/static/images/brain.png" alt="Mind" class="icon-choice" width="45" height="45" />
+           <h3 data-translate-key="createMind">Crea tu Mente</h3>
+           <p data-translate-key="mindDes">Configura tu Mente Hunter para estrategias avanzadas.</p>
+         </div>
+       </div>
+     </div>
 
     <!-- "Create Hunter" Form Section (Initially Hidden) -->
     <section id="hunter-form-section" class="form-section">
       <div class="form-container">
         <div class="form-card">
           <h2>
-            <i class="/static/images/arco.ico"></i> UPLOAD YOUR MESSAGE LIST
+            <i class="/static/images/arco.ico"></i> <span data-translate-key="uploadMessages">CARGA TU LISTA DE MENSAJES</span>
           </h2>
-          <p class="subtitle">Start a new hunt.</p>
+          <p class="subtitle" data-translate-key="startHunt">Inicia una nueva caza.</p>
 
           <form
             action="/api/flecha/mensajes"
@@ -77,7 +92,7 @@
           >
             <div class="form-group">
               <label for="mensajes"
-                ><i class="fas fa-signature"></i> Arrows:</label
+                ><i class="fas fa-signature"></i> <span data-translate-key="arrowsLabel">Arrows:</span></label
               >
               <textarea
                 id="mensajes"
@@ -86,9 +101,7 @@
                 required
                 rows="5"
               ></textarea>
-              <small>
-                Remember to insert the <strong><em>arrows</em></strong> with line breaks
-              </small>
+              <small data-translate-key="arrowsSmall" data-html="true">Recordá insertar las <strong><em>flechas</em></strong> con salto de lineas</small>
             </div>
 
             <div class="form-actions">
@@ -97,10 +110,10 @@
                 class="back-button"
                 data-action="show-choice"
               >
-                <i class="fas fa-arrow-left"></i> Back
+                <i class="fas fa-arrow-left"></i> <span data-translate-key="backButton">Volver</span>
               </button>
               <button type="submit" class="submit-button">
-                <i class="fas fa-cogs"></i> Start Hunter
+                <i class="fas fa-cogs"></i> <span data-translate-key="startHunterButton">Iniciar Hunter</span>
               </button>
             </div>
           </form>
@@ -117,15 +130,15 @@
       <div class="form-container">
         <div class="form-card">
           <h2>
-            <i class="fas fa-bullseye icon-title"></i> Register New Niche (Target)
+            <i class="fas fa-bullseye icon-title"></i> <span data-translate-key="newTargetRegister">Registrar Nuevo Target</span>
           </h2>
-          <p class="subtitle">Define the details of your target audience.</p>
+          <p class="subtitle" data-translate-key="newTargetRegisterDesc">Define los detalles de tu público objetivo.</p>
 
           <!-- Form modified to use JSON -->
           <form id="nicho-form" class="nicho-form">
             <div class="form-group">
               <label for="ubicacion"
-                ><i class="fas fa-map-marker-alt"></i> Location:</label
+                ><i class="fas fa-map-marker-alt"></i> <span data-translate-key="location">Ubicación:</span></label
               >
               <input
                 type="text"
@@ -138,7 +151,7 @@
 
             <div class="form-group">
               <label for="tipo_personas"
-                ><i class="fas fa-lightbulb"></i> Interests (comma separated):</label
+                ><i class="fas fa-lightbulb"></i> <span data-translate-key="interests">Intereses (separados por coma):</span></label
               >
               <textarea
                 id="tipo_personas"
@@ -152,7 +165,7 @@
             <div class="form-row">
               <div class="form-group half-width">
                 <label for="edad_min"
-                  ><i class="fas fa-arrow-down-1-9"></i> Minimum Age:</label
+                  ><i class="fas fa-arrow-down-1-9"></i> <span data-translate-key="ageMin">Edad Mínima:</span></label
                 >
                 <input
                   type="number"
@@ -164,7 +177,7 @@
               </div>
               <div class="form-group half-width">
                 <label for="edad_max"
-                  ><i class="fas fa-arrow-up-9-1"></i> Maximum Age:</label
+                  ><i class="fas fa-arrow-up-9-1"></i> <span data-translate-key="ageMax">Edad Máxima:</span></label
                 >
                 <input
                   type="number"
@@ -178,7 +191,7 @@
 
             <div class="form-group">
               <label for="cuentas"
-                ><i class="fas fa-envelope-open-text"></i> Target Accounts:</label
+                ><i class="fas fa-envelope-open-text"></i> <span data-translate-key="targetsAccounts">Cuentas Objetivo:</span></label
               >
               <textarea
                 id="cuentas"
@@ -187,7 +200,7 @@
                 required
                 rows="4"
               ></textarea>
-              <small>Separate each account with a line break</small>
+              <small data-translate-key="noteDesc">Separá cada cuenta con un salto de línea</small>
             </div>
 
             <div class="form-actions">
@@ -196,10 +209,10 @@
                 class="back-button"
                 data-action="show-choice"
               >
-                <i class="fas fa-arrow-left"></i> Back
+                <i class="fas fa-arrow-left"></i> <span data-translate-key="backButton">Volver</span>
               </button>
               <button type="submit" class="submit-button">
-                <i class="fas fa-save"></i> Save Niche
+                <i class="fas fa-save"></i> <span data-translate-key="saveButton">Guardar Target</span>
               </button>
             </div>
           </form>
@@ -427,5 +440,84 @@
         }
       });
     </script>
+    <script>
+  const translations = {
+    es: {
+      createArrow: "Crea tu Flecha",
+      arrowDesc: "Configura una nueva instancia de Hunter para empezar.",
+      createBow: "Crea tu Arco",
+      bowDesc: "Configura un nuevo lanzador para tus campañas.",
+      createTarget: "Crea tu Blanco",
+      targetDesc: "Define un nuevo nicho objetivo con sus características.",
+      createMind: "Crea tu Mente",
+      mindDes: "Configura tu Mente Hunter para estrategias avanzadas.",
+      uploadMessages: "CARGA TU LISTA DE MENSAJES",
+      startHunt: "Inicia una nueva caza.",
+      arrowsLabel: "Flechas:",
+      arrowsSmall: "Recordá insertarlas con salto de línea",
+      backButton: "Volver",
+      startHunterButton: "Iniciar Hunter",
+      newTargetRegister: "Registrar Nuevo Blanco",
+      newTargetRegisterDesc: "Define los detalles de tu público objetivo.",
+      location: "Ubicación:",
+      interests: "Intereses (separados por coma):",
+      ageMin: "Edad Mínima:",
+      ageMax: "Edad Máxima:",
+      targetsAccounts: "Cuentas Objetivo:",
+      noteDesc: "Separá cada cuenta con un salto de línea",
+      saveButton: "Guardar Blanco",
+    },
+    en: {
+      createArrow: "Create your Arrow",
+      arrowDesc: "Set up a new Hunter instance to get started.",
+      createBow: "Create your Bow",
+      bowDesc: "Configure a new launching weapon for your campaigns.",
+      createTarget: "Create your Target",
+      targetDesc: "Define a new target niche with its characteristics.",
+      createMind: "Create your Mind",
+      mindDes: "Configure your Hunter Mind for advanced strategies.",
+      uploadMessages: "UPLOAD YOUR MESSAGE LIST",
+      startHunt: "Start a new hunt.",
+      arrowsLabel: "Arrows:",
+      arrowsSmall: "Remember to insert the <strong><em>arrows</em></strong> with line breaks",
+      backButton: "Back",
+      startHunterButton: "Start Hunter",
+      newTargetRegister: "Register New Target",
+      newTargetRegisterDesc: "Define the details of your target audience.",
+      location: "Location:",
+      interests: "Interests (comma separated):",
+      ageMin: "Minimum Age:",
+      ageMax: "Maximum Age:",
+      targetsAccounts: "Target Accounts:",
+      noteDesc: "Separate each account with a line break",
+      saveButton: "Save Target",
+    }
+  };
+
+  function changeLanguage(lang) {
+  const elements = document.querySelectorAll('[data-translate-key]');
+  elements.forEach(el => {
+    const key = el.getAttribute('data-translate-key');
+    const useHTML = el.getAttribute('data-html') === 'true';
+    const translation = translations[lang][key];
+
+    if (translation) {
+      if (useHTML) {
+        el.innerHTML = translation; // Solo si querés etiquetas HTML como <strong> o <em>
+      } else {
+        el.textContent = translation; // Seguro
+      }
+    }
+  });
+
+  // Actualizar botones activos
+  document.getElementById('btn-es')?.classList.toggle('active', lang === 'es');
+  document.getElementById('btn-en')?.classList.toggle('active', lang === 'en');
+
+  // Guardar en localStorage
+  localStorage.setItem('preferredLanguage', lang);
+  }
+</script>
+
   </body>
 </html>

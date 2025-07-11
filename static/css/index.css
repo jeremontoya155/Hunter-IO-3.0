@@ -602,30 +602,33 @@ button.loading::after {
     display: none;
   }
 }
-
+.platform-wrapper{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top: 1rem;
+  flex-flow:column wrap;
+}
 .platform-choice-container {
+  
   display: flex;
   justify-content: center;
 
   align-items: center;
   flex-wrap: wrap;
   gap: 30px;
-  height: 100vh;
+  height: 100%;
   padding-top: 7em;
-
+  max-width:70%;
   animation: fadeInScale 0.5s ease-in-out;
-  position: relative;
 }
 .platform-choice-title {
-  position: absolute;
   font-size: 2em;
   text-align: left;
-  top: 10%;
-  left: 10%;
+  padding-top:2em;
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
   color: #cbd5e1;
-  margin-bottom: 2.5rem;
   text-transform: uppercase;
   letter-spacing: 2px;
   animation: pulse-glow 3s ease-in-out infinite;
@@ -675,7 +678,6 @@ button.loading::after {
 
 .platform-card .icon-choice {
   font-size: 3em;
-  margin-bottom: 20px;
 }
 
 .platform-card h3 {
@@ -733,19 +735,17 @@ button.loading::after {
 }
 @media screen and (max-width: 768px) {
   .platform-choice-container {
-    height: 100vh;
+    height: 100%;
     padding: 0;
     margin: 0;
-
-    margin-top: 6em;
-    flex-flow: column nowrap;
+    flex-flow: row wrap;
     justify-content: space-evenly;
     gap: 2px;
+    padding-top: 2em;
+    gap:20px;
   }
   .platform-card {
-    width: 70%;
-    max-width: 90vw;
-
+    width:50px;
     height: 90px;
   }
   .platform-card .icon-choice {
@@ -787,9 +787,7 @@ button.loading::after {
     font-size: 1.2em;
   }
   .platform-card {
-    width: 70%;
-    max-width: 90vw;
-
+    width:90px;    
     height: 90px;
   }
 }
@@ -901,12 +899,11 @@ button.loading::after {
     opacity: 0.3;
   }
 }
-
+.full-content{
+  overflow-x:hidden;
+}
 @media (max-width: 768px) {
-  .main-content {
-    max-width: 90%;
-  }
-
+  
   .notification {
     top: 10px;
     right: 10px;
@@ -917,4 +914,37 @@ button.loading::after {
   .notification.show {
     transform: translateY(0);
   }
+}
+
+.connected-accounts {
+  margin-top: 1rem;
+  background-color: #1e1e2a;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  color: #e0e0e0;
+}
+
+.connected-title {
+  font-weight: 600;
+  color: #00f5ff;
+  margin-bottom: 0.5rem;
+}
+
+.account-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.account-list li {
+  margin-bottom: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #ccc;
+}
+
+.account-list li i {
+  color: #c13584;
 }

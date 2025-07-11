@@ -139,11 +139,19 @@ app.get('/', (req, res) => {
   res.redirect('/index');
 });
 
+// app.get('/index', isAuthenticated, (req, res) => {
+//   res.render('index', {
+//     messages: [], // Puedes enviar mensajes de estado o notificaciones
+//   });
+// });
 app.get('/index', isAuthenticated, (req, res) => {
+  const userAccounts = req.session.user.accounts || [];
   res.render('index', {
-    messages: [], // Puedes enviar mensajes de estado o notificaciones
+    messages: [],
+    userAccounts, // ← agrega esto
   });
 });
+
 
 app.get('/resumen', isAuthenticated, async (req, res) => {
   try {

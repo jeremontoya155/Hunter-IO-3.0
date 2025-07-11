@@ -171,12 +171,21 @@ label i {
   font-weight: 500;
   transition: all var(--transition-fast);
   margin-top: 10px;
+  margin-bottom:10px;
+  width:100%;
 }
 .back-button:hover {
   background-color: var(--color-bg-panel);
 }
 
 /* === CHOICE CARD === */
+.choice-wrapper{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+}
 .choice-container {
   display: flex;
   justify-content: center;
@@ -185,6 +194,7 @@ label i {
   padding: 40px 20px;
   gap: 30px;
   flex-wrap: wrap;
+  max-width:910px;
 }
 .choice-card {
   background-color: var(--color-bg-light);
@@ -196,6 +206,7 @@ label i {
   transition: transform var(--transition-fast),
     box-shadow var(--transition-fast);
   width: 300px;
+  height:300px;
   box-shadow: var(--shadow-soft);
 }
 .choice-card:hover {
@@ -260,7 +271,6 @@ label i {
   .back-button,
   .submit-button {
     width: 100%;
-    margin: 0;
   }
 }
 

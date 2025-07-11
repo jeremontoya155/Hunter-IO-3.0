@@ -1,3 +1,47 @@
 *{
      font-family: 'Poppins', sans-serif;
 }
+
+/* --- Selector de idioma --- */
+.language-switcher {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  background-color: rgba(44, 62, 80, 0.85);
+  padding: 6px 12px;
+  border-radius: 20px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  gap: 5px;
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+}
+
+.lang-btn {
+  background: none;
+  border: none;
+  color: #ecf0f1;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 15px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: all 0.3s ease;
+}
+.lang-btn.active {
+  background-color: var(--color-accent-green);
+  color: #111;
+  opacity: 1;
+}
+.lang-btn:hover:not(.active) {
+  opacity: 0.85;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+@media (max-width: 768px) {
+  .language-switcher {
+    top: 25px;
+    left: 20px;
+    right: auto;
+  }
+}
