@@ -12,16 +12,28 @@
 
     <link rel="stylesheet" href="/static/css/navbar.css" />
     <link rel="stylesheet" href="/static/css/campaigns.css" />
-    <script src="/static/js/navbar.js" defer></script>
     <link rel="stylesheet" href="/static/css/scrollbar.css" />
     <link rel="stylesheet" href="/static/css/all.css" />
+
+    <script src="/static/js/navbar.js" defer></script>
   </head>
   <body>
     <%- include('partials/navbar') %>
+        <!-- Selector de Idioma -->
+    <div class="language-switcher">
+      <button id="btn-es" class="lang-btn active" onclick="changeLanguage('es')">
+        <span>SP</span>
+      </button>
+      <div class="separator"></div>
+      <button id="btn-en" class="lang-btn" onclick="changeLanguage('en')">
+        <span>EN</span>
+      </button>
+    </div>
+
     <div class="container">
       <div class="header">
-        <h1><i class="fas fa-bullhorn"></i> Gestión de Campañas</h1>
-        <p>Administra y monitorea tus campañas de marketing</p>
+        <h1><i class="fas fa-bullhorn"></i> <span data-translate-key="campaignTitle">Gestión de Campañas</span></h1>
+        <p data-translate-key="campaignSubtitle">Administra y monitorea tus campañas de marketing</p>
       </div>
 
       <% if (success) { %>
@@ -38,22 +50,22 @@
         <div class="stats-card">
           <div class="icon"><i class="fas fa-chart-line"></i></div>
           <h3><%= stats.total_campaigns %></h3>
-          <h5>Total Campañas</h5>
+          <h5 data-translate-key="totalCampaigns">Total Campañas</h5>
         </div>
         <div class="stats-card">
           <div class="icon"><i class="fas fa-play-circle"></i></div>
           <h3><%= stats.active_campaigns %></h3>
-          <h5>Activas</h5>
+          <h5 data-translate-key="activeCampaigns">Activas</h5>
         </div>
         <div class="stats-card">
           <div class="icon"><i class="fas fa-pause-circle"></i></div>
           <h3><%= stats.paused_campaigns %></h3>
-          <h5>Pausadas</h5>
+          <h5 data-translate-key="pausedCampaigns">Pausadas</h5>
         </div>
         <div class="stats-card">
           <div class="icon"><i class="fas fa-check-circle"></i></div>
           <h3><%= stats.completed_campaigns %></h3>
-          <h5>Completadas</h5>
+          <h5 data-translate-key="completedCampaigns">Completadas</h5>
         </div>
       </div>
 
@@ -62,13 +74,14 @@
           class="btn-primary-custom"
           onclick="openModal('newCampaignModal')"
         >
-          <i class="fas fa-plus"></i> Nueva Campaña
+          <i class="fas fa-plus"></i> <span data-translate-key="newCampaignBtn">Nueva Campaña</span>
         </button>
 
         <div class="campaigns-filters">
           <input
             type="text"
             class="form-control search-input"
+            data-translate-key="searchPlaceholder"
             placeholder="Buscar por nombre o cuenta..."
             oninput="filterCampaigns()"
           />
@@ -86,13 +99,13 @@
         <table class="campaigns-table">
           <thead>
             <tr>
-              <th>Nombre</th>
-              <th>Cuenta</th>
-              <th>Inicio</th>
-              <th>Fin</th>
-              <th>Mensajes/día</th>
-              <th>Estado</th>
-              <th>Acciones</th>
+              <th data-translate-key="nameCol">Nombre</th>
+              <th data-translate-key="accountCol">Cuenta</th>
+              <th data-translate-key="startCol">Inicio</th>
+              <th data-translate-key="endCol">Fin</th>
+              <th data-translate-key="limitCol">Mensajes/día</th>
+              <th data-translate-key="statusCol">Estado</th>
+              <th data-translate-key="actionsCol">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -108,12 +121,21 @@
               <td><%= new Date(c.end_date).toLocaleDateString() %></td>
               <td><%= c.daily_messages_limit %></td>
               <td>
+                <% const statusMap = {
+                  active: { key: 'statusActive', label: 'Activa' },
+                  paused: { key: 'statusPaused', label: 'Pausada' },
+                  completed: { key: 'statusCompleted', label: 'Completada' }
+                }; %>
+
+                <% const currentStatus = statusMap[c.status] || statusMap['completed']; %>
+
                 <span
                   class="badge badge-<%= c.status === 'active' ? 'success' : c.status === 'paused' ? 'warning' : 'secondary' %>"
+                  data-translate-key="<%= currentStatus.key %>"
                 >
-                  <%= c.status === 'active' ? 'Activa' : c.status === 'paused' ?
-                  'Pausada' : 'Completada' %>
+                  <%= currentStatus.label %>
                 </span>
+
               </td>
               <td>
                 <% if (c.status === 'active') { %>
@@ -151,7 +173,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">
-              <i class="fas fa-plus-circle"></i> Nueva Campaña
+              <i class="fas fa-plus-circle"></i> <span data-translate-key="modalNewTitle">Nueva Campaña</span>
             </h5>
             <button
               type="button"
@@ -164,30 +186,32 @@
           <div class="modal-body">
             <form id="newCampaignForm">
               <div class="form-group">
-                <label><i class="fas fa-tag"></i> Nombre de la Campaña</label>
+                <label><i class="fas fa-tag"></i> <span data-translate-key="nameLabel">Nombre de la Campaña</span></label>
                 <input
                   type="text"
                   class="form-control"
                   name="name"
+                  data-translate-key="namePlaceholder"
                   placeholder="Ej: Campaña Verano 2024"
                   required
                 />
               </div>
               <div class="form-group">
-                <label><i class="fas fa-align-left"></i> Descripción</label>
+                <label><i class="fas fa-align-left"></i> <span data-translate-key="descLabel">Descripción</span></label>
                 <textarea
                   class="form-control"
                   name="description"
                   rows="3"
+                  data-translate-key="descPlaceholder"
                   placeholder="Describe el objetivo de tu campaña..."
                 ></textarea>
               </div>
               <div class="form-group">
                 <label
-                  ><i class="fab fa-instagram"></i> Cuenta de Instagram</label
+                  ><i class="fab fa-instagram"></i> <span data-translate-key="instaLabel">Cuenta de Instagram</span></label
                 >
                 <select class="form-control" name="insta_account" required>
-                  <option value="">Selecciona una cuenta</option>
+                  <option value="" data-translate-key="instaPlaceholder">Selecciona una cuenta</option>
                   <% user.accounts.forEach(account => { %>
                   <option value="<%= account.insta_username %>">
                     <%= account.insta_username %>
@@ -197,7 +221,7 @@
               </div>
               <div class="form-group">
                 <label
-                  ><i class="fas fa-calendar-alt"></i> Fecha de Inicio</label
+                  ><i class="fas fa-calendar-alt"></i> <span data-translate-key="startDateLabel">Fecha de Inicio</span></label
                 >
                 <input
                   type="date"
@@ -208,7 +232,7 @@
               </div>
               <div class="form-group">
                 <label
-                  ><i class="fas fa-calendar-check"></i> Fecha de Fin</label
+                  ><i class="fas fa-calendar-check"></i> <span data-translate-key="endDateLabel">Fecha de Fin</span></label
                 >
                 <input
                   type="date"
@@ -218,22 +242,23 @@
                 />
               </div>
               <div class="form-group">
-                <label><i class="fas fa-envelope"></i> Mensajes por día</label>
+                <label><i class="fas fa-envelope"></i> <span data-translate-key="limitLabel">Mensajes por día</span></label>
                 <input
                   type="number"
                   class="form-control"
                   name="daily_messages_limit"
                   min="1"
                   max="100"
+                  data-translate-key="limitPlaceholder"
                   placeholder="Ej: 50"
                   required
                 />
               </div>
               <div class="form-group">
-                <label><i class="fas fa-toggle-on"></i> Estado</label>
+                <label><i class="fas fa-toggle-on"></i> <span data-translate-key="stateLabel">Estado</span></label>
                 <select class="form-control" name="status">
-                  <option value="active">Activa</option>
-                  <option value="paused">Pausada</option>
+                  <option value="active" data-translate-key="optionActive">Activa</option>
+                  <option value="paused" data-translate-key="optionPaused">Pausada</option>
                 </select>
               </div>
             </form>
@@ -244,10 +269,10 @@
               class="btn btn-secondary"
               onclick="closeModal('newCampaignModal')"
             >
-              <i class="fas fa-times"></i> Cancelar
+              <i class="fas fa-times"></i> <span data-translate-key="cancelBtn">Cancelar</span>
             </button>
             <button type="button" class="btn btn-success" id="saveCampaignBtn">
-              <i class="fas fa-save"></i> Guardar Campaña
+              <i class="fas fa-save"></i> <span data-translate-key="saveBtn">Guardar Campaña</span>
             </button>
           </div>
         </div>
@@ -260,7 +285,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">
-              <i class="fas fa-chart-line"></i> Estadísticas de Campaña
+              <i class="fas fa-chart-line"></i> <span data-translate-key="statsModalTitle">Estadísticas de Campaña</span>
             </h5>
             <button
               type="button"
@@ -279,267 +304,14 @@
               class="btn btn-secondary"
               onclick="closeModal('statsModal')"
             >
-              <i class="fas fa-times"></i> Cerrar
+              <i class="fas fa-times"></i> <span data-translate-key="closeBtn">Cerrar</span>
             </button>
           </div>
         </div>
       </div>
     </div>
 
-    <script>
-      function filterCampaigns() {
-        const searchValue = document.querySelector('.search-input').value.toLowerCase();
-        const selectedDate = document.getElementById('filter-date').value;
-
-        document.querySelectorAll('.campaign-row').forEach(row => {
-          const name = row.querySelector('td:nth-child(1) strong')?.textContent.toLowerCase() || '';
-          const account = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
-          const startDate = row.querySelector('td:nth-child(3)')?.textContent;
-
-          const matchText = name.includes(searchValue) || account.includes(searchValue);
-          const matchDate = !selectedDate || startDate === new Date(selectedDate).toLocaleDateString();
-
-          if (matchText && matchDate) {
-            row.style.display = '';
-          } else {
-            row.style.display = 'none';
-          }
-        });
-      }
-      // Funciones para manejar modales
-      function openModal(modalId) {
-          document.getElementById(modalId).classList.add('show');
-      }
-
-      function closeModal(modalId) {
-          document.getElementById(modalId).classList.remove('show');
-      }
-
-      // Cerrar modal al hacer clic fuera
-      document.querySelectorAll('.modal').forEach(modal => {
-          modal.addEventListener('click', (e) => {
-              if (e.target === modal) {
-                  modal.classList.remove('show');
-              }
-          });
-      });
-
-      // Configurar fecha mínima para los inputs de fecha (hoy)
-      const today = new Date().toISOString().split('T')[0];
-      document.querySelector('input[name="start_date"]').min = today;
-      document.querySelector('input[name="end_date"]').min = today;
-
-      // Guardar nueva campaña
-      document.getElementById('saveCampaignBtn').addEventListener('click', async () => {
-          const form = document.getElementById('newCampaignForm');
-          const formData = new FormData(form);
-
-          try {
-              const response = await fetch('/campaigns', {
-                  method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify(Object.fromEntries(formData))
-              });
-
-              if (response.ok) {
-                  window.location.reload();
-              } else {
-                  alert('Error al crear la campaña');
-              }
-          } catch (error) {
-              console.error('Error:', error);
-              alert('Error al crear la campaña');
-          }
-      });
-
-      // Pausar/reanudar campaña
-      document.querySelectorAll('.pause-campaign, .resume-campaign').forEach(btn => {
-          btn.addEventListener('click', async () => {
-              const campaignId = btn.dataset.id;
-              const newStatus = btn.classList.contains('pause-campaign') ? 'paused' : 'active';
-
-              try {
-                  const response = await fetch(`/campaigns/${campaignId}`, {
-                      method: 'PUT',
-                      headers: {
-                          'Content-Type': 'application/json'
-                      },
-                      body: JSON.stringify({
-                          status: newStatus
-                      })
-                  });
-
-                  if (response.ok) {
-                      window.location.reload();
-                  } else {
-                      alert('Error al actualizar la campaña');
-                  }
-              } catch (error) {
-                  console.error('Error:', error);
-                  alert('Error al actualizar la campaña');
-              }
-          });
-      });
-
-      // Ver estadísticas
-      document.querySelectorAll('.view-stats').forEach(btn => {
-          btn.addEventListener('click', async () => {
-              const campaignId = btn.dataset.id;
-
-              try {
-                  const response = await fetch(`/campaigns/${campaignId}/stats`);
-                  const data = await response.json();
-
-                  if (response.ok) {
-                      // Mostrar estadísticas en el modal
-                      const statsContent = document.getElementById('statsContent');
-                      statsContent.innerHTML = `
-                          <div class="campaign-header">
-                              <h4>${data.campaign.name}</h4>
-                              <p>${data.campaign.description}</p>
-                          </div>
-
-                          <div class="stats-grid">
-                              <div class="stats-card">
-                                  <div class="icon"><i class="fas fa-paper-plane"></i></div>
-                                  <h5>Mensajes Enviados</h5>
-                                  <h3>${data.stats.total_messages}</h3>
-                              </div>
-                              <div class="stats-card">
-                                  <div class="icon"><i class="fas fa-reply"></i></div>
-                                  <h5>Respuestas Recibidas</h5>
-                                  <h3>${data.stats.total_replies}</h3>
-                              </div>
-                              <div class="stats-card">
-                                  <div class="icon"><i class="fas fa-percentage"></i></div>
-                                  <h5>Tasa de Respuesta</h5>
-                                  <h3>${data.stats.reply_rate}%</h3>
-                              </div>
-                          </div>
-
-                          <div class="chart-container" style="height: 300px; margin-top: 2rem;">
-                              <canvas id="statsChart"></canvas>
-                          </div>
-                      `;
-
-                      // Mostrar gráfico
-                      const ctx = document.getElementById('statsChart').getContext('2d');
-                      new Chart(ctx, {
-                          type: 'bar',
-                          data: {
-                              labels: data.stats.messages_by_day.map(item => item.date),
-                              datasets: [{
-                                  label: 'Mensajes por día',
-                                  data: data.stats.messages_by_day.map(item => item.count),
-                                  backgroundColor: 'rgba(102, 126, 234, 0.8)',
-                                  borderColor: 'rgba(102, 126, 234, 1)',
-                                  borderWidth: 2,
-                                  borderRadius: 8,
-                                  borderSkipped: false,
-                              }]
-                          },
-                          options: {
-                              responsive: true,
-                              maintainAspectRatio: false,
-                              plugins: {
-                                  legend: {
-                                      display: false
-                                  }
-                              },
-                              scales: {
-                                  y: {
-                                      beginAtZero: true,
-                                      grid: {
-                                          color: 'rgba(0,0,0,0.1)'
-                                      }
-                                  },
-                                  x: {
-                                      grid: {
-                                          display: false
-                                      }
-                                  }
-                              }
-                          }
-                      });
-                      console.log('Se abriría un modal si tuviese datos')
-
-                      // Mostrar modal
-                    //   openModal('statsModal');
-                    //en vez de modal vamos a redireccionar por ahora
-                    window.location.href = '/resumen';
-                  } else {
-                      alert('Error al obtener estadísticas');
-                  }
-              } catch (error) {
-                  console.error('Error:', error);
-                  alert('Error al obtener estadísticas');
-              }
-          });
-      });
-
-      // Inicializar gráficos de campañas
-      document.addEventListener('DOMContentLoaded', () => {
-          <% campaigns.forEach(campaign => { %>
-              const ctx<%= campaign.id %> = document.getElementById('chart-<%= campaign.id %>').getContext('2d');
-              // Gráfico de ejemplo para cada campaña
-              new Chart(ctx<%= campaign.id %>, {
-                  type: 'line',
-                  data: {
-                      labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
-                      datasets: [{
-                          label: 'Mensajes enviados',
-                          data: [12, 19, 3, 5, 2, 3, 8],
-                          borderColor: 'rgba(102, 126, 234, 1)',
-                          backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                          borderWidth: 2,
-                          fill: true,
-                          tension: 0.4
-                      }]
-                  },
-                  options: {
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      plugins: {
-                          legend: {
-                              display: false
-                          }
-                      },
-                      scales: {
-                          y: {
-                              beginAtZero: true,
-                              display: false
-                          },
-                          x: {
-                              display: false
-                          }
-                      },
-                      elements: {
-                          point: {
-                              radius: 0
-                          }
-                      }
-                  }
-              });
-          <% }); %>
-      });
-
-      // Validación del formulario
-      document.getElementById('newCampaignForm').addEventListener('submit', (e) => {
-          e.preventDefault();
-      });
-
-      // Validar fechas
-      document.querySelector('input[name="start_date"]').addEventListener('change', (e) => {
-          const startDate = e.target.value;
-          const endDateInput = document.querySelector('input[name="end_date"]');
-          endDateInput.min = startDate;
-
-          if (endDateInput.value && endDateInput.value < startDate) {
-              endDateInput.value = startDate;
-          }
-      });
-    </script>
+    <script type="module" src="/static/js/languagesDefine/campaignLang.js"></script>
+    <script defer src="/static/js/campaigns.js"></script>
   </body>
 </html>

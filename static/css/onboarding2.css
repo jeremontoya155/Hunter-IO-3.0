@@ -356,3 +356,8 @@
     font-size: 1rem;
   }
 }
+@media (max-width: 768px) {
+  .language-switcher {
+    top: 55px !important;
+  }
+}
