@@ -283,3 +283,10 @@ label i {
     box-shadow: 0 0 25px rgba(0, 255, 148, 0.7);
   }
 }
+
+
+@media (max-width: 768px) {
+  .language-switcher {
+    top: 55px !important;
+  }
+}
