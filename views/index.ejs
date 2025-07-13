@@ -12,10 +12,10 @@
     <link rel="stylesheet" href="/static/css/variables.css" />
     <!-- Asegúrate de que esta ruta es correcta y el archivo existe, si no, puede causar problemas -->
     <!-- <link rel="stylesheet" href="/static/css/all.csss" /> -
-
     <script src="/static/js/index.js" defer></script>
     <!-- Added defer -->
     <script src="/static/js/navbar.js" defer></script>
+    <script src="/static/js/languagesDefine/indexLang.js" type="module" ></script>
     <!-- Added defer -->
 
     <link
@@ -30,9 +30,17 @@
   <body>
     <%- include('partials/navbar') %>
 
-
+    <div class="language-switcher">
+      <button id="btn-es" class="lang-btn " onclick="changeLanguage('es')">
+        <span>SP</span>
+      </button>
+      <div class="separator"></div>
+      <button id="btn-en" class="lang-btn" onclick="changeLanguage('en')">
+        <span>EN</span>
+      </button>
+    </div>
     <div class="platform-wrapper">
-      <h1 class="platform-choice-title">Elige tu canal:</h1>
+      <h1 class="platform-choice-title" data-translate-key="platformChoiceTitle">Elige tu canal:</h1>
 
       <div class="platform-choice-container" id="platform-choice-container">
   
@@ -123,7 +131,7 @@
             </div>
 
             <button type="submit" id="submitBtn" class="btn btn-primary">
-              <span>Agregar Cuenta</span>
+              <span data-translate-key="addAccount">Agregar Cuenta</span>
             </button>
           </form>
         </div>
@@ -134,20 +142,20 @@
             <div class="card-icon">
               <i class="fas fa-users"></i>
             </div>
-            <h5 class="card-title">Gestión de Cuentas Objetivo</h5>
-            <p class="card-text">
+            <h5 class="card-title" data-translate-key="gestionTitle">Gestión de Cuentas Objetivo</h5>
+            <p class="card-text" data-translate-key="gestionDesc">
               Carga o actualiza la lista de cuentas de Instagram a las que
               dirigir tus acciones de manera automática y eficiente.
             </p>
             <a href="/targets" class="btn btn-primary">
               <i class="fas fa-upload" style="margin-right: 8px"></i>
-              Gestionar Cuentas Objetivo
+              <span data-translate-key="manageTargets">Gestionar Cuentas Objetivo</span>  
             </a>
 
             <% if (userAccounts && userAccounts.length > 0) { %>
               <div class="connected-accounts">
                 <p class="connected-title">
-                  <i class="fas fa-link"></i> Cuentas Conectadas:
+                  <i class="fas fa-link"></i> <span data-translate-key="connectedAccounts">Cuentas Conectadas:</span>
                 </p>
                 <ul class="account-list">
                   <% userAccounts.forEach(ac => { %>
@@ -156,7 +164,7 @@
                 </ul>
               </div>
             <% } else { %>
-              <p class="no-accounts">No hay cuentas conectadas aún.</p>
+              <p class="no-accounts" data-translate-key="noAccounts">No hay cuentas conectadas aún.</p>
             <% } %>
           </div>
         </div>
@@ -170,7 +178,7 @@
         class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
       >
         <i class="fas fa-rocket" style="margin-right: 6px"></i>
-        ¡Carga aquí tus usuarios para ver sus avances!
+        <span data-translate-key="cargaUsuarios">¡Carga aquí tus usuarios para ver sus avances!</span>
         <div class="tooltip-arrow" data-popper-arrow></div>
       </div>
 
@@ -181,8 +189,10 @@
         <div class="shape shape-3"></div>
       </div>
     </div>
+    
 
     <script>
+      
       // Asegurarse que el script se ejecute después de cargar el DOM
       document.addEventListener('DOMContentLoaded', () => {
         const iconMap = {
