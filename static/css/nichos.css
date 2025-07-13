@@ -290,3 +290,24 @@ label i {
     top: 55px !important;
   }
 }
+.textarea-counter {
+  margin-top: 4px;
+  font-size: 0.85em;
+  color: #888;
+}
+.warning-message {
+  color: #ff4d4d;
+  font-size: 0.85em;
+  margin-top: 6px;
+  display: none;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.warning-message.show {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

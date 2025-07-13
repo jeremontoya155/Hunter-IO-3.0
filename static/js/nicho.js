@@ -69,35 +69,68 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
 
       const textarea = document.getElementById("mensajes");
-      const cuentas = textarea.value
+      let mensajes = textarea.value
         .split("\n")
-        .map((cuenta) => cuenta.trim())
-        .filter((cuenta) => cuenta.length > 0);
+        .map((m) => m.trim())
+        .filter((m) => m.length > 0);
+
+      // 🛡️ Validaciones
+      const MAX_LINEAS = 100;
+      const MAX_CARACTERES_POR_LINEA = 300;
+
+      const contieneHTML = (text) => /<[^>]*>|javascript:/i.test(text);
+      const errores = [];
+
+      if (mensajes.length === 0) {
+        errores.push("Debe ingresar al menos una flecha.");
+      }
+
+      if (mensajes.length > MAX_LINEAS) {
+        errores.push(`Máximo ${MAX_LINEAS} flechas permitidas.`);
+      }
+
+      mensajes.forEach((linea, idx) => {
+        if (linea.length > MAX_CARACTERES_POR_LINEA) {
+          errores.push(`La flecha #${idx + 1} excede los ${MAX_CARACTERES_POR_LINEA} caracteres.`);
+        }
+        if (contieneHTML(linea)) {
+          errores.push(`La flecha #${idx + 1} contiene código inválido (HTML/JS).`);
+        }
+      });
+
+      if (errores.length > 0) {
+        alert("Errores en el formulario:\n- " + errores.join("\n- "));
+        return;
+      }
 
       try {
+        const csrfToken = document.querySelector('input[name="_csrf"]').value;
+
         const response = await fetch("/api/flecha/mensajes", {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            "CSRF-Token": csrfToken,
           },
-          body: JSON.stringify({ mensajes: cuentas }),
+          body: JSON.stringify({ mensajes }),
         });
 
         const result = await response.json();
 
         if (response.ok) {
-          alert("Messages saved successfully!");
+          alert("¡Flechas guardadas correctamente!");
           textarea.value = "";
         } else {
-          alert(`Error: ${result.error || "Error saving messages"}`);
+          alert(`Error: ${result.error || "Error al guardar las flechas"}`);
         }
       } catch (error) {
         console.error("Error:", error);
-        alert("Error connecting to the server");
+        alert("Error al conectar con el servidor");
       }
     });
   }
 });
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const nichoForm = document.getElementById("nicho-form");
@@ -195,3 +228,71 @@ document.addEventListener("DOMContentLoaded", () => {
     sessionStorage.removeItem("nichoJustSubmitted");
   }
 });
+document.addEventListener("DOMContentLoaded", () => {
+  const textarea = document.getElementById("mensajes");
+  const lineCountLabel = document.getElementById("line-count");
+  const charRemainingLabel = document.getElementById("char-remaining");
+
+  const MAX_CARACTERES_POR_LINEA = 40;
+
+  if (textarea && lineCountLabel && charRemainingLabel) {
+    const actualizarContadores = () => {
+      const cursorPos = textarea.selectionStart;
+      let text = textarea.value;
+
+      // Remover todos los espacios del texto
+      text = text.replace(/ /g, "");
+
+      const lineas = text.split("\n");
+
+      // Flechas válidas (no vacías)
+      const flechas = lineas.filter((l) => l.trim().length > 0);
+      lineCountLabel.textContent = `${flechas.length} ${flechas.length === 1 ? "flecha" : "flechas"}`;
+
+      // Línea actual donde está el cursor
+      const hastaCursor = text.slice(0, cursorPos);
+      const lineaActual = hastaCursor.split("\n").length - 1;
+      const textoLineaActual = lineas[lineaActual] || "";
+
+      const restantes = Math.max(0, MAX_CARACTERES_POR_LINEA - textoLineaActual.length);
+      charRemainingLabel.textContent = `Quedan ${restantes} caract. en esta línea`;
+
+      // Limitar caracteres por línea
+      const lineasValidadas = lineas.map((l) => l.slice(0, MAX_CARACTERES_POR_LINEA));
+      const textoFinal = lineasValidadas.join("\n");
+
+      if (textoFinal !== textarea.value) {
+        textarea.value = textoFinal;
+        textarea.setSelectionRange(cursorPos - 1, cursorPos - 1);
+      }
+    };
+
+    textarea.addEventListener("input", actualizarContadores);
+    actualizarContadores();
+    const pasteWarning = document.getElementById("paste-warning");
+
+    // Manejar evento de pegado (bloquear si contiene espacios)
+    textarea.addEventListener("paste", (e) => {
+      const clipboardData = e.clipboardData || window.clipboardData;
+      const pastedText = clipboardData.getData("text");
+
+      if (/\s/.test(pastedText)) {
+        e.preventDefault();
+        mostrarAdvertencia();
+      }
+    });
+
+    // Mostrar mensaje de advertencia durante 3 segundos
+    function mostrarAdvertencia() {
+      if (pasteWarning) {
+        pasteWarning.classList.add("show");
+        clearTimeout(pasteWarning.timeout);
+        pasteWarning.timeout = setTimeout(() => {
+          pasteWarning.classList.remove("show");
+        }, 3000);
+      }
+    }
+
+  }
+});
+

@@ -92,9 +92,11 @@
             id="hunter-form"
           >
             <div class="form-group">
-              <label for="mensajes"
-                ><i class="fas fa-signature"></i> <span data-translate-key="arrowsLabel">Arrows:</span></label
-              >
+              <label for="mensajes">
+                <i class="fas fa-signature"></i>
+                <span data-translate-key="arrowsLabel">Arrows:</span>
+              </label>
+
               <textarea
                 id="mensajes"
                 name="mensajes"
@@ -102,8 +104,21 @@
                 required
                 rows="5"
               ></textarea>
-              <small data-translate-key="arrowsSmall" data-html="true">Recordá insertar las <strong><em>flechas</em></strong> con salto de lineas</small>
+
+              <div class="textarea-counter">
+                <small id="line-count">0 flechas</small> ·
+                <small id="char-remaining">Quedan 40 caracteres en esta línea</small>
+              </div>
+              <div id="paste-warning" class="hidden warning-message">
+                No se permiten espacios en las flechas. Ingresá solo texto continuo por línea.
+              </div>
+
+              <small data-translate-key="arrowsSmall" data-html="true">
+                Recordá insertar las <strong><em>flechas</em></strong> con salto de línea
+              </small>
+
             </div>
+
 
             <div class="form-actions">
               <button
@@ -125,102 +140,7 @@
     <!-- "Create your Target" Form Section (Initially Hidden) -->
     <!-- Although this section exists in the HTML, the modified script now redirects instead of showing it -->
     <!-- Consider removing this section and its form script if the /targets page now handles it completely -->
-    <section id="blanco-form-section" class="form-section">
-      <!-- The content of this form will no longer be shown on this page when clicking "Create your Target" -->
-      <!-- If you need this form, it should be on the /targets page -->
-      <div class="form-container">
-        <div class="form-card">
-          <h2>
-            <i class="fas fa-bullseye icon-title"></i> <span data-translate-key="newTargetRegister">Registrar Nuevo Target</span>
-          </h2>
-          <p class="subtitle" data-translate-key="newTargetRegisterDesc">Define los detalles de tu público objetivo.</p>
-
-          <!-- Form modified to use JSON -->
-          <form id="nicho-form" class="nicho-form">
-            <div class="form-group">
-              <label for="ubicacion"
-                ><i class="fas fa-map-marker-alt"></i> <span data-translate-key="location">Ubicación:</span></label
-              >
-              <input
-                type="text"
-                id="ubicacion"
-                name="ubicacion"
-                placeholder="Ex: Mexico City, Remote"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="tipo_personas"
-                ><i class="fas fa-lightbulb"></i> <span data-translate-key="interests">Intereses (separados por coma):</span></label
-              >
-              <textarea
-                id="tipo_personas"
-                name="tipo_personas"
-                placeholder="Ex: Web development, Digital marketing, Sustainable travel"
-                required
-                rows="3"
-              ></textarea>
-            </div>
-
-            <div class="form-row">
-              <div class="form-group half-width">
-                <label for="edad_min"
-                  ><i class="fas fa-arrow-down-1-9"></i> <span data-translate-key="ageMin">Edad Mínima:</span></label
-                >
-                <input
-                  type="number"
-                  id="edad_min"
-                  name="edad_min"
-                  placeholder="Ex: 21"
-                  min="0"
-                />
-              </div>
-              <div class="form-group half-width">
-                <label for="edad_max"
-                  ><i class="fas fa-arrow-up-9-1"></i> <span data-translate-key="ageMax">Edad Máxima:</span></label
-                >
-                <input
-                  type="number"
-                  id="edad_max"
-                  name="edad_max"
-                  placeholder="Ex: 45"
-                  min="0"
-                />
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="cuentas"
-                ><i class="fas fa-envelope-open-text"></i> <span data-translate-key="targetsAccounts">Cuentas Objetivo:</span></label
-              >
-              <textarea
-                id="cuentas"
-                name="cuentas"
-                placeholder="Enter accounts similar to your niches, one per line"
-                required
-                rows="4"
-              ></textarea>
-              <small data-translate-key="noteDesc">Separá cada cuenta con un salto de línea</small>
-            </div>
-
-            <div class="form-actions">
-              <button
-                type="button"
-                class="back-button"
-                data-action="show-choice"
-              >
-                <i class="fas fa-arrow-left"></i> <span data-translate-key="backButton">Volver</span>
-              </button>
-              <button type="submit" class="submit-button">
-                <i class="fas fa-save"></i> <span data-translate-key="saveButton">Guardar Target</span>
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </section>
-
+    
     <script defer src="/static/js/nicho.js"></script>
 
   </body>
