@@ -698,7 +698,7 @@
 .card-title {
   font-size: 1.125rem; /* text-lg */
   font-weight: 600; /* font-semibold */
-  margin-bottom: 1rem; /* mb-4 */
+  margin-bottom: 1.5rem; /* mb-4 */
   color: #e5e7eb; /* text-gray-200 */
   display: flex;
   align-items: center;
